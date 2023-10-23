@@ -37,7 +37,6 @@ const { width: windowWidth } = useWindowSize()
         </VBtn>
 
         <NavbarThemeSwitcher />
-
         <VSpacer />
 
         <UserProfile />

@@ -9,14 +9,14 @@ import { AppContentLayoutNav, ContentWidth, FooterType, NavbarType } from '@layo
 
 export const { themeConfig, layoutConfig } = defineThemeConfig({
   app: {
-    title: 'Vuexy',
+    title: 'Turki',
     logo: h('div', { innerHTML: logo, style: 'line-height:0; color: rgb(var(--v-global-theme-primary))' }),
     contentWidth: ContentWidth.Boxed,
     contentLayoutNav: AppContentLayoutNav.Vertical,
     overlayNavFromBreakpoint: breakpointsVuetify.md + 16,
-    enableI18n: false,
+    enableI18n: true,
     theme: 'light',
-    isRtl: false,
+    isRtl: true,
     skin: Skins.Default,
     routeTransition: RouteTransitions.Fade,
     iconRenderer: VIcon,

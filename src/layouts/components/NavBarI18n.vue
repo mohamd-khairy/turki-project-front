@@ -10,10 +10,6 @@ const i18nCompLanguages = [
     i18nLang: 'en',
   },
   {
-    label: 'French',
-    i18nLang: 'fr',
-  },
-  {
     label: 'Arabic',
     i18nLang: 'ar',
   },
