@@ -108,6 +108,16 @@
   "Two Steps v1": "خطوتين v1.0",
   "Two Steps v2": "خطوتين v2.0",
   "eCommerce": "التجارة الإلكترونية",
+  "Home": "الرئيسية",
+  "Customers": "العملاء",
+  "Orders": "الطلبات",
+  "Employees": "الموظفين",
+  "Categories": "الفئات",
+  "Sub_Category": "الفئات الفرعية",
+  "Products": "المنتجات",
+  "Cities": "المدن",
+  "Wallet": "المحفظة",
+  "Permissions": "الصلاحيات",
   "$vuetify": {
     "badge": "شارة",
     "pagination": {

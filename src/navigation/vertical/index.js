@@ -5,13 +5,38 @@ export default [
     icon: { icon: 'tabler-smart-home' },
   },
   {
-    title: 'Customers',
-    to: { name: 'customers' },
-    icon: { icon: 'tabler-file' },
-  },
-  {
     title: 'Orders',
     to: { name: 'orders' },
+    icon: { icon: 'solar:delivery-broken' },
+  },
+  {
+    title: 'Categories',
+    to: { name: 'categories' },
+    icon: { icon: 'carbon:categories' },
+  },
+  {
+    title: 'Sub_Category',
+    to: { name: 'sub-category' },
+    icon: { icon: 'carbon:category-new-each' },
+  },
+  {
+    title: 'Products',
+    to: { name: 'products' },
+    icon: { icon: 'streamline:shopping-bag-hand-bag-1-shopping-bag-purse-goods-item-products' },
+  },
+  {
+    title: 'Cities',
+    to: { name: 'cities' },
+    icon: { icon: 'solar:city-broken' },
+  },
+  {
+    title: 'Wallet',
+    to: { name: 'wallet' },
+    icon: { icon: 'solar:wallet-broken' },
+  },
+  {
+    title: 'Customers',
+    to: { name: 'customers' },
     icon: { icon: 'clarity:users-line' },
   },
   {
@@ -20,33 +45,8 @@ export default [
     icon: { icon: 'ph:users-four' },
   },
   {
-    title: 'Categories',
-    to: { name: 'categories' },
-    icon: { icon: 'solar:city-bold-duotone' },
-  },
-  {
-    title: 'Sub Category',
-    to: { name: 'sub-category' },
-    icon: { icon: 'solar:city-bold-duotone' },
-  },
-  {
-    title: 'Products',
-    to: { name: 'products' },
-    icon: { icon: 'solar:city-bold-duotone' },
-  },
-  {
-    title: 'Cities',
-    to: { name: 'cities' },
-    icon: { icon: 'solar:city-bold-duotone' },
-  },
-  {
-    title: 'Wallet',
-    to: { name: 'wallet' },
-    icon: { icon: 'solar:city-bold-duotone' },
-  },
-  {
     title: 'Permissions',
     to: { name: 'permissions' },
-    icon: { icon: 'solar:city-bold-duotone' },
+    icon: { icon: 'zondicons:shield' },
   },
 ]
