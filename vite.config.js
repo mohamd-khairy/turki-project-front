@@ -1,9 +1,10 @@
-import { fileURLToPath } from 'url'
+import VueI18n from '@intlify/vite-plugin-vue-i18n'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import DefineOptions from 'unplugin-vue-define-options/vite'
+import { fileURLToPath } from 'url'
 import { defineConfig } from 'vite'
 import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts'
@@ -36,10 +37,17 @@ export default defineConfig({
         enabled: true,
         filepath: './.eslintrc-auto-import.json',
       },
-      imports: ['vue', 'vue-router', '@vueuse/core', '@vueuse/math', 'pinia'],
+      imports: ['vue', 'vue-router', '@vueuse/core', '@vueuse/math', 'pinia', 'vue-i18n'],
       vueTemplate: true,
     }),
     DefineOptions(),
+    VueI18n({
+    runtimeOnly: true,
+    compositionOnly: true,
+    include: [
+      fileURLToPath(new URL('./src/plugins/i18n/locales/**', import.meta.url)),
+    ],
+  }),
   ],
   define: { 'process.env': {} },
   resolve: {

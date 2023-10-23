@@ -108,6 +108,7 @@
   "Two Steps v1": "خطوتين v1.0",
   "Two Steps v2": "خطوتين v2.0",
   "eCommerce": "التجارة الإلكترونية",
+  "Home": "الرئيسية",
   "$vuetify": {
     "badge": "شارة",
     "pagination": {
