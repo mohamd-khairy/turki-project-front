@@ -118,6 +118,12 @@
   "Cities": "المدن",
   "Wallet": "المحفظة",
   "Permissions": "الصلاحيات",
+  "Banners": "اللافتات",
+  "Activities": "النشاطات",
+  "Roles": "الأدوار",
+  "Countries": "البلاد",
+  "Add_Banner": "إضافة لافتة",
+  "Add_Activitie": "إضافة نشاط",
   "$vuetify": {
     "badge": "شارة",
     "pagination": {

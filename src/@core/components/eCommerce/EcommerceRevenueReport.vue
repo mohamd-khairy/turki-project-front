@@ -112,7 +112,7 @@ const chartOptions = computed(() => {
         show: true,
         horizontalAlign: 'left',
         position: 'top',
-        fontFamily: 'Public Sans',
+        fontFamily: 'Alkalami',
         markers: {
           height: 12,
           width: 12,
@@ -146,7 +146,7 @@ const chartOptions = computed(() => {
           style: {
             fontSize: '14px',
             colors: labelColor,
-            fontFamily: 'Public Sans',
+            fontFamily: 'Alkalami',
           },
         },
         axisTicks: { show: false },
@@ -158,7 +158,7 @@ const chartOptions = computed(() => {
           style: {
             fontSize: '14px',
             colors: labelColor,
-            fontFamily: 'Public Sans',
+            fontFamily: 'Alkalami',
           },
         },
         min: -200,

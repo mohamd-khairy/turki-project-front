@@ -1,33 +1,33 @@
 <script setup>
-import { useInvoiceStore } from '@/store/Invoice'
+import { useCountriesStore } from "@/store/Countries"
 
-const invoiceListStore = useInvoiceStore()
+const productListStore = useCountriesStore()
 const searchQuery = ref('')
 const selectedStatus = ref()
-const rowPerPage = ref(7)
+const rowPerPage = ref(5)
 const currentPage = ref(1)
 const totalPage = ref(1)
-const totalInvoices = ref(0)
-const invoices = ref([])
+const totalProducts = ref(0)
+const products = ref([])
 const selectedRows = ref([])
 
-// 👉 Fetch Invoices
+// 👉 Fetch Categories
 watchEffect(() => {
-  invoiceListStore.fetchInvoices({
+  productListStore.fetchCountries({
     q: searchQuery.value,
     status: selectedStatus.value,
     perPage: rowPerPage.value,
     currentPage: currentPage.value,
   }).then(response => {
-    invoices.value = response.data.invoices
-    totalPage.value = response.data.totalPage
-    totalInvoices.value = response.data.totalInvoices
+    products.value = response.data.categories
+    totalPage.value = response.data.total
+    totalProducts.value = response.data.total
   }).catch(error => {
     console.log(error)
   })
 })
 
-// 👉 Fetch Invoices
+// 👉 Fetch Categories
 watchEffect(() => {
   if (currentPage.value > totalPage.value)
     currentPage.value = totalPage.value
@@ -35,87 +35,47 @@ watchEffect(() => {
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
-  const firstIndex = invoices.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
-  const lastIndex = invoices.value.length + (currentPage.value - 1) * rowPerPage.value
+  // const firstIndex = products.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
+  // const lastIndex = products.value.length + (currentPage.value - 1) * rowPerPage.value
+  const firstIndex = 0
+  const lastIndex = 0
 
-  return `Showing ${ firstIndex } to ${ lastIndex } of ${ totalInvoices.value } entries`
+  return ` عرض من ${ firstIndex } إلي ${ lastIndex } من ${ totalProducts.value } الإجمالي `
 })
-
-const resolveInvoiceStatusVariantAndIcon = status => {
-  if (status === 'Partial Payment')
-    return {
-      variant: 'success',
-      icon: 'tabler-circle-half-2',
-    }
-  if (status === 'Paid')
-    return {
-      variant: 'warning',
-      icon: 'tabler-chart-pie',
-    }
-  if (status === 'Downloaded')
-    return {
-      variant: 'info',
-      icon: 'tabler-arrow-down-circle',
-    }
-  if (status === 'Draft')
-    return {
-      variant: 'primary',
-      icon: 'tabler-device-floppy',
-    }
-  if (status === 'Sent')
-    return {
-      variant: 'secondary',
-      icon: 'tabler-circle-check',
-    }
-  if (status === 'Past Due')
-    return {
-      variant: 'error',
-      icon: 'tabler-info-circle',
-    }
-
-  return {
-    variant: 'secondary',
-    icon: 'tabler-x',
-  }
-}
 </script>
 
 <template>
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="solar:city-broken" size="24"></VIcon>
-        <span class="mx-1">المدن</span>
+        <VIcon icon="streamline:shopping-bag-hand-bag-1-shopping-bag-purse-goods-item-products" size="24"></VIcon>
+        <span class="mx-1">البلاد</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
         <!-- 👉 Rows per page -->
-
-        <!-- 👉 Create invoice :to="{ name: 'apps-invoice-add' }" -->
-<!--        <VBtn-->
-<!--          prepend-icon="tabler-plus"-->
-<!--        >-->
-<!--          Create invoice-->
-<!--        </VBtn>-->
+        <div style="width: 5rem;">
+          <VSelect
+            v-model="rowPerPage"
+            variant="outlined"
+            :items="[5, 10, 20, 30, 50]"
+          />
+        </div>
+        <!--         👉 Create product :to="{ name: 'apps-product-add' }"-->
+        <VBtn
+          prepend-icon="tabler-plus"
+        >
+          إضافة بلد
+        </VBtn>
 
         <VSpacer />
 
-        <div class="d-flex align-center flex-wrap gap-2">
+        <div class="w-25 d-flex align-center flex-wrap gap-2">
           <!-- 👉 Search  -->
-          <div class="invoice-list-search">
+          <div class="w-100 product-list-search">
             <VTextField
               v-model="searchQuery"
-              placeholder="Search Invoice"
+              placeholder="بحث"
               density="compact"
-            />
-          </div>
-          <div class="invoice-list-status">
-            <VSelect
-              v-model="selectedStatus"
-              label="Select Status"
-              clearable
-              clear-icon="tabler-x"
-              density="compact"
-              :items="['Downloaded', 'Draft', 'Paid', 'Partial Payment', 'Past Due']"
             />
           </div>
         </div>
@@ -124,7 +84,7 @@ const resolveInvoiceStatusVariantAndIcon = status => {
       <VDivider />
 
       <!-- SECTION Table -->
-      <VTable class="text-no-wrap invoice-list-table">
+      <VTable class="text-no-wrap product-list-table">
         <!-- 👉 Table head -->
         <thead>
         <tr>
@@ -164,13 +124,13 @@ const resolveInvoiceStatusVariantAndIcon = status => {
         <!-- 👉 Table Body -->
         <tbody>
         <tr
-          v-for="invoice in invoices"
-          :key="invoice.id"
+          v-for="product in products"
+          :key="product.id"
         >
           <!-- 👉 Id -->
           <td>
-            <RouterLink :to="{ name: 'apps-invoice-preview-id', params: { id: invoice.id } }">
-              #{{ invoice.id }}
+            <RouterLink :to="{ name: 'apps-product-preview-id', params: { id: product.id } }">
+              #{{ product.id }}
             </RouterLink>
           </td>
 
@@ -181,35 +141,33 @@ const resolveInvoiceStatusVariantAndIcon = status => {
                 <VAvatar
                   :size="30"
                   v-bind="props"
-                  :color="resolveInvoiceStatusVariantAndIcon(invoice.invoiceStatus).variant"
                   variant="tonal"
                 >
                   <VIcon
                     :size="20"
-                    :icon="resolveInvoiceStatusVariantAndIcon(invoice.invoiceStatus).icon"
                   />
                 </VAvatar>
               </template>
               <p class="mb-0">
-                {{ invoice.invoiceStatus }}
+                {{ product.productStatus }}
               </p>
               <p class="mb-0">
-                Balance: {{ invoice.balance }}
+                Balance: {{ product.balance }}
               </p>
               <p class="mb-0">
-                Due date: {{ invoice.dueDate }}
+                Due date: {{ product.dueDate }}
               </p>
             </VTooltip>
           </td>
 
           <!-- 👉 total -->
           <td class="text-center text-medium-emphasis">
-            ${{ invoice.total }}
+            ${{ product.total }}
           </td>
 
           <!-- 👉 Date -->
           <td class="text-center text-medium-emphasis">
-            {{ invoice.issuedDate }}
+            {{ product.issuedDate }}
           </td>
 
           <!-- 👉 Actions -->
@@ -231,7 +189,7 @@ const resolveInvoiceStatusVariantAndIcon = status => {
               variant="plain"
               color="default"
               size="x-small"
-              :to="{ name: 'apps-invoice-preview-id', params: { id: invoice.id } }"
+              :to="{ name: 'apps-product-preview-id', params: { id: product.id } }"
             >
               <VIcon
                 :size="22"
@@ -263,7 +221,7 @@ const resolveInvoiceStatusVariantAndIcon = status => {
                     <VListItemTitle>Download</VListItemTitle>
                   </VListItem>
 
-                  <VListItem :to="{ name: '/apps/invoice/edit/[id]', params: { id: invoice.id } }">
+                  <VListItem :to="{ name: '/apps/product/edit/[id]', params: { id: product.id } }">
                     <template #prepend>
                       <VIcon
                         size="22"
@@ -293,13 +251,13 @@ const resolveInvoiceStatusVariantAndIcon = status => {
         </tbody>
 
         <!-- 👉 table footer  -->
-        <tfoot v-show="!invoices.length">
+        <tfoot v-show="!products.length">
         <tr>
           <td
             colspan="8"
             class="text-center text-body-1"
           >
-            No data available
+            لا يوجد بيانات
           </td>
         </tr>
         </tfoot>
@@ -326,5 +284,3 @@ const resolveInvoiceStatusVariantAndIcon = status => {
     </VCard>
   </div>
 </template>
-<script setup>
-</script>

@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AddBannerDialog: typeof import('./src/@core/components/pages/banners/AddBannerDialog.vue')['default']
     AppBarSearch: typeof import('./src/@core/components/AppBarSearch.vue')['default']
     AppCardActions: typeof import('./src/@core/components/AppCardActions.vue')['default']
     AppCardCode: typeof import('./src/@core/components/AppCardCode.vue')['default']

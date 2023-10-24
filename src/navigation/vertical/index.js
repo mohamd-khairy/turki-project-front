@@ -5,6 +5,11 @@ export default [
     icon: { icon: 'tabler-smart-home' },
   },
   {
+    title: 'Banners',
+    to: { name: 'banners' },
+    icon: { icon: 'game-icons:vertical-banner' },
+  },
+  {
     title: 'Orders',
     to: { name: 'orders' },
     icon: { icon: 'solar:delivery-broken' },
@@ -23,6 +28,11 @@ export default [
     title: 'Products',
     to: { name: 'products' },
     icon: { icon: 'streamline:shopping-bag-hand-bag-1-shopping-bag-purse-goods-item-products' },
+  },
+  {
+    title: 'Countries',
+    to: { name: 'countries' },
+    icon: { icon: 'material-symbols:globe' },
   },
   {
     title: 'Cities',
@@ -45,8 +55,18 @@ export default [
     icon: { icon: 'ph:users-four' },
   },
   {
+    title: 'Roles',
+    to: { name: 'roles' },
+    icon: { icon: 'zondicons:shield' },
+  },
+  {
     title: 'Permissions',
     to: { name: 'permissions' },
     icon: { icon: 'zondicons:shield' },
+  },
+  {
+    title: 'Activities',
+    to: { name: 'activities' },
+    icon: { icon: 'octicon:log-24' },
   },
 ]
