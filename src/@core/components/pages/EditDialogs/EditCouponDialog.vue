@@ -116,7 +116,7 @@ const resetForm = () => {
 }
 
 const onFormSubmit = () => {
-  couponsListStore.storeCoupon(coupon).then(response => {
+  couponsListStore.editCoupon(couponData).then(response => {
     emit('update:isEditOpen', false)
     emit('refreshTable')
   })
