@@ -251,7 +251,7 @@ const dialogModelValueUpdate = val => {
               sm="6"
             >
               <VSelect
-                v-model="couponData.country_id"
+                v-model="couponData.country_ids"
                 :items="countries.value"
                 :label="t('forms.countries')"
                 item-title="name_ar"
