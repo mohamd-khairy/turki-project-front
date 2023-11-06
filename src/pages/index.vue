@@ -1,123 +1,66 @@
 <script setup>
-import EcommerceCongratulationsJohn from '@core/components/eCommerce/EcommerceCongratulationsJohn.vue'
-import EcommerceEarningReports from '@core/components/eCommerce/EcommerceEarningReports.vue'
-import EcommerceExpensesRadialBarCharts from '@core/components/eCommerce/EcommerceExpensesRadialBarCharts.vue'
-import EcommerceGeneratedLeads from '@core/components/eCommerce/EcommerceGeneratedLeads.vue'
 import EcommerceInvoiceTable from '@core/components/eCommerce/EcommerceInvoiceTable.vue'
-import EcommerceOrder from '@core/components/eCommerce/EcommerceOrder.vue'
-import EcommercePopularProducts from '@core/components/eCommerce/EcommercePopularProducts.vue'
-import EcommerceRevenueReport from '@core/components/eCommerce/EcommerceRevenueReport.vue'
 import EcommerceStatistics from '@core/components/eCommerce/EcommerceStatistics.vue'
-import EcommerceTotalProfitLineCharts from '@core/components/eCommerce/EcommerceTotalProfitLineCharts.vue'
-import EcommerceTransactions from '@core/components/eCommerce/EcommerceTransactions.vue'
+import { useDashboardStore } from "@/store/Dashboard"
+
+const dashboardList = useDashboardStore()
+const dashboard = reactive([])
+const cards = reactive({})
+const chart = reactive([])
+const table = reactive([])
+const { t } = useI18n()
+
+const chartJsCustomColors = {
+  white: '#fff',
+  yellow: '#ffe802',
+  primary: '#836af9',
+  areaChartBlue: '#2c9aff',
+  barChartYellow: '#ffcf5c',
+  polarChartGrey: '#4f5d70',
+  polarChartInfo: '#299aff',
+  lineChartYellow: '#d4e157',
+  polarChartGreen: '#28dac6',
+  lineChartPrimary: '#9e69fd',
+  lineChartWarning: '#ff9800',
+  horizontalBarInfo: '#26c6da',
+  polarChartWarning: '#ff8131',
+  scatterChartGreen: '#28c76f',
+  warningShade: '#ffbd1f',
+  areaChartBlueLight: '#84d0ff',
+  areaChartGreyLight: '#edf1f4',
+  scatterChartWarning: '#ff9f43',
+}
+
+onMounted(() => {
+  dashboardList.fetchDashboard({}).then(response => {
+    dashboard.value = response.data.data
+    chart.value = response.data.data.monthly_orders
+    cards.value = response.data.data.total
+    table.value = response.data.data.orders
+  })
+})
 </script>
 
 <template>
   <VRow>
-    <!-- 👉 Congratulation John -->
     <VCol
       cols="12"
-      md="5"
-      lg="4"
+      lg="12"
     >
-      <EcommerceCongratulationsJohn />
-    </VCol>
-
-    <!-- 👉 Ecommerce Transition -->
-    <VCol
-      cols="12"
-      md="7"
-      lg="8"
-    >
-      <EcommerceStatistics class="h-100" />
+      <EcommerceStatistics :statistics="cards" class="h-100"/>
     </VCol>
 
     <VCol
       cols="12"
-      lg="4"
+      lg="6"
     >
-      <VRow>
-        <!-- 👉 Expenses Radial Bar Charts -->
-        <VCol
-          cols="12"
-          lg="6"
-          md="3"
-          sm="6"
-        >
-          <EcommerceExpensesRadialBarCharts />
-        </VCol>
-
-        <!-- 👉 Total Profit Line -->
-        <VCol
-          cols="12"
-          lg="6"
-          md="3"
-          sm="6"
-        >
-          <EcommerceTotalProfitLineCharts />
-        </VCol>
-
-        <!-- 👉 Generated Leads -->
-        <VCol
-          cols="12"
-          md="6"
-          lg="12"
-        >
-          <EcommerceGeneratedLeads />
-        </VCol>
-      </VRow>
+      <BarChart :colors="chartJsCustomColors" :title="t('monthly_orders')" :chartData="chart.value"/>
     </VCol>
-
-    <!-- 👉 Revenue Report -->
     <VCol
       cols="12"
-      lg="8"
+      lg="6"
     >
-      <EcommerceRevenueReport />
-    </VCol>
-
-    <!-- 👉 Earning Reports -->
-    <VCol
-      cols="12"
-      sm="6"
-      lg="4"
-    >
-      <EcommerceEarningReports />
-    </VCol>
-
-    <!-- 👉 Popular Products -->
-    <VCol
-      cols="12"
-      sm="6"
-      lg="4"
-    >
-      <EcommercePopularProducts />
-    </VCol>
-
-    <!-- 👉 Order -->
-    <VCol
-      cols="12"
-      sm="6"
-      lg="4"
-    >
-      <EcommerceOrder />
-    </VCol>
-
-    <!-- 👉 Transaction -->
-    <VCol
-      cols="12"
-      sm="6"
-      lg="4"
-    >
-      <EcommerceTransactions />
-    </VCol>
-
-    <!-- 👉 Invoice Table -->
-    <VCol
-      cols="12"
-      lg="8"
-    >
-      <EcommerceInvoiceTable />
+      <DashboardOrdersTable :orders="table.value"></DashboardOrdersTable>
     </VCol>
   </VRow>
 </template>

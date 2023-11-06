@@ -30,6 +30,11 @@ export default [
     icon: { icon: 'streamline:shopping-bag-hand-bag-1-shopping-bag-purse-goods-item-products' },
   },
   {
+    title: 'Coupons',
+    to: { name: 'coupons' },
+    icon: { icon: 'bxs:coupon' },
+  },
+  {
     title: 'Countries',
     to: { name: 'countries' },
     icon: { icon: 'material-symbols:globe' },
@@ -38,11 +43,6 @@ export default [
     title: 'Cities',
     to: { name: 'cities' },
     icon: { icon: 'solar:city-broken' },
-  },
-  {
-    title: 'Wallet',
-    to: { name: 'wallet' },
-    icon: { icon: 'solar:wallet-broken' },
   },
   {
     title: 'Customers',
@@ -64,9 +64,9 @@ export default [
     to: { name: 'permissions' },
     icon: { icon: 'zondicons:shield' },
   },
-  {
-    title: 'Activities',
-    to: { name: 'activities' },
-    icon: { icon: 'octicon:log-24' },
-  },
+  // {
+  //   title: 'Activities',
+  //   to: { name: 'activities' },
+  //   icon: { icon: 'octicon:log-24' },
+  // },
 ]

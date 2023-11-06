@@ -1,68 +1,127 @@
 <script setup>
-const statistics = [
-  {
-    title: 'Sales',
-    stats: '230k',
-    icon: 'tabler-chart-pie-2',
-    color: 'primary',
+const props = defineProps({
+  statistics: {
+    type: Object,
+    required: true,
   },
-  {
-    title: 'Customers',
-    stats: '8.549k',
-    icon: 'tabler-users',
-    color: 'info',
-  },
-  {
-    title: 'Products',
-    stats: '1.423k',
-    icon: 'tabler-shopping-cart',
-    color: 'error',
-  },
-  {
-    title: 'Revenue',
-    stats: '$9745',
-    icon: 'tabler-currency-dollar',
-    color: 'success',
-  },
-]
+})
+
+const { t } = useI18n()
+
+const ConvertToArabicNumbers = num => {
+  const arabicNumbers = "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669"
+
+  return String(num).replace(/[0123456789]/g, d => {
+    return arabicNumbers[d]
+  })
+}
 </script>
 
 <template>
-  <VCard title="Statistics">
-    <template #append>
-      <span class="text-body-2">Updated 1 month ago</span>
-    </template>
-
-    <VCardText class="pt-6">
-      <VRow>
-        <VCol
-          v-for="item in statistics"
-          :key="item.title"
-          cols="6"
-          md="3"
+  <VRow>
+    <VCol
+      cols="6"
+      md="3"
+    >
+      <VCard class="d-flex pa-5" :loading="!props.statistics.value">
+        <VAvatar
+          color="warning"
+          variant="tonal"
+          size="42"
+          class="me-3"
         >
-          <div class="d-flex">
-            <VAvatar
-              :color="item.color"
-              variant="tonal"
-              size="42"
-              class="me-3"
-            >
-              <VIcon
-                size="24"
-                :icon="item.icon"
-              />
-            </VAvatar>
+          <VIcon
+            size="24"
+            icon="tabler-users"
+          />
+        </VAvatar>
 
-            <div class="d-flex flex-column">
-              <span class="text-h6 font-weight-medium">{{ item.stats }}</span>
-              <span class="text-caption">
-                {{ item.title }}
-              </span>
-            </div>
-          </div>
-        </VCol>
-      </VRow>
-    </VCardText>
-  </VCard>
+        <div class="d-flex flex-column">
+          <span class="text-h6">
+            {{ t('customer_count') }}
+          </span>
+          <span class="text-h6 font-weight-medium mt-2"
+          >{{ props.statistics.value ? ConvertToArabicNumbers(Intl.NumberFormat().format(props.statistics.value.customer_count)) : ConvertToArabicNumbers(0) }}</span>
+        </div>
+      </VCard>
+    </VCol>
+    <VCol
+      cols="6"
+      md="3"
+    >
+      <VCard class="d-flex pa-5" :loading="!props.statistics.value">
+        <VAvatar
+          color="info"
+          variant="tonal"
+          size="42"
+          class="me-3"
+        >
+          <VIcon
+            size="24"
+            icon="tabler-shopping-cart"
+          />
+        </VAvatar>
+
+        <div class="d-flex flex-column">
+          <span class="text-h6">
+            {{ t('order_count') }}
+          </span>
+          <span class="text-h6 font-weight-medium mt-2"
+          >{{ props.statistics.value ? ConvertToArabicNumbers(Intl.NumberFormat().format(props.statistics.value.order_count)) : ConvertToArabicNumbers(0) }}</span>
+        </div>
+      </VCard>
+    </VCol>
+    <VCol
+      cols="6"
+      md="3"
+    >
+      <VCard class="d-flex pa-5" :loading="!props.statistics.value">
+        <VAvatar
+          color="success"
+          variant="tonal"
+          size="42"
+          class="me-3"
+        >
+          <VIcon
+            size="24"
+            icon="tabler-currency-dollar"
+          />
+        </VAvatar>
+
+        <div class="d-flex flex-column">
+          <span class="text-h6">
+            {{ t('payment_sum') }}
+          </span>
+          <span class="text-h6 font-weight-medium mt-2"
+          >{{ props.statistics.value ? ConvertToArabicNumbers(Intl.NumberFormat().format(props.statistics.value.payment_sum)) : ConvertToArabicNumbers(0) }} {{ t('riyal') }}</span>
+        </div>
+      </VCard>
+    </VCol>
+    <VCol
+      cols="6"
+      md="3"
+    >
+      <VCard class="d-flex pa-5" :loading="!props.statistics.value">
+        <VAvatar
+          color="primary"
+          variant="tonal"
+          size="42"
+          class="me-3"
+        >
+          <VIcon
+            size="24"
+            icon="fluent-mdl2:shop"
+          />
+        </VAvatar>
+
+        <div class="d-flex flex-column">
+          <span class="text-h6">
+            {{ t('product_count') }}
+          </span>
+          <span class="text-h6 font-weight-medium mt-2"
+          >{{ props.statistics.value ? ConvertToArabicNumbers(Intl.NumberFormat().format(props.statistics.value.product_count)) : ConvertToArabicNumbers(0) }}</span>
+        </div>
+      </VCard>
+    </VCol>
+  </VRow>
 </template>

@@ -94,8 +94,8 @@ const handleNavScroll = evt => {
           to="/"
           class="app-logo d-flex align-center gap-x-3 app-title-wrapper"
         >
-          <VNodeRenderer :nodes="config.app.logo" />
-
+<!--          <VNodeRenderer :nodes="config.app.logo" />-->
+          <VIcon icon="iconoir:n-square" size="36" ></VIcon>
           <Transition name="vertical-nav-app-title">
             <h1
               v-show="!hideTitleAndIcon"

@@ -1,8 +1,10 @@
 <script setup>
 import { useBannersStore } from '@/store/Banners'
 import { useI18n } from "vue-i18n"
+
 const { t } = useI18n()
 
+const backend = process.env.VUE_APP_SERVER_URL || 'https://najdiya.com.sa'
 const bannersListStore = useBannersStore()
 const searchQuery = ref('')
 const selectedStatus = ref()
@@ -11,56 +13,72 @@ const currentPage = ref(1)
 const totalPage = ref(1)
 const totalBanners = ref(0)
 const banners = ref([])
+const selectedBanner = ref({})
 const selectedRows = ref([])
 const isAddOpen = ref(false)
-const currentBillingAddress = {
-  companyName: 'Pixinvent',
-  billingEmail: 'gertrude@gmail.com',
-  taxID: 'TAX-875623',
-  vatNumber: 'SDF754K77',
-  address: '100 Water Plant Avenue, Building 1303 Wake Island',
-  contact: '+1(609) 933-44-22',
-  country: 'USA',
-  state: 'Queensland',
-  zipCode: '403114',
-}
+const isEditOpen = ref(false)
+const isDeleteOpen = ref(false)
+
 // Functions
-const addNewBanner = () => {
-  console.log("Done !")
-}
-
-
-// 👉 Fetch Banners
-watchEffect(() => {
+const getBanners = () => {
   bannersListStore.fetchBanners({
     q: searchQuery.value,
-    status: selectedStatus.value,
-    perPage: rowPerPage.value,
-    currentPage: currentPage.value,
   }).then(response => {
-    banners.value = response.data.banners
-    totalPage.value = response.data.banners
-    totalBanners.value = response.data.totalBanners
+    banners.value = response.data.data
+    totalBanners.value = response.data.data.length
+    currentPage.value = 1
   }).catch(error => {
     console.log(error)
   })
+}
+
+// 👉 Fetch Banners
+watchEffect(() => {
+  getBanners()
 })
 
 // 👉 Fetch Banners
 watchEffect(() => {
-  if (currentPage.value > totalPage.value)
-    currentPage.value = totalPage.value
+  if (rowPerPage.value) {
+    currentPage.value = 1
+  }
 })
+
+const paginateBanners = computed(() => {
+  totalPage.value = Math.ceil(banners.value.length / rowPerPage.value)
+
+  return banners.value.filter((row, index) => {
+    let start = (currentPage.value - 1) * rowPerPage.value
+    let end = currentPage.value * rowPerPage.value
+    if (index >= start && index < end) return true
+  })
+})
+
+const nextPage = () => {
+  if ((currentPage.value * rowPerPage.value) < banners.value.length) currentPage.value++
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--
+}
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
-  // const firstIndex = banners.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
-  // const lastIndex = banners.value.length + (currentPage.value - 1) * rowPerPage.value
-  const firstIndex = 0
-  const lastIndex = 0
+  const firstIndex = banners.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
+  const lastIndex = firstIndex + (rowPerPage.value - 1) <= banners.value.length ? firstIndex + (rowPerPage.value - 1) : totalBanners.value
 
-  return ` عرض من ${ firstIndex } إلي ${ lastIndex } من ${ totalBanners.value } الإجمالي `
+  return ` عرض من ${firstIndex} إلي ${lastIndex} من ${totalBanners.value} الإجمالي `
 })
+
+const openDelete = banner => {
+  isDeleteOpen.value = true
+  selectedBanner.value = banner
+}
+
+const openEdit = banner => {
+  isEditOpen.value = true
+  selectedBanner.value = banner
+}
 </script>
 
 <template>
@@ -87,7 +105,7 @@ const paginationData = computed(() => {
           {{ t('Add_Banner') }}
         </VBtn>
 
-        <VSpacer />
+        <VSpacer/>
 
         <div class="w-25 d-flex align-center flex-wrap gap-1">
           <!-- 👉 Search  -->
@@ -102,212 +120,191 @@ const paginationData = computed(() => {
         </div>
       </VCardText>
 
-      <VDivider />
+      <VDivider/>
+
+      <!--      {{ paginateBanners }}-->
+
+      <VDivider/>
 
       <!-- SECTION Table -->
       <VTable class="text-no-wrap banner-list-table">
         <!-- 👉 Table head -->
         <thead>
-        <tr>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            ID
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            <VIcon icon="tabler-trending-up" />
-          </th>
-          <th
-            scope="col"
-            class="text-center font-weight-semibold"
-          >
-            TOTAL
-          </th>
-          <th
-            scope="col"
-            class="text-center font-weight-semibold"
-          >
-            ISSUED DATE
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            <span class="ms-2">ACTIONS</span>
-          </th>
-        </tr>
+          <tr>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.id') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.title') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.status') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.type') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.image') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.category_type') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.category_desc') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              <span class="ms-2">{{ t('forms.actions') }}</span>
+            </th>
+          </tr>
         </thead>
 
-        <!-- 👉 Table Body -->
         <tbody>
-        <tr
-          v-for="banner in banners"
-          :key="banner.id"
-        >
-          <!-- 👉 Id -->
-          <td>
-            <RouterLink :to="{ name: 'apps-banner-preview-id', params: { id: banner.id } }">
-              #{{ banner.id }}
-            </RouterLink>
-          </td>
-
-          <!-- 👉 Trending -->
-          <td>
-            <VTooltip>
-              <template #activator="{ props }">
-                <VAvatar
-                  :size="30"
-                  v-bind="props"
-                  variant="tonal"
-                >
-                  <VIcon
-                    :size="20"
-                  />
-                </VAvatar>
-              </template>
-              <p class="mb-0">
-                {{ banner.bannerStatus }}
-              </p>
-              <p class="mb-0">
-                Balance: {{ banner.balance }}
-              </p>
-              <p class="mb-0">
-                Due date: {{ banner.dueDate }}
-              </p>
-            </VTooltip>
-          </td>
-
-          <!-- 👉 total -->
-          <td class="text-center text-medium-emphasis">
-            ${{ banner.total }}
-          </td>
-
-          <!-- 👉 Date -->
-          <td class="text-center text-medium-emphasis">
-            {{ banner.issuedDate }}
-          </td>
-
-          <!-- 👉 Actions -->
-          <td style="width: 7.5rem;">
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-            >
-              <VIcon
-                icon="tabler-mail"
-                :size="22"
-              />
-            </VBtn>
-
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-              :to="{ name: 'apps-banner-preview-id', params: { id: banner.id } }"
-            >
-              <VIcon
-                :size="22"
-                icon="tabler-eye"
-              />
-            </VBtn>
-
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-            >
-              <VIcon
-                :size="22"
-                icon="tabler-dots-vertical"
-              />
-              <VMenu activator="parent">
-                <VList density="compact">
-                  <VListItem value="Download">
-                    <template #prepend>
-                      <VIcon
-                        size="22"
-                        class="me-3"
-                        icon="tabler-download"
-                      />
-                    </template>
-
-                    <VListItemTitle>Download</VListItemTitle>
-                  </VListItem>
-
-                  <VListItem :to="{ name: '/apps/banner/edit/[id]', params: { id: banner.id } }">
-                    <template #prepend>
-                      <VIcon
-                        size="22"
-                        class="me-3"
-                        icon="tabler-pencil"
-                      />
-                    </template>
-
-                    <VListItemTitle>Edit</VListItemTitle>
-                  </VListItem>
-                  <VListItem value="Duplicate">
-                    <template #prepend>
-                      <VIcon
-                        size="22"
-                        class="me-3"
-                        icon="tabler-stack"
-                      />
-                    </template>
-
-                    <VListItemTitle>Duplicate</VListItemTitle>
-                  </VListItem>
-                </VList>
-              </VMenu>
-            </VBtn>
-          </td>
-        </tr>
+          <tr
+            v-for="(banner, i) in paginateBanners"
+            :key="banner.id"
+          >
+            <td>
+              #{{ ++i }}
+            </td>
+            <td>
+              {{ banner.title }}
+            </td>
+            <td>
+              <VIcon icon="ph:dot-bold" :color="banner.is_active == true ? '#008000' : '#f00000'" size="32"></VIcon>
+              <span>
+                {{ banner.is_active == true ? t('forms.statuses.active') : t('forms.statuses.inactive') }}
+              </span>
+            </td>
+            <td>
+              <span class="mx-1" v-if=" banner.type == 0">
+                <VIcon icon="material-symbols-light:link" />
+                <span>
+                  عادي
+                </span>
+              </span>
+              <span class="mx-1" v-if=" banner.type == 1">
+                <VIcon icon="gg:external" />
+                <span>
+                  خارجي
+                </span>
+              </span>
+              <span class="mx-1" v-if=" banner.type == 2">
+                <VIcon icon="gg:internal" />
+                <span>
+                  داخلي
+                </span>
+              </span>
+            </td>
+            <td>
+              <img :src="backend + '/storage/' + banner.image" alt="بنر" width="50" v-if="banner.image">
+              <VIcon icon="iconoir:n-square" size="32" v-else></VIcon>
+            </td>
+            <td>
+              {{ banner.category.type_ar }}
+            </td>
+            <td>
+              {{
+                banner.category.description.toString().length > 20 ? banner.category.description.toString().slice(0, 20) + '...' : banner.category.description
+              }}
+            </td>
+            <td style="width: 7.5rem;">
+              <VBtn
+                icon
+                variant="plain"
+                color="default"
+                size="x-small"
+              >
+                <VIcon
+                  :size="22"
+                  icon="tabler-eye"
+                />
+              </VBtn>
+              <VBtn
+                icon
+                variant="plain"
+                color="default"
+                size="x-small"
+                @click="openEdit(banner)"
+              >
+                <VIcon
+                  :size="22"
+                  icon="tabler-pencil"
+                />
+              </VBtn>
+              <VBtn
+                icon
+                variant="plain"
+                color="default"
+                size="x-small"
+                @click="openDelete(banner)"
+              >
+                <VIcon
+                  :size="22"
+                  icon="tabler-trash"
+                />
+              </VBtn>
+            </td>
+          </tr>
         </tbody>
 
         <!-- 👉 table footer  -->
         <tfoot v-show="!banners.length">
-        <tr>
-          <td
-            colspan="8"
-            class="text-center text-body-1"
-          >
-            لا يوجد بيانات
-          </td>
-        </tr>
+          <tr>
+            <td
+              colspan="8"
+              class="text-center text-body-1"
+            >
+              لا يوجد بيانات
+            </td>
+          </tr>
         </tfoot>
       </VTable>
-      <!-- !SECTION -->
 
       <VDivider />
 
-      <!-- SECTION Pagination -->
       <VCardText class="d-flex align-center flex-wrap justify-space-between gap-4 py-3">
-        <!-- 👉 Pagination meta -->
         <span class="text-sm text-disabled">{{ paginationData }}</span>
 
-        <!-- 👉 Pagination -->
         <VPagination
           v-model="currentPage"
           size="small"
-          :total-visible="5"
+          :total-visible="rowPerPage"
           :length="totalPage"
-          @next="selectedRows = []"
-          @prev="selectedRows = []"
+          @next="nextPage"
+          @prev="prevPage"
         />
+        <!--        <button @click="prevPage">Previous</button>-->
+        <!--        <button @click="nextPage">Next</button>-->
       </VCardText>
     </VCard>
 
     <!--  Dialogs  -->
-    <AddBannerDialog v-model:isAddOpen="isAddOpen"
-                     :billing-address="currentBillingAddress" />
+    <AddBannerDialog v-model:isAddOpen="isAddOpen" @refreshTable="getBanners"/>
+    <EditBannerDialog v-model:isEditOpen="isEditOpen" :banner="selectedBanner" @refreshTable="getBanners"/>
+    <DeleteBannerDialog v-model:isDeleteOpen="isDeleteOpen" :banner="selectedBanner" @refreshTable="getBanners"/>
   </div>
 </template>
-<script setup>
-</script>

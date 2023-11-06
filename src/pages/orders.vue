@@ -1,7 +1,11 @@
 <script setup>
-import { useOrdersStore } from '@/store/Orders'
+import moment from "moment"
+import { useI18n } from "vue-i18n"
+import { useOrdersStore } from "@/store/Orders"
 
-const orderListStore = useOrdersStore()
+const { t } = useI18n()
+
+const ordersListStore = useOrdersStore()
 const searchQuery = ref('')
 const selectedStatus = ref()
 const rowPerPage = ref(5)
@@ -10,38 +14,94 @@ const totalPage = ref(1)
 const totalOrders = ref(0)
 const orders = ref([])
 const selectedRows = ref([])
+const isAddOpen = ref(false)
+const isDeleteOpen = ref(false)
+const selectedOrder = ref({})
+const isEditOpen = ref(false)
 
-// 👉 Fetch Orders
-watchEffect(() => {
-  orderListStore.fetchOrders({
+const getOrders = () => {
+  ordersListStore.fetchOrders({
     q: searchQuery.value,
-    status: selectedStatus.value,
-    perPage: rowPerPage.value,
-    currentPage: currentPage.value,
   }).then(response => {
-    orders.value = response.data.orders
-    totalPage.value = response.data.totalPage
-    totalOrders.value = response.data.totalOrders
+    orders.value = response.data.data.data
+    totalPage.value = orders.value / rowPerPage
+    totalOrders.value = orders.value.length
+    currentPage.value = 1
   }).catch(error => {
     console.log(error)
   })
+}
+
+// 👉 Fetch Categories
+watchEffect(() => {
+  getOrders()
 })
 
-// 👉 Fetch Orders
+
+// 👉 Fetch Countrys
 watchEffect(() => {
-  if (currentPage.value > totalPage.value)
-    currentPage.value = totalPage.value
+  if (rowPerPage.value) {
+    currentPage.value = 1
+  }
 })
+
+const paginateOrders = computed(() => {
+  totalPage.value = Math.ceil(orders.value.length / rowPerPage.value)
+
+  return orders.value.filter((row, index) => {
+    let start = (currentPage.value - 1) * rowPerPage.value
+    let end = currentPage.value * rowPerPage.value
+    if (index >= start && index < end) return true
+  })
+})
+
+const nextPage = () => {
+  if ((currentPage.value * rowPerPage.value) < orders.value.length) currentPage.value++
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--
+}
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
-  // const firstIndex = orders.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
-  // const lastIndex = orders.value.length + (currentPage.value - 1) * rowPerPage.value
-  const firstIndex = 0
-  const lastIndex = 0
+  const firstIndex = orders.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
+  const lastIndex = firstIndex + (rowPerPage.value - 1) <= orders.value.length ? firstIndex + (rowPerPage.value - 1) : totalOrders.value
 
-  return ` عرض من ${ firstIndex } إلي ${ lastIndex } من ${ totalOrders.value } الإجمالي `
+  return ` عرض من ${ConvertToArabicNumbers(firstIndex)} إلي ${ConvertToArabicNumbers(lastIndex)} من ${ConvertToArabicNumbers(totalOrders.value)} الإجمالي `
 })
+
+const changeStatus = data => {
+  // ordersListStore.changeCountryStatus(data).then(response => {
+  //   getOrders()
+  // })
+}
+
+const openDelete = order => {
+  isDeleteOpen.value = true
+  selectedOrder.value = order
+}
+
+const openEdit = order => {
+  isEditOpen.value = true
+  selectedOrder.value = order
+}
+
+// Functions
+const ConvertToArabicNumbers = num => {
+  const arabicNumbers = "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669"
+
+  return String(num).replace(/[0123456789]/g, d => {
+    return arabicNumbers[d]
+  })
+}
+
+const formatDateTime = data => {
+  let date = moment(data).format("DD-MM-YYYY")
+  let time = moment(data).format("hh:mm:ss A")
+
+  return { date, time }
+}
 </script>
 
 <template>
@@ -49,7 +109,7 @@ const paginationData = computed(() => {
     <VCard>
       <VCardTitle class="d-flex align-center">
         <VIcon icon="solar:delivery-broken" size="24"></VIcon>
-        <span class="mx-1">الطلبات</span>
+        <span class="mx-1">{{ t('Orders') }}</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
         <!-- 👉 Rows per page -->
@@ -60,18 +120,18 @@ const paginationData = computed(() => {
             :items="[5, 10, 20, 30, 50]"
           />
         </div>
-        <!-- 👉 Create order :to="{ name: 'apps-order-add' }" -->
-        <!--        <VBtn-->
-        <!--          prepend-icon="tabler-plus"-->
-        <!--        >-->
-        <!--          Create order-->
-        <!--        </VBtn>-->
+        <VBtn
+          prepend-icon="tabler-plus"
+          @click="isAddOpen = true"
+        >
+          {{ t('Add_Order') }}
+        </VBtn>
 
-        <VSpacer />
+        <VSpacer/>
 
         <div class="w-25 d-flex align-center flex-wrap gap-2">
           <!-- 👉 Search  -->
-          <div class="w-100 order-list-search">
+          <div class="w-100 product-list-search">
             <VTextField
               v-model="searchQuery"
               placeholder="بحث"
@@ -81,170 +141,152 @@ const paginationData = computed(() => {
         </div>
       </VCardText>
 
-      <VDivider />
+      <VDivider/>
 
-      <!-- SECTION Table -->
-      <VTable class="text-no-wrap order-list-table">
-        <!-- 👉 Table head -->
+      <VTable class="text-no-wrap product-list-table">
         <thead>
-        <tr>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            ID
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            <VIcon icon="tabler-trending-up" />
-          </th>
-          <th
-            scope="col"
-            class="text-center font-weight-semibold"
-          >
-            TOTAL
-          </th>
-          <th
-            scope="col"
-            class="text-center font-weight-semibold"
-          >
-            ISSUED DATE
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            <span class="ms-2">ACTIONS</span>
-          </th>
-        </tr>
+          <tr>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.id') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.customer_name') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.address_address') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.delivery_date') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.order_state_ar') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.order_subtotal') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.payment_type_name') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.total_amount') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.total_amount_after_discount') }}
+            </th>
+
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.created_at') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.actions') }}
+            </th>
+          </tr>
         </thead>
 
-        <!-- 👉 Table Body -->
         <tbody>
         <tr
-          v-for="order in orders"
+          v-for="(order, i) in paginateOrders"
           :key="order.id"
         >
-          <!-- 👉 Id -->
           <td>
-            <RouterLink :to="{ name: 'apps-order-preview-id', params: { id: order.id } }">
-              #{{ order.id }}
-            </RouterLink>
+            #{{ ConvertToArabicNumbers(Intl.NumberFormat().format(++i)) }}
           </td>
-
-          <!-- 👉 Trending -->
           <td>
-            <VTooltip>
-              <template #activator="{ props }">
-                <VAvatar
-                  :size="30"
-                  v-bind="props"
-                  variant="tonal"
-                >
-                  <VIcon
-                    :size="20"
-                  />
-                </VAvatar>
-              </template>
-              <p class="mb-0">
-                {{ order.orderStatus }}
-              </p>
-              <p class="mb-0">
-                Balance: {{ order.balance }}
-              </p>
-              <p class="mb-0">
-                Due date: {{ order.dueDate }}
-              </p>
-            </VTooltip>
+            {{ order.customer_name }}
+          </td>
+          <td>
+            {{ order.address_address }}
+          </td>
+          <td>
+            {{ ConvertToArabicNumbers(order.delivery_date) }}
+          </td>
+          <td>
+            {{ order.order_state_ar }}
+          </td>
+          <td>
+            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.order_subtotal)) }}
+          </td>
+          <td>
+            {{ order.payment_type_name }}
+          </td>
+          <td>
+            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount)) }}
+          </td>
+          <td>
+            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount_after_discount)) }}
+          </td>
+          <td>
+            {{ ConvertToArabicNumbers(formatDateTime(order.created_at).date) }}
           </td>
 
-          <!-- 👉 total -->
-          <td class="text-center text-medium-emphasis">
-            ${{ order.total }}
-          </td>
-
-          <!-- 👉 Date -->
-          <td class="text-center text-medium-emphasis">
-            {{ order.issuedDate }}
-          </td>
-
-          <!-- 👉 Actions -->
-          <td style="width: 7.5rem;">
+          <td>
             <VBtn
               icon
               variant="plain"
               color="default"
               size="x-small"
-            >
-              <VIcon
-                icon="tabler-mail"
-                :size="22"
-              />
-            </VBtn>
-
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-              :to="{ name: 'apps-order-preview-id', params: { id: order.id } }"
             >
               <VIcon
                 :size="22"
                 icon="tabler-eye"
               />
             </VBtn>
-
             <VBtn
               icon
               variant="plain"
               color="default"
               size="x-small"
+              @click="openEdit(order)"
             >
               <VIcon
                 :size="22"
-                icon="tabler-dots-vertical"
+                icon="tabler-pencil"
               />
-              <VMenu activator="parent">
-                <VList density="compact">
-                  <VListItem value="Download">
-                    <template #prepend>
-                      <VIcon
-                        size="22"
-                        class="me-3"
-                        icon="tabler-download"
-                      />
-                    </template>
-
-                    <VListItemTitle>Download</VListItemTitle>
-                  </VListItem>
-
-                  <VListItem :to="{ name: '/apps/order/edit/[id]', params: { id: order.id } }">
-                    <template #prepend>
-                      <VIcon
-                        size="22"
-                        class="me-3"
-                        icon="tabler-pencil"
-                      />
-                    </template>
-
-                    <VListItemTitle>Edit</VListItemTitle>
-                  </VListItem>
-                  <VListItem value="Duplicate">
-                    <template #prepend>
-                      <VIcon
-                        size="22"
-                        class="me-3"
-                        icon="tabler-stack"
-                      />
-                    </template>
-
-                    <VListItemTitle>Duplicate</VListItemTitle>
-                  </VListItem>
-                </VList>
-              </VMenu>
+            </VBtn>
+            <VBtn
+              icon
+              variant="plain"
+              color="default"
+              size="x-small"
+              @click="openDelete(order)"
+            >
+              <VIcon
+                :size="22"
+                icon="tabler-trash"
+              />
             </VBtn>
           </td>
         </tr>
@@ -264,25 +306,21 @@ const paginationData = computed(() => {
       </VTable>
       <!-- !SECTION -->
 
-      <VDivider />
+      <VDivider/>
 
-      <!-- SECTION Pagination -->
       <VCardText class="d-flex align-center flex-wrap justify-space-between gap-4 py-3">
-        <!-- 👉 Pagination meta -->
         <span class="text-sm text-disabled">{{ paginationData }}</span>
 
-        <!-- 👉 Pagination -->
         <VPagination
           v-model="currentPage"
           size="small"
-          :total-visible="5"
+          :total-visible="rowPerPage"
           :length="totalPage"
-          @next="selectedRows = []"
-          @prev="selectedRows = []"
+          @next="nextPage"
+          @prev="prevPage"
         />
       </VCardText>
     </VCard>
+
   </div>
 </template>
-<script setup>
-</script>

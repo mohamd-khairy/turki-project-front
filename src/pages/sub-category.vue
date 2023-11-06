@@ -1,47 +1,100 @@
 <script setup>
-import { useCategoriesStore } from '@/store/Categories'
+import moment from "moment/moment"
+import { useCategoriesStore } from "@/store/Categories"
 
-const categoryListStore = useCategoriesStore()
+const subCategoriesListStore = useCategoriesStore()
 const searchQuery = ref('')
 const selectedStatus = ref()
 const rowPerPage = ref(5)
 const currentPage = ref(1)
 const totalPage = ref(1)
-const totalSubCategories = ref(0)
-const subCategories = ref([])
+const totalProducts = ref(0)
+const sub_categories = ref([])
 const selectedRows = ref([])
+const isAddOpen = ref(false)
+const isDeleteOpen = ref(false)
+const selectedProduct = ref({})
+const isEditOpen = ref(false)
+
+const { t } = useI18n()
 
 // 👉 Fetch Categories
-watchEffect(() => {
-  categoryListStore.fetchSubCategories({
+const getSubCategories = () => {
+  subCategoriesListStore.fetchSubCategories({
     q: searchQuery.value,
-    status: selectedStatus.value,
-    perPage: rowPerPage.value,
-    currentPage: currentPage.value,
+    // status: selectedStatus.value,
+    // perPage: rowPerPage.value,
+    // currentPage: currentPage.value,
   }).then(response => {
-    subCategories.value = response.data.categories
-    totalPage.value = response.data.totalPage
-    totalSubCategories.value = response.data.totalSubCategories
+    sub_categories.value = response.data.data
+    totalPage.value = sub_categories.value / rowPerPage
+    totalProducts.value = sub_categories.value.length
+    currentPage.value = 1
   }).catch(error => {
     console.log(error)
   })
+}
+
+watchEffect(() => {
+  getSubCategories()
 })
 
-// 👉 Fetch Categories
 watchEffect(() => {
-  if (currentPage.value > totalPage.value)
-    currentPage.value = totalPage.value
+  if (rowPerPage.value) {
+    currentPage.value = 1
+  }
 })
+
+const paginateProducts = computed(() => {
+  totalPage.value = Math.ceil(sub_categories.value.length / rowPerPage.value)
+
+  return sub_categories.value.filter((row, index) => {
+    let start = (currentPage.value - 1) * rowPerPage.value
+    let end = currentPage.value * rowPerPage.value
+    if (index >= start && index < end) return true
+  })
+})
+
+const nextPage = () => {
+  if ((currentPage.value * rowPerPage.value) < sub_categories.value.length) currentPage.value++
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--
+}
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
-  // const firstIndex = subCategories.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
-  // const lastIndex = subCategories.value.length + (currentPage.value - 1) * rowPerPage.value
-  const firstIndex = 0
-  const lastIndex = 0
+  const firstIndex = sub_categories.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
+  const lastIndex = firstIndex + (rowPerPage.value - 1) <= sub_categories.value.length ? firstIndex + (rowPerPage.value - 1) : totalProducts.value
 
-  return ` عرض من ${ firstIndex } إلي ${ lastIndex } من ${ totalSubCategories.value } الإجمالي `
+  return ` عرض من ${ConvertToArabicNumbers(firstIndex)} إلي ${ConvertToArabicNumbers(lastIndex)} من ${ConvertToArabicNumbers(totalProducts.value)} الإجمالي `
 })
+
+const openDelete = sub_category => {
+  isDeleteOpen.value = true
+  selectedProduct.value = sub_category
+}
+
+const openEdit = sub_category => {
+  isEditOpen.value = true
+  selectedProduct.value = sub_category
+}
+
+const ConvertToArabicNumbers = num => {
+  const arabicNumbers = "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669"
+
+  return String(num).replace(/[0123456789]/g, d => {
+    return arabicNumbers[d]
+  })
+}
+
+const formatDateTime = data => {
+  let date = moment(data).format("DD-MM-YYYY")
+  let time = moment(data).format("hh:mm:ss A")
+
+  return { date, time }
+}
 </script>
 
 <template>
@@ -49,7 +102,7 @@ const paginationData = computed(() => {
     <VCard>
       <VCardTitle class="d-flex align-center">
         <VIcon icon="carbon:category-new-each" size="24"></VIcon>
-        <span class="mx-1">الفئات الفرعية</span>
+        <span class="mx-1">{{ t('Sub_Category') }}</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
         <!-- 👉 Rows per page -->
@@ -60,18 +113,18 @@ const paginationData = computed(() => {
             :items="[5, 10, 20, 30, 50]"
           />
         </div>
-        <!--         👉 Create category :to="{ name: 'apps-category-add' }"-->
+        <!--         👉 Create sub_categorie :to="{ name: 'apps-sub_categorie-add' }"-->
         <VBtn
           prepend-icon="tabler-plus"
         >
-          إضافة فئة فرعية
+          {{ t('Add_Sub_Category') }}
         </VBtn>
 
-        <VSpacer />
+        <VSpacer/>
 
         <div class="w-25 d-flex align-center flex-wrap gap-2">
           <!-- 👉 Search  -->
-          <div class="w-100 category-list-search">
+          <div class="w-100 sub_categories-list-search">
             <VTextField
               v-model="searchQuery"
               placeholder="بحث"
@@ -83,188 +136,163 @@ const paginationData = computed(() => {
 
       <VDivider />
 
-      <!-- SECTION Table -->
-      <VTable class="text-no-wrap category-list-table">
-        <!-- 👉 Table head -->
+      <VTable class="text-no-wrap sub_categories-list-table">
         <thead>
-        <tr>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            ID
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            <VIcon icon="tabler-trending-up" />
-          </th>
-          <th
-            scope="col"
-            class="text-center font-weight-semibold"
-          >
-            TOTAL
-          </th>
-          <th
-            scope="col"
-            class="text-center font-weight-semibold"
-          >
-            ISSUED DATE
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            <span class="ms-2">ACTIONS</span>
-          </th>
-        </tr>
+          <tr>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.id') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.product_image') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.name') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.description') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.category') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.products') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.cities') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.created_at') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.actions') }}
+            </th>
+          </tr>
         </thead>
 
-        <!-- 👉 Table Body -->
         <tbody>
-        <tr
-          v-for="category in subCategories"
-          :key="category.id"
-        >
-          <!-- 👉 Id -->
-          <td>
-            <RouterLink :to="{ name: 'apps-category-preview-id', params: { id: category.id } }">
-              #{{ category.id }}
-            </RouterLink>
-          </td>
-
-          <!-- 👉 Trending -->
-          <td>
-            <VTooltip>
-              <template #activator="{ props }">
-                <VAvatar
-                  :size="30"
-                  v-bind="props"
-                  variant="tonal"
-                >
-                  <VIcon
-                    :size="20"
-                  />
-                </VAvatar>
-              </template>
-              <p class="mb-0">
-                {{ category.categoryStatus }}
-              </p>
-              <p class="mb-0">
-                Balance: {{ category.balance }}
-              </p>
-              <p class="mb-0">
-                Due date: {{ category.dueDate }}
-              </p>
-            </VTooltip>
-          </td>
-
-          <!-- 👉 total -->
-          <td class="text-center text-medium-emphasis">
-            ${{ category.total }}
-          </td>
-
-          <!-- 👉 Date -->
-          <td class="text-center text-medium-emphasis">
-            {{ category.issuedDate }}
-          </td>
-
-          <!-- 👉 Actions -->
-          <td style="width: 7.5rem;">
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-            >
-              <VIcon
-                icon="tabler-mail"
-                :size="22"
-              />
-            </VBtn>
-
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-              :to="{ name: 'apps-category-preview-id', params: { id: category.id } }"
-            >
-              <VIcon
-                :size="22"
-                icon="tabler-eye"
-              />
-            </VBtn>
-
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-            >
-              <VIcon
-                :size="22"
-                icon="tabler-dots-vertical"
-              />
-              <VMenu activator="parent">
-                <VList density="compact">
-                  <VListItem value="Download">
-                    <template #prepend>
-                      <VIcon
-                        size="22"
-                        class="me-3"
-                        icon="tabler-download"
-                      />
-                    </template>
-
-                    <VListItemTitle>Download</VListItemTitle>
-                  </VListItem>
-
-                  <VListItem :to="{ name: '/apps/category/edit/[id]', params: { id: category.id } }">
-                    <template #prepend>
-                      <VIcon
-                        size="22"
-                        class="me-3"
-                        icon="tabler-pencil"
-                      />
-                    </template>
-
-                    <VListItemTitle>Edit</VListItemTitle>
-                  </VListItem>
-                  <VListItem value="Duplicate">
-                    <template #prepend>
-                      <VIcon
-                        size="22"
-                        class="me-3"
-                        icon="tabler-stack"
-                      />
-                    </template>
-
-                    <VListItemTitle>Duplicate</VListItemTitle>
-                  </VListItem>
-                </VList>
-              </VMenu>
-            </VBtn>
-          </td>
-        </tr>
+          <tr
+            v-for="(sub_category, i) in paginateProducts"
+            :key="sub_category.id"
+          >
+            <td>
+              #{{ ++i }}
+            </td>
+            <td>
+              <img :src="sub_category.image_url" alt="منتج" width="50" v-if="sub_category.image_url.toString().split('storage/')[1] !== '' && sub_category.image_url !== null">
+              <VIcon icon="iconoir:n-square" size="32" v-else></VIcon>
+            </td>
+            <td>
+              {{ sub_category.type_ar }}
+            </td>
+            <td>
+              {{ sub_category.description ?? '-' }}
+            </td>
+            <td>
+              <VChip>
+                {{ sub_category.category.type_ar }}
+              </VChip>
+            </td>
+            <td>
+              <VChip v-for="(sub_cat , i) in sub_category.products" :key="sub_cat.id" class="mx-1" :style="{display: i < 1 ? '' : 'none'}">
+                <span v-if="i < 1">
+                  {{ sub_cat.name_ar }}
+                </span>
+              </VChip>
+              <VChip v-if="sub_category.products.length > 1">+{{ sub_category.products.length - 1 }}</VChip>
+            </td>
+            <td>
+              <VChip v-for="(city , i) in sub_category.cities" :key="city.id" class="mx-1" :style="{display: i < 1 ? '' : 'none'}">
+                <span v-if="i < 1">
+                  {{ city.name_ar }}
+                </span>
+              </VChip>
+              <VChip v-if="sub_category.cities.length > 1">+{{ sub_category.cities.length - 1 }}</VChip>
+            </td>
+            <td>
+              {{ ConvertToArabicNumbers(formatDateTime(sub_category.created_at).date) }}
+            </td>
+            <td>
+<!--              <VBtn-->
+<!--                icon-->
+<!--                variant="plain"-->
+<!--                color="default"-->
+<!--                size="x-small"-->
+<!--              >-->
+<!--                <VIcon-->
+<!--                  :size="22"-->
+<!--                  icon="tabler-eye"-->
+<!--                />-->
+<!--              </VBtn>-->
+              <VBtn
+                icon
+                variant="plain"
+                color="default"
+                size="x-small"
+                @click="openEdit(sub_category)"
+              >
+                <VIcon
+                  :size="22"
+                  icon="tabler-pencil"
+                />
+              </VBtn>
+              <VBtn
+                icon
+                variant="plain"
+                color="default"
+                size="x-small"
+                @click="openDelete(sub_category)"
+              >
+                <VIcon
+                  :size="22"
+                  icon="tabler-trash"
+                />
+              </VBtn>
+            </td>
+          </tr>
         </tbody>
 
         <!-- 👉 table footer  -->
-        <tfoot v-show="!subCategories.length">
-        <tr>
-          <td
-            colspan="8"
-            class="text-center text-body-1"
-          >
-            لا يوجد بيانات
-          </td>
-        </tr>
+        <tfoot v-show="!sub_categories.length">
+          <tr>
+            <td
+              colspan="8"
+              class="text-center text-body-1"
+            >
+              لا يوجد بيانات
+            </td>
+          </tr>
         </tfoot>
       </VTable>
       <!-- !SECTION -->
 
-      <VDivider />
+      <VDivider/>
 
       <!-- SECTION Pagination -->
       <VCardText class="d-flex align-center flex-wrap justify-space-between gap-4 py-3">

@@ -5,7 +5,7 @@ export const useOrdersStore = defineStore('OrdersStore', {
   actions: {
     // 👉 Fetch all Invoices
     fetchOrders(params) {
-      return axios.get('orders', { params })
+      return axios.get('orders/get-order', { params })
     },
 
     // 👉 Fetch single banner

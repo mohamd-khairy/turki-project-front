@@ -13,15 +13,14 @@ import { createApp } from 'vue'
 
 loadFonts()
 
-
 // Create vue app
+const pinia = createPinia()
 const app = createApp(App)
-
 
 // Use plugins
 app.use(vuetify)
 app.use(i18n)
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 app.use(layoutsPlugin)
 

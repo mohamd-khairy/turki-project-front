@@ -31,14 +31,15 @@ export const getLatestBarChartConfig = themeColors => {
       },
       y: {
         min: 0,
-        max: 400,
+        suggestedMax: 10,
+        // max: 400,
         grid: {
           borderColor,
           drawBorder: false,
           color: borderColor,
         },
         ticks: {
-          stepSize: 100,
+          // stepSize: 1,
           color: labelColor,
         },
       },

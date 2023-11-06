@@ -1,27 +1,33 @@
 import axios from 'axios'
-import { useRouter } from "vue-router"
+import {  useAuthStore  } from "@/store/Auth"
 
-const router = useRouter()
+const token = localStorage.getItem("najdToken") || ""
 
 const axiosIns = axios.create({
 // You can add your headers here
 // ================================
-  baseURL: 'https://c296-41-42-87-23.ngrok-free.app/api/v1/',
-
-  // timeout: 1000,
-  // headers: {'X-Custom-Header': 'foobar'}
+  baseURL: 'https://najdiya.com.sa/api/v1/',
+  headers: {
+    Accept: "application/json",
+    Authorization: `Bearer ${token}`,
+  },
 })
 
-axios.interceptors.response.use(
+axiosIns.interceptors.response.use(
   response => {
+
+    const token = localStorage.getItem("najdToken") || ""
+
+    axiosIns.defaults.headers.Authorization = `Bearer ${token}`
+
     return response
   },
   error => {
     if (error.response && error.response.status === 401) {
-      // Use router.push() to navigate to the login screen
-      router.push('/login') // Adjust the route as needed
-      // Throw an exception to stop further execution
-
+      // localStorage.removeItem("najdToken")
+      // localStorage.removeItem("najdUser")
+      // location.reload()
+      
       return Promise.reject('Unauthorized')
     }
 

@@ -1,5 +1,5 @@
 <script setup>
-import { useActivitiesStore } from '@/store/Orders'
+// import { useActivitiesStore } from '@/store/Orders'
 import { useI18n } from "vue-i18n"
 const { t } = useI18n()
 
@@ -29,20 +29,38 @@ watchEffect(() => {
   })
 })
 
-// 👉 Fetch Activities
+
+// 👉 Fetch Banners
 watchEffect(() => {
-  if (currentPage.value > totalPage.value)
-    currentPage.value = totalPage.value
+  if (rowPerPage.value) {
+    currentPage.value = 1
+  }
 })
+
+const paginateBanners = computed(() => {
+  totalPage.value = Math.ceil(banners.value.length / rowPerPage.value)
+
+  return banners.value.filter((row, index) => {
+    let start = (currentPage.value - 1) * rowPerPage.value
+    let end = currentPage.value * rowPerPage.value
+    if (index >= start && index < end) return true
+  })
+})
+
+const nextPage = () => {
+  if ((currentPage.value * rowPerPage.value) < banners.value.length) currentPage.value++
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--
+}
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
-  // const firstIndex = activities.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
-  // const lastIndex = activities.value.length + (currentPage.value - 1) * rowPerPage.value
-  const firstIndex = 0
-  const lastIndex = 0
+  const firstIndex = banners.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
+  const lastIndex = firstIndex + (rowPerPage.value - 1) <= banners.value.length ? firstIndex + (rowPerPage.value - 1) : totalBanners.value
 
-  return ` عرض من ${ firstIndex } إلي ${ lastIndex } من ${ totalActivities.value } الإجمالي `
+  return ` عرض من ${firstIndex} إلي ${lastIndex} من ${totalBanners.value} الإجمالي `
 })
 </script>
 
