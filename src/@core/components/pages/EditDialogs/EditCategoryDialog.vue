@@ -58,7 +58,7 @@ const resetForm = () => {
 }
 
 const onFormSubmit = () => {
-  categoriesListStore.storeCategory(category).then(response => {
+  categoriesListStore.storeCategory(categoryData).then(response => {
     emit('update:isEditOpen', false)
     emit('refreshTable')
   })
