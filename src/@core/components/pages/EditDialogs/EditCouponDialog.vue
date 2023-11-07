@@ -4,6 +4,7 @@ import { useCountriesStore } from "@/store/Countries"
 import { useCategoriesStore } from "@/store/Categories"
 import { useProductsStore } from "@/store/Products"
 import { useCouponsStore } from "@/store/Coupons"
+import { useEmployeesStore } from "@/store/Employees"
 import AppDateTimePicker from '@core/components/AppDateTimePicker.vue'
 
 const props = defineProps({
@@ -30,28 +31,33 @@ const countriesListStore = useCountriesStore()
 const categoriesListStore = useCategoriesStore()
 const productsListStore = useProductsStore()
 const couponsListStore = useCouponsStore()
+const employeesListStore = useEmployeesStore()
 
 const products = reactive([])
 const countries = reactive([])
 const cities = reactive([])
 const categories = reactive([])
 const subCategories = reactive([])
+const customers = reactive([])
 
 onMounted(() => {
-  countriesListStore.fetchCountries({}).then(response => {
+  countriesListStore.fetchCountries({ pageSize: -1 }).then(response => {
     countries.value = response.data.data
   })
-  citiesListStore.fetchCities({}).then(response => {
+  citiesListStore.fetchCities({ pageSize: -1 }).then(response => {
     cities.value = response.data.data
   })
-  categoriesListStore.fetchCategories({}).then(response => {
+  categoriesListStore.fetchCategories({ pageSize: -1 }).then(response => {
     categories.value = response.data.data
   })
-  categoriesListStore.fetchSubCategories({}).then(response => {
+  categoriesListStore.fetchSubCategories({ pageSize: -1 }).then(response => {
     subCategories.value = response.data.data
   })
-  productsListStore.fetchProducts({}).then(response => {
+  productsListStore.fetchProducts({ pageSize: -1 }).then(response => {
     products.value = response.data.data
+  })
+  employeesListStore.fetchEmployees({ pageSize: -1 }).then(response => {
+    customers.value = response.data.data
   })
 })
 
@@ -77,6 +83,7 @@ onUpdated(() => {
   couponData.category_parent_ids = props.coupon.category_parent_ids
   couponData.city_ids = props.coupon.city_ids
   couponData.country_ids = props.coupon.country_ids
+  couponData.client_ids = props.coupon.client_ids
   couponData.category_child_ids = props.coupon.category_child_ids
   couponData.expire_at = props.coupon.expire_at
   couponData.use_times_per_user = props.coupon.use_times_per_user
@@ -104,6 +111,7 @@ const couponData = reactive({
   is_active: true,
   category_parent_ids: [],
   city_ids: [],
+  client_ids: [],
   country_ids: [],
   category_child_ids: [],
   expire_at: "",
@@ -229,6 +237,20 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="couponData.description_en"
                 :label="t('forms.description_en')"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              lg="12"
+              sm="6"
+            >
+              <VSelect
+                v-model="couponData.client_ids"
+                :items="customers.value"
+                :label="t('forms.customers')"
+                item-title="username"
+                item-value="id"
+                multiple
               />
             </VCol>
             <VCol

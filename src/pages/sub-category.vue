@@ -13,7 +13,7 @@ const sub_categories = ref([])
 const selectedRows = ref([])
 const isAddOpen = ref(false)
 const isDeleteOpen = ref(false)
-const selectedProduct = ref({})
+const selectedSubCategory = ref({})
 const isEditOpen = ref(false)
 
 const { t } = useI18n()
@@ -73,12 +73,12 @@ const paginationData = computed(() => {
 
 const openDelete = sub_category => {
   isDeleteOpen.value = true
-  selectedProduct.value = sub_category
+  selectedSubCategory.value = sub_category
 }
 
 const openEdit = sub_category => {
   isEditOpen.value = true
-  selectedProduct.value = sub_category
+  selectedSubCategory.value = sub_category
 }
 
 const ConvertToArabicNumbers = num => {
@@ -116,6 +116,7 @@ const formatDateTime = data => {
         <!--         👉 Create sub_categorie :to="{ name: 'apps-sub_categorie-add' }"-->
         <VBtn
           prepend-icon="tabler-plus"
+          @click="isAddOpen = true"
         >
           {{ t('Add_Sub_Category') }}
         </VBtn>
@@ -310,5 +311,9 @@ const formatDateTime = data => {
         />
       </VCardText>
     </VCard>
+
+    <AddSubCategoryDialog v-model:isAddOpen="isAddOpen" @refreshTable="getSubCategories" />
+    <EditSubCategoryDialog v-model:isEditOpen="isEditOpen" :subCategory="selectedSubCategory" @refreshTable="getSubCategories" />
+    <DeleteSubCategoriesDialog v-model:isDeleteOpen="isDeleteOpen" :subCategory="selectedSubCategory" @refreshTable="getSubCategories" />
   </div>
 </template>

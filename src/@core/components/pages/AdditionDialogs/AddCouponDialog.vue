@@ -4,6 +4,7 @@ import { useCountriesStore } from "@/store/Countries"
 import { useCategoriesStore } from "@/store/Categories"
 import { useProductsStore } from "@/store/Products"
 import { useCouponsStore } from "@/store/Coupons"
+import { useEmployeesStore } from "@/store/Employees"
 import AppDateTimePicker from '@core/components/AppDateTimePicker.vue'
 
 const props = defineProps({
@@ -26,12 +27,14 @@ const countriesListStore = useCountriesStore()
 const categoriesListStore = useCategoriesStore()
 const productsListStore = useProductsStore()
 const couponsListStore = useCouponsStore()
+const employeesListStore = useEmployeesStore()
 
 const products = reactive([])
 const countries = reactive([])
 const cities = reactive([])
 const categories = reactive([])
 const subCategories = reactive([])
+const customers = reactive([])
 
 onMounted(() => {
   countriesListStore.fetchCountries({}).then(response => {
@@ -48,6 +51,9 @@ onMounted(() => {
   })
   productsListStore.fetchProducts({}).then(response => {
     products.value = response.data.data
+  })
+  employeesListStore.fetchEmployees({ pageSize: -1 }).then(response => {
+    customers.value = response.data.data
   })
 })
 
@@ -73,6 +79,7 @@ const coupon = reactive({
   category_parent_ids: [],
   city_ids: [],
   country_ids: [],
+  client_ids: [],
   category_child_ids: [],
   expire_at: "",
   use_times_per_user: 1,
@@ -205,6 +212,20 @@ const dialogModelValueUpdate = val => {
               sm="6"
             >
               <VSelect
+                v-model="coupon.client_ids"
+                :items="customers.value"
+                :label="t('forms.customers')"
+                item-title="username"
+                item-value="id"
+                multiple
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              lg="12"
+              sm="6"
+            >
+              <VSelect
                 v-model="coupon.product_ids"
                 :items="products.value"
                 :label="t('forms.products')"
@@ -219,7 +240,7 @@ const dialogModelValueUpdate = val => {
               sm="6"
             >
               <VSelect
-                v-model="coupon.country_id"
+                v-model="coupon.country_ids"
                 :items="countries.value"
                 :label="t('forms.countries')"
                 item-title="name_ar"

@@ -7,7 +7,7 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-  role: {
+  subCategory: {
     type: Object,
     required: true,
   },
@@ -27,7 +27,7 @@ const resetForm = () => {
 
 const onFormSubmit = () => {
   // Delete
-  rolesListStore.deleteRole(props.role).then(() => {
+  rolesListStore.deleteRole(props.subCategory).then(() => {
     emit('refreshTable')
     emit('update:isDeleteOpen', false)
   })

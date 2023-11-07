@@ -1,164 +1,170 @@
 <script setup>
+import { useCitiesStore } from "@/store/Cities"
+import { useCategoriesStore } from "@/store/Categories"
+
 const props = defineProps({
-  billingAddress: {
-    type: Object,
+  isEditOpen: {
+    type: Boolean,
     required: true,
   },
-  isAddOpen: {
-    type: Boolean,
+  subCategory: {
+    type: Object,
     required: true,
   },
 })
 
 const emit = defineEmits([
-  'update:isAddOpen',
-  'bannerData',
+  'refreshTable',
+  'update:isEditOpen',
 ])
 
-const billingAddress = ref(structuredClone(toRaw(props.billingAddress)))
+import { useI18n } from "vue-i18n"
 
+const { t } = useI18n()
+const citiesListStore = useCitiesStore()
+const categoriesListStore = useCategoriesStore()
+const categories = reactive([])
+const cities = reactive([])
+
+onMounted(() => {
+  citiesListStore.fetchCities({ pageSize: -1 }).then(response => {
+    cities.value = response.data.data
+  })
+  categoriesListStore.fetchCategories({ pageSize: -1 }).then(response => {
+    categories.value = response.data.data
+  })
+})
+
+onUpdated(() => {
+  categoryData.id = props.subCategory.id
+  categoryData.type_ar = props.subCategory.type_ar
+  categoryData.type_en = props.subCategory.type_en
+  categoryData.description = props.subCategory.description
+  categoryData.category_id = props.subCategory.category_id
+  categoryData.city_ids = props.subCategory.city_ids
+})
+
+// Variables
+const categoryData = reactive({
+  id: null,
+  type_ar: null,
+  type_en: null,
+  description: null,
+  category_id: null,
+  city_ids: null,
+})
+
+// Functions
 const resetForm = () => {
-  emit('update:isAddOpen', false)
-  billingAddress.value = structuredClone(toRaw(props.billingAddress))
+  emit('update:isEditOpen', false)
 }
 
 const onFormSubmit = () => {
-  emit('update:isAddOpen', false)
-  emit('bannerData', billingAddress.value)
+  categoriesListStore.editSubCategory(categoryData).then(response => {
+    emit('update:isEditOpen', false)
+    emit('refreshTable')
+  })
 }
 
 const dialogModelValueUpdate = val => {
-  emit('update:isAddOpen', val)
+  emit('update:isEditOpen', val)
 }
 </script>
 
 <template>
   <VDialog
     :width="$vuetify.display.smAndDown ? 'auto' : 650 "
-    :model-value="props.isAddOpen"
+    :model-value="props.isEditOpen"
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
 
     <VCard
-      v-if="props.billingAddress"
       class="pa-sm-9 pa-5"
     >
       <!-- 👉 Title -->
       <VCardItem>
-        <VCardTitle class="text-h5 text-center mb-3">
-          Edit Address
+        <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
+          <VIcon icon="carbon:category-new-each" size="24"></VIcon>
+          <span class="mx-1 my-1">
+            {{ t('Edit_Sub_Category') }}
+          </span>
         </VCardTitle>
-        <!-- 👉 Subtitle -->
-        <p class="text-center">
-          Edit Address for future billing
-        </p>
       </VCardItem>
 
       <VCardText>
         <!-- 👉 Form -->
         <VForm @submit.prevent="onFormSubmit">
           <VRow>
-            <!-- 👉 Company Name -->
             <VCol
               cols="12"
-              md="6"
+              lg="12"
+              sm="6"
             >
               <VTextField
-                v-model="billingAddress.companyName"
-                label="Company Name"
+                v-model="categoryData.type_ar"
+                :label="t('forms.type_ar')"
               />
             </VCol>
-
-            <!-- 👉 Email -->
             <VCol
               cols="12"
-              md="6"
+              lg="12"
+              sm="6"
             >
               <VTextField
-                v-model="billingAddress.billingEmail"
-                label="Email"
+                v-model="categoryData.type_en"
+                :label="t('forms.type_en')"
               />
             </VCol>
-
-            <!-- 👉 Tax ID -->
             <VCol
               cols="12"
-              md="6"
+              lg="12"
+              sm="6"
             >
               <VTextField
-                v-model="billingAddress.taxID"
-                label="Tax ID"
+                v-model="categoryData.description"
+                :label="t('forms.description')"
               />
             </VCol>
-
-            <!-- 👉 VAT Number -->
             <VCol
               cols="12"
-              md="6"
-            >
-              <VTextField
-                v-model="billingAddress.vatNumber"
-                label="VAT Number"
-              />
-            </VCol>
-
-            <!-- 👉 Billing Address -->
-            <VCol cols="12">
-              <VTextarea
-                v-model="billingAddress.address"
-                rows="2"
-                label="Billing Address"
-              />
-            </VCol>
-
-            <!-- 👉 Contact -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VTextField
-                v-model="billingAddress.contact"
-                label="Contact"
-              />
-            </VCol>
-
-            <!-- 👉 Country -->
-            <VCol
-              cols="12"
-              md="6"
+              lg="12"
+              sm="6"
             >
               <VSelect
-                v-model="billingAddress.country"
-                label="Country"
-                :items="['USA', 'Uk', 'France', 'Germany', 'Japan']"
+                v-model="categoryData.city_ids"
+                :items="cities.value"
+                :label="t('forms.cities')"
+                item-title="name_ar"
+                item-value="id"
+                multiple
               />
             </VCol>
-
-            <!-- 👉 State -->
+            <!--            <VCol-->
+            <!--              cols="12"-->
+            <!--            >-->
+            <!--              <VFileInput-->
+            <!--                v-model="categoryData.image"-->
+            <!--                :label="t('forms.image')"-->
+            <!--                accept="image/*"-->
+            <!--                prepend-icon=""-->
+            <!--                prepend-inner-icon="mdi-image"-->
+            <!--              />-->
+            <!--            </VCol>-->
             <VCol
               cols="12"
-              md="6"
+              lg="12"
+              sm="6"
             >
-              <VTextField
-                v-model="billingAddress.state"
-                label="State"
+              <VSelect
+                v-model="categoryData.category_id"
+                :items="categories.value"
+                :label="t('forms.categories')"
+                item-title="type_ar"
+                item-value="id"
               />
             </VCol>
-
-            <!-- 👉 Zip Code -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VTextField
-                v-model="billingAddress.zipCode"
-                label="Zip Code"
-              />
-            </VCol>
-
-            <!-- 👉 Submit and Cancel button -->
             <VCol
               cols="12"
               class="text-center"
@@ -167,7 +173,7 @@ const dialogModelValueUpdate = val => {
                 type="submit"
                 class="me-3"
               >
-                submit
+                {{ t("buttons.save") }}
               </VBtn>
 
               <VBtn
@@ -175,7 +181,7 @@ const dialogModelValueUpdate = val => {
                 color="secondary"
                 @click="resetForm"
               >
-                Cancel
+                {{ t("buttons.cancel") }}
               </VBtn>
             </VCol>
           </VRow>

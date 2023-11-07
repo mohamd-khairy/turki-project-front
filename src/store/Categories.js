@@ -37,7 +37,36 @@ export const useCategoriesStore = defineStore('CategoriesStore', {
       return axios.post(`/categories/add-category`, formData)
     },
     storeSubCategory(data) {
-      return axios.get(`/sub-categories`, data)
+      const formData = new FormData()
+
+      let cty_ids = " "
+      Object.values(data.city_ids).map(ctid => {
+        cty_ids = cty_ids + ',' + ctid
+      })
+
+      formData.append("type_ar", data.type_ar)
+      formData.append("type_en", data.type_en)
+      formData.append("description", data.description)
+      formData.append("category_id", data.category_id)
+      formData.append("city_ids", cty_ids.split(" ,")[1])
+
+      return axios.post(`/sub-categories/add-sub-category`, formData)
+    },
+    editSubCategory(data) {
+      const formData = new FormData()
+
+      let cty_ids = " "
+      Object.values(data.city_ids).map(ctid => {
+        cty_ids = cty_ids + ',' + ctid
+      })
+
+      formData.append("type_ar", data.type_ar)
+      formData.append("type_en", data.type_en)
+      formData.append("description", data.description)
+      formData.append("category_id", data.category_id)
+      formData.append("city_ids", cty_ids.split(" ,")[1])
+
+      return axios.post(`/sub-categories/update-sub-category/${data.id}`, formData)
     },
 
     editCategory(data) {
@@ -60,6 +89,9 @@ export const useCategoriesStore = defineStore('CategoriesStore', {
 
     deleteCategory(data) {
       return axios.delete(`/categories/delete-category/${data.id}`)
+    },
+    deleteSubCategory(data) {
+      return axios.delete(`/sub-categories/delete-sub-category/${data.id}`)
     },
   },
 })
