@@ -3,7 +3,11 @@ import avatar1 from '@images/avatars/avatar-1.png'
 
 const user = JSON.parse(localStorage.getItem('najdUser'))
 
-console.log('User', user)
+const logout = () => {
+  localStorage.removeItem('najdToken')
+  localStorage.removeItem('najdUser')
+  location.reload()
+}
 </script>
 
 <template>
@@ -121,8 +125,8 @@ console.log('User', user)
           <!-- Divider -->
 <!--          <VDivider class="my-2" />-->
 
-          <!-- 👉 Logout -->
-          <VListItem to="/login">
+          <!-- 👉 Logout   to="/login" -->
+          <VListItem @click="logout">
             <template #prepend>
               <VIcon
                 class="me-2"
