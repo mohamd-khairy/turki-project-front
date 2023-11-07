@@ -1,6 +1,10 @@
 <script setup>
 import { useCitiesStore } from "@/store/Cities"
 import { useCategoriesStore } from "@/store/Categories"
+import {
+  requiredValidator,
+} from '@validators'
+
 
 const props = defineProps({
   isAddOpen: {
@@ -91,6 +95,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="category.type_ar"
                 :label="t('forms.type_ar')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -101,6 +106,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="category.type_en"
                 :label="t('forms.type_en')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -111,6 +117,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="category.description"
                 :label="t('forms.description')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -125,6 +132,7 @@ const dialogModelValueUpdate = val => {
                 item-title="name_ar"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
 <!--            <VCol-->
@@ -149,6 +157,7 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.categories')"
                 item-title="type_ar"
                 item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol

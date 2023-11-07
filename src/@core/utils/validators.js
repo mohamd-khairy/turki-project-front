@@ -3,7 +3,7 @@ import { isEmpty, isEmptyArray, isNullOrUndefined } from './index'
 // 👉 Required Validator
 export const requiredValidator = value => {
   if (isNullOrUndefined(value) || isEmptyArray(value) || value === false)
-    return 'This field is required'
+    return 'هذا الحقل مطلوب'
   
   return !!String(value).trim().length || 'This field is required'
 }
@@ -16,7 +16,7 @@ export const emailValidator = value => {
   if (Array.isArray(value))
     return value.every(val => re.test(String(val))) || 'The Email field must be a valid email'
   
-  return re.test(String(value)) || 'The Email field must be a valid email'
+  return re.test(String(value)) || 'ادخل قيمة صالحة للبريد الإلكتروني'
 }
 
 // 👉 Password Validator
@@ -27,17 +27,17 @@ export const passwordValidator = password => {
   return (
     // eslint-disable-next-line operator-linebreak
     validPassword ||
-        'Field must contain at least one uppercase, lowercase, special character and digit with min 8 chars')
+        'يجب أن يحتوي الحقل على حرف كبير وصغير وحرف خاص ورقم بحد أدنى 8 أحرف')
 }
 
 // 👉 Confirm Password Validator
-export const confirmedValidator = (value, target) => value === target || 'The Confirm Password field confirmation does not match'
+export const confirmedValidator = (value, target) => value === target || 'تأكيد حقل تأكيد كلمة المرور غير متطابق'
 
 // 👉 Between Validator
 export const betweenValidator = (value, min, max) => {
   const valueAsNumber = Number(value)
   
-  return (Number(min) <= valueAsNumber && Number(max) >= valueAsNumber) || `Enter number between ${min} and ${max}`
+  return (Number(min) <= valueAsNumber && Number(max) >= valueAsNumber) || `أدخل الرقم بين ${min} و ${max}`
 }
 
 // 👉 Integer Validator
@@ -47,7 +47,7 @@ export const integerValidator = value => {
   if (Array.isArray(value))
     return value.every(val => /^-?[0-9]+$/.test(String(val))) || 'This field must be an integer'
   
-  return /^-?[0-9]+$/.test(String(value)) || 'This field must be an integer'
+  return /^-?[0-9]+$/.test(String(value)) || 'يجب أن يكون هذا الحقل عددًا صحيحًا'
 }
 
 // 👉 Regex Validator
@@ -60,7 +60,7 @@ export const regexValidator = (value, regex) => {
   if (Array.isArray(value))
     return value.every(val => regexValidator(val, regeX))
   
-  return regeX.test(String(value)) || 'The Regex field format is invalid'
+  return regeX.test(String(value)) || 'تنسيق حقل Regex غير صالح'
 }
 
 // 👉 Alpha Validator
@@ -68,7 +68,7 @@ export const alphaValidator = value => {
   if (isEmpty(value))
     return true
   
-  return /^[A-Z]*$/i.test(String(value)) || 'The Alpha field may only contain alphabetic characters'
+  return /^[A-Z]*$/i.test(String(value)) || 'قد يحتوي حقل Alpha على أحرف أبجدية فقط'
 }
 
 // 👉 URL Validator
@@ -77,7 +77,7 @@ export const urlValidator = value => {
     return true
   const re = /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/
   
-  return re.test(String(value)) || 'URL is invalid'
+  return re.test(String(value)) || 'عنوان URL غير صالح'
 }
 
 // 👉 Length Validator
@@ -85,7 +85,7 @@ export const lengthValidator = (value, length) => {
   if (isEmpty(value))
     return true
   
-  return String(value).length === length || `The Min Character field must be at least ${length} characters`
+  return String(value).length === length || ` يجب أن يحتوي الحقل على الأقل علي${length}حروف `
 }
 
 // 👉 Alpha-dash Validator
@@ -94,5 +94,5 @@ export const alphaDashValidator = value => {
     return true
   const valueAsString = String(value)
   
-  return /^[0-9A-Z_-]*$/i.test(valueAsString) || 'All Character are not valid'
+  return /^[0-9A-Z_-]*$/i.test(valueAsString) || 'جميع الحروف غير صالحة'
 }

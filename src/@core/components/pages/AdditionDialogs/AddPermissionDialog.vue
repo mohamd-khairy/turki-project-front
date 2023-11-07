@@ -1,6 +1,9 @@
 <script setup>
 import { usePermissionsStore } from "@/store/Permissions"
-import { useRolesStore } from "@/store/Roles"
+import {
+  requiredValidator,
+} from '@validators'
+
 
 const props = defineProps({
   isAddOpen: {
@@ -24,6 +27,7 @@ const permission = reactive({
   name: "",
   display_name: "",
   group: "",
+  guard_name: "web",
 })
 
 // Functions
@@ -77,6 +81,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="permission.name"
                 :label="t('forms.name')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -87,6 +92,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="permission.display_name"
                 :label="t('forms.display_name')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -97,6 +103,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="permission.group"
                 :label="t('forms.group')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol

@@ -1,6 +1,10 @@
 <script setup>
 import { usePermissionsStore } from "@/store/Permissions"
 import { useRolesStore } from "@/store/Roles"
+import {
+  requiredValidator,
+} from '@validators'
+
 
 const props = defineProps({
   isAddOpen: {
@@ -32,7 +36,7 @@ const role = reactive({
   name: null,
   display_name: null,
   permissions: [],
-  guard_name:"web",
+  guard_name: "web",
 })
 
 // Functions
@@ -59,7 +63,7 @@ const dialogModelValueUpdate = val => {
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
 
     <VCard
       class="pa-sm-9 pa-5"
@@ -86,6 +90,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="role.name"
                 :label="t('forms.name')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -96,6 +101,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="role.display_name"
                 :label="t('forms.display_name')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -110,6 +116,7 @@ const dialogModelValueUpdate = val => {
                 item-title="name"
                 item-value="name"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol

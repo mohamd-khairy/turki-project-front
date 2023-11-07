@@ -120,12 +120,12 @@ const formatDateTime = data => {
             :items="[5, 10, 20, 30, 50]"
           />
         </div>
-        <VBtn
-          prepend-icon="tabler-plus"
-          @click="isAddOpen = true"
-        >
-          {{ t('Add_Order') }}
-        </VBtn>
+<!--        <VBtn-->
+<!--          prepend-icon="tabler-plus"-->
+<!--          @click="isAddOpen = true"-->
+<!--        >-->
+<!--          {{ t('Add_Order') }}-->
+<!--        </VBtn>-->
 
         <VSpacer/>
 
@@ -207,101 +207,101 @@ const formatDateTime = data => {
             >
               {{ t('forms.created_at') }}
             </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.actions') }}
-            </th>
+<!--            <th-->
+<!--              scope="col"-->
+<!--              class="font-weight-semibold"-->
+<!--            >-->
+<!--              {{ t('forms.actions') }}-->
+<!--            </th>-->
           </tr>
         </thead>
 
         <tbody>
-        <tr
-          v-for="(order, i) in paginateOrders"
-          :key="order.id"
-        >
-          <td>
-            #{{ ConvertToArabicNumbers(Intl.NumberFormat().format(++i)) }}
-          </td>
-          <td>
-            {{ order.customer_name }}
-          </td>
-          <td>
-            {{ order.address_address }}
-          </td>
-          <td>
-            {{ ConvertToArabicNumbers(order.delivery_date) }}
-          </td>
-          <td>
-            {{ order.order_state_ar }}
-          </td>
-          <td>
-            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.order_subtotal)) }}
-          </td>
-          <td>
-            {{ order.payment_type_name }}
-          </td>
-          <td>
-            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount)) }}
-          </td>
-          <td>
-            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount_after_discount)) }}
-          </td>
-          <td>
-            {{ ConvertToArabicNumbers(formatDateTime(order.created_at).date) }}
-          </td>
+          <tr
+            v-for="(order, i) in paginateOrders"
+            :key="order.id"
+          >
+            <td>
+              #{{ ConvertToArabicNumbers(Intl.NumberFormat().format(++i)) }}
+            </td>
+            <td>
+              {{ order.customer_name }}
+            </td>
+            <td>
+              {{ order.address_address }}
+            </td>
+            <td>
+              {{ ConvertToArabicNumbers(order.delivery_date) }}
+            </td>
+            <td>
+              {{ order.order_state_ar }}
+            </td>
+            <td>
+              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.order_subtotal)) }}
+            </td>
+            <td>
+              {{ order.payment_type_name }}
+            </td>
+            <td>
+              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount)) }}
+            </td>
+            <td>
+              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount_after_discount)) }}
+            </td>
+            <td>
+              {{ ConvertToArabicNumbers(formatDateTime(order.created_at).date) }}
+            </td>
 
-          <td>
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-            >
-              <VIcon
-                :size="22"
-                icon="tabler-eye"
-              />
-            </VBtn>
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-              @click="openEdit(order)"
-            >
-              <VIcon
-                :size="22"
-                icon="tabler-pencil"
-              />
-            </VBtn>
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-              @click="openDelete(order)"
-            >
-              <VIcon
-                :size="22"
-                icon="tabler-trash"
-              />
-            </VBtn>
-          </td>
-        </tr>
+<!--            <td>-->
+<!--              <VBtn-->
+<!--                icon-->
+<!--                variant="plain"-->
+<!--                color="default"-->
+<!--                size="x-small"-->
+<!--              >-->
+<!--                <VIcon-->
+<!--                  :size="22"-->
+<!--                  icon="tabler-eye"-->
+<!--                />-->
+<!--              </VBtn>-->
+<!--              <VBtn-->
+<!--                icon-->
+<!--                variant="plain"-->
+<!--                color="default"-->
+<!--                size="x-small"-->
+<!--                @click="openEdit(order)"-->
+<!--              >-->
+<!--                <VIcon-->
+<!--                  :size="22"-->
+<!--                  icon="tabler-pencil"-->
+<!--                />-->
+<!--              </VBtn>-->
+<!--              <VBtn-->
+<!--                icon-->
+<!--                variant="plain"-->
+<!--                color="default"-->
+<!--                size="x-small"-->
+<!--                @click="openDelete(order)"-->
+<!--              >-->
+<!--                <VIcon-->
+<!--                  :size="22"-->
+<!--                  icon="tabler-trash"-->
+<!--                />-->
+<!--              </VBtn>-->
+<!--            </td>-->
+          </tr>
         </tbody>
 
         <!-- 👉 table footer  -->
         <tfoot v-show="!orders.length">
-        <tr>
-          <td
-            colspan="8"
-            class="text-center text-body-1"
-          >
-            لا يوجد بيانات
-          </td>
-        </tr>
+          <tr>
+            <td
+              colspan="8"
+              class="text-center text-body-1"
+            >
+              لا يوجد بيانات
+            </td>
+          </tr>
         </tfoot>
       </VTable>
       <!-- !SECTION -->

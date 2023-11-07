@@ -4,6 +4,9 @@ import { useProductsStore } from "@/store/Products"
 import { useBannersStore } from "@/store/Banners"
 import { useCategoriesStore } from "@/store/Categories"
 import { useCitiesStore } from "@/store/Cities"
+import {
+  requiredValidator,
+} from '@validators'
 
 const props = defineProps({
   isAddOpen: {
@@ -60,6 +63,7 @@ const bannerData = reactive({
 const products = reactive([])
 const categories = reactive([])
 const cities = reactive([])
+const form = ref()
 
 const types = reactive([
   {
@@ -126,7 +130,7 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit">
+        <VForm @submit.prevent="onFormSubmit" ref="bannerData">
           <VRow>
             <VCol
               cols="12"
@@ -135,6 +139,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="bannerData.title"
                 :label="t('forms.title')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -148,6 +153,7 @@ const dialogModelValueUpdate = val => {
                 :items="types"
                 item-title="name"
                 item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -158,6 +164,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="bannerData.redirect_url"
                 :label="t('forms.redirect_url')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -170,6 +177,7 @@ const dialogModelValueUpdate = val => {
                 :items="statuses"
                 item-title="name"
                 item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -182,6 +190,7 @@ const dialogModelValueUpdate = val => {
                 accept="image/*"
                 prepend-icon=""
                 prepend-inner-icon="mdi-image"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -194,6 +203,7 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.products')"
                 item-title="name_ar"
                 item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -206,6 +216,7 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.categories')"
                 item-title="type_ar"
                 item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -218,6 +229,7 @@ const dialogModelValueUpdate = val => {
                 :items="cities.value"
                 item-title="name_ar"
                 item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
 

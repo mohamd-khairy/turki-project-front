@@ -1,6 +1,9 @@
 <script setup>
 import { useCitiesStore } from "@/store/Cities"
 import { useCountriesStore } from "@/store/Countries"
+import {
+  requiredValidator,
+} from '@validators'
 
 const props = defineProps({
   isAddOpen: {
@@ -60,7 +63,7 @@ const dialogModelValueUpdate = val => {
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
 
     <VCard
       class="pa-sm-9 pa-5"
@@ -87,6 +90,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="city.name_en"
                 :label="t('forms.name_en')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -97,6 +101,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="city.name_ar"
                 :label="t('forms.name_ar')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -110,6 +115,7 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.countries')"
                 item-title="name_ar"
                 item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -117,7 +123,9 @@ const dialogModelValueUpdate = val => {
               lg="12"
               sm="6"
             >
-              <VSwitch :label="t('available_for_delivery')" v-model="city.is_available_for_delivery"></VSwitch>
+              <VSwitch :label="t('available_for_delivery')" v-model="city.is_available_for_delivery"
+                       :rules="[requiredValidator]"
+              ></VSwitch>
             </VCol>
             <VCol
               cols="12"

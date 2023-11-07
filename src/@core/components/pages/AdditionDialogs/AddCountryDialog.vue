@@ -1,5 +1,8 @@
 <script setup>
 import { useCountriesStore } from "@/store/Countries"
+import {
+  requiredValidator,
+} from '@validators'
 
 const props = defineProps({
   isAddOpen: {
@@ -54,7 +57,7 @@ const dialogModelValueUpdate = val => {
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
 
     <VCard
       class="pa-sm-9 pa-5"
@@ -81,6 +84,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="country.name_en"
                 :label="t('forms.name_en')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -91,6 +95,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="country.name_ar"
                 :label="t('forms.name_ar')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -101,6 +106,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="country.currency_en"
                 :label="t('forms.currency_en')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -111,6 +117,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="country.currency_ar"
                 :label="t('forms.currency_ar')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -121,6 +128,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="country.phone_code"
                 :label="t('forms.phone_code')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -131,6 +139,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="country.code"
                 :label="t('forms.code')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol

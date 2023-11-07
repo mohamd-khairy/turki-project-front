@@ -1,6 +1,11 @@
 <script setup>
 import { useEmployeesStore } from "@/store/Employees"
 import { useRolesStore } from "@/store/Roles"
+import {
+  emailValidator,
+  requiredValidator,
+} from '@validators'
+
 
 const props = defineProps({
   isAddOpen: {
@@ -101,6 +106,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="employee.email"
                 :label="t('forms.email')"
+                :rules="[requiredValidator, emailValidator]"
               />
             </VCol>
             <VCol
@@ -111,6 +117,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="employee.mobile"
                 :label="t('forms.phone')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -121,6 +128,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="employee.username"
                 :label="t('forms.username')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -132,6 +140,7 @@ const dialogModelValueUpdate = val => {
                 v-model="employee.password"
                 :label="t('forms.password')"
                 type="password"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -145,6 +154,7 @@ const dialogModelValueUpdate = val => {
                 :items="genders"
                 item-title="name"
                 item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -155,6 +165,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="employee.age"
                 :label="t('forms.age')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -166,6 +177,7 @@ const dialogModelValueUpdate = val => {
                 accept="image/*"
                 prepend-icon=""
                 prepend-inner-icon="mdi-image"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -180,6 +192,7 @@ const dialogModelValueUpdate = val => {
                 item-title="display_name"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol

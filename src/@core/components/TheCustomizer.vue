@@ -76,9 +76,9 @@ const headerValues = computed(() => {
       <div class="customizer-heading d-flex align-center justify-space-between">
         <div>
           <h6 class="text-h6">
-            THEME CUSTOMIZER
+            إعدادات السمات
           </h6>
-          <span class="text-body-1">Customize & Preview in Real Time</span>
+          <span class="text-body-1">تخصيص ومعاينة في الوقت الحقيقي</span>
         </div>
         <VBtn
           icon
@@ -130,14 +130,14 @@ const headerValues = computed(() => {
               for="pricing-plan-toggle"
               class="me-3"
             >
-              Light
+              فاتح
             </VLabel>
 
             <div>
               <VSwitch
                 id="pricing-plan-toggle"
                 v-model="theme"
-                label="Dark"
+                label="غامق"
                 true-value="dark"
                 false-value="light"
               />
@@ -174,7 +174,7 @@ const headerValues = computed(() => {
         <CustomizerSection title="LAYOUT">
           <!-- 👉 Content Width -->
           <h6 class="text-base font-weight-regular">
-            Content width
+            عرض المحتوى
           </h6>
           <VRadioGroup
             v-model="appContentWidth"
@@ -204,7 +204,7 @@ const headerValues = computed(() => {
           </VRadioGroup>
           <!-- 👉 Footer Type -->
           <h6 class="mt-3 text-base font-weight-regular">
-            Footer Type
+            نوع الفوتر
           </h6>
           <VRadioGroup
             v-model="footerType"
@@ -240,7 +240,7 @@ const headerValues = computed(() => {
         <CustomizerSection title="MENU">
           <!-- 👉 Menu Type -->
           <h6 class="text-base font-weight-regular">
-            Menu Type
+            نوع القائمة
           </h6>
           <VRadioGroup
             v-model="appContentLayoutNav"

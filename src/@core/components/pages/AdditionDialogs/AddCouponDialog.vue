@@ -5,6 +5,10 @@ import { useCategoriesStore } from "@/store/Categories"
 import { useProductsStore } from "@/store/Products"
 import { useCouponsStore } from "@/store/Coupons"
 import { useEmployeesStore } from "@/store/Employees"
+import {
+  requiredValidator,
+} from '@validators'
+
 import AppDateTimePicker from '@core/components/AppDateTimePicker.vue'
 
 const props = defineProps({
@@ -137,6 +141,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="coupon.name"
                 :label="t('forms.name')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -147,6 +152,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="coupon.code"
                 :label="t('forms.code')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -157,6 +163,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="coupon.discount_amount_percent"
                 :label="t('forms.discount_amount_percent')"
+                :rules="[requiredValidator]"
                 type="number"
                 min="0"
                 max="100"
@@ -170,6 +177,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="coupon.min_applied_amount"
                 :label="t('forms.min_applied_amount')"
+                :rules="[requiredValidator]"
                 type="number"
                 min="0"
               />
@@ -182,6 +190,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="coupon.max_discount"
                 :label="t('forms.max_discount')"
+                :rules="[requiredValidator]"
                 type="number"
                 min="0"
               />
@@ -194,6 +203,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="coupon.description_ar"
                 :label="t('forms.description_ar')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -204,6 +214,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="coupon.description_en"
                 :label="t('forms.description_en')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -218,6 +229,7 @@ const dialogModelValueUpdate = val => {
                 item-title="username"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -232,6 +244,7 @@ const dialogModelValueUpdate = val => {
                 item-title="name_ar"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -246,6 +259,7 @@ const dialogModelValueUpdate = val => {
                 item-title="name_ar"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -260,6 +274,7 @@ const dialogModelValueUpdate = val => {
                 item-title="name_ar"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -274,6 +289,7 @@ const dialogModelValueUpdate = val => {
                 item-title="type_ar"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -288,6 +304,7 @@ const dialogModelValueUpdate = val => {
                 item-title="type_ar"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -298,6 +315,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="coupon.use_times_per_user"
                 :label="t('forms.use_times_per_user')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -309,7 +327,7 @@ const dialogModelValueUpdate = val => {
                 v-model="coupon.expire_at"
                 :label="t('forms.expire_at')"
                 :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
-                @click.stop
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol

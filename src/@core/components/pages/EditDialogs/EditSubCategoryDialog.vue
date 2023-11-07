@@ -40,8 +40,8 @@ onUpdated(() => {
   categoryData.type_ar = props.subCategory.type_ar
   categoryData.type_en = props.subCategory.type_en
   categoryData.description = props.subCategory.description
-  categoryData.category_id = props.subCategory.category_id
-  categoryData.city_ids = props.subCategory.city_ids
+  categoryData.category_id = props.subCategory.category
+  categoryData.city_ids = props.subCategory.cities
 })
 
 // Variables
