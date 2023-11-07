@@ -32,7 +32,7 @@ const router = useRouter()
 
 const loginUser = () => {
   auth.login(user).then(res => {
-    localStorage.setItem("najdUser", res.data.data)
+    localStorage.setItem("najdUser", JSON.stringify(res.data.data))
     localStorage.setItem("najdToken", res.data.data.api_token)
     axiosIns.defaults.headers.Authorization = `Bearer ${res.data.data.api_token}`
     router.push({ name: 'index' })
