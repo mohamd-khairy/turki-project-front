@@ -4,11 +4,15 @@ import { useThemeConfig } from '@core/composable/useThemeConfig'
 
 // @layouts plugin
 import { AppContentLayoutNav } from '@layouts/enums'
+import { useSettingsStore } from "@/store/Settings"
 
 const DefaultLayoutWithHorizontalNav = defineAsyncComponent(() => import('./components/DefaultLayoutWithHorizontalNav.vue'))
 const DefaultLayoutWithVerticalNav = defineAsyncComponent(() => import('./components/DefaultLayoutWithVerticalNav.vue'))
 const { width: windowWidth } = useWindowSize()
 const { appContentLayoutNav, switchToVerticalNavOnLtOverlayNavBreakpoint } = useThemeConfig()
+
+const isShow = ref(false)
+const settings = useSettingsStore()
 
 // Remove below composable usage if you are not using horizontal nav layout in your app
 switchToVerticalNavOnLtOverlayNavBreakpoint(windowWidth)
@@ -19,12 +23,15 @@ injectSkinClasses()
 </script>
 
 <template>
-  <template v-if="appContentLayoutNav === AppContentLayoutNav.Vertical">
-    <DefaultLayoutWithVerticalNav v-bind="layoutAttrs" />
-  </template>
-  <template v-else>
-    <DefaultLayoutWithHorizontalNav v-bind="layoutAttrs" />
-  </template>
+  <div>
+    <Alert :is-show="settings.isAlertShow" @change-status="settings.isAlertShow = !settings.isAlertShow" :color="settings.alertColor" :message="settings.alertMessage"></Alert>
+    <template v-if="appContentLayoutNav === AppContentLayoutNav.Vertical">
+      <DefaultLayoutWithVerticalNav v-bind="layoutAttrs" />
+    </template>
+    <template v-else>
+      <DefaultLayoutWithHorizontalNav v-bind="layoutAttrs" />
+    </template>
+  </div>
 </template>
 
 <style lang="scss">

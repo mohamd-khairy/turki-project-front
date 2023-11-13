@@ -1,6 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n"
 import { usePermissionsStore } from "@/store/Permissions"
+import { useSettingsStore } from "@/store/Settings"
 
 const props = defineProps({
   isDeleteOpen: {
@@ -20,6 +21,8 @@ const emit = defineEmits([
 
 const { t } = useI18n()
 const permissionsListStore = usePermissionsStore()
+const settingsListStore = useSettingsStore()
+const isLoading = ref(false)
 
 const resetForm = () => {
   emit('update:isDeleteOpen', false)
@@ -30,6 +33,21 @@ const onFormSubmit = () => {
   permissionsListStore.deletePermission(props.permission).then(() => {
     emit('refreshTable')
     emit('update:isDeleteOpen', false)
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم حذف الصلاحية بنجاح"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 1000)
+  }).catch(error => {
+    settingsListStore.alertColor = "error"
+    settingsListStore.alertMessage = "حدث خطأ ما !"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
   })
 }
 
@@ -67,10 +85,18 @@ const dialogModelValueUpdate = val => {
               class="text-center"
             >
               <VBtn
+                v-if="!isLoading"
                 type="submit"
                 class="me-3"
               >
                 {{t('buttons.confirm')}}
+              </VBtn>
+              <VBtn
+                v-else
+                type="submit"
+                class="position-relative me-3"
+              >
+                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
               </VBtn>
 
               <VBtn

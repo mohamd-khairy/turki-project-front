@@ -1,6 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n"
 import { useCountriesStore } from "@/store/Countries"
+import { useSettingsStore } from "@/store/Settings"
 
 const props = defineProps({
   isDeleteOpen: {
@@ -20,16 +21,35 @@ const emit = defineEmits([
 
 const { t } = useI18n()
 const countriesListStore = useCountriesStore()
+const settingsListStore = useSettingsStore()
+const isLoading = ref(false)
 
 const resetForm = () => {
   emit('update:isDeleteOpen', false)
 }
 
 const onFormSubmit = () => {
-  // Delete
+  isLoading.value = true
   countriesListStore.deleteCountry(props.country).then(() => {
     emit('refreshTable')
     emit('update:isDeleteOpen', false)
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم حذف البلد بنجاح"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+      isLoading.value = false
+    }, 1000)
+  }).catch(error => {
+    isLoading.value = false
+    settingsListStore.alertColor = "error"
+    settingsListStore.alertMessage = "حدث خطأ ما !"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
   })
 }
 
@@ -67,10 +87,18 @@ const dialogModelValueUpdate = val => {
               class="text-center"
             >
               <VBtn
+                v-if="!isLoading"
                 type="submit"
                 class="me-3"
               >
                 {{t('buttons.confirm')}}
+              </VBtn>
+              <VBtn
+                v-else
+                type="submit"
+                class="position-relative me-3"
+              >
+                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
               </VBtn>
 
               <VBtn

@@ -57,11 +57,11 @@ const paginateCountries = computed(() => {
 })
 
 const nextPage = () => {
-  if ((currentPage.value * rowPerPage.value) < countries.value.length) currentPage.value++
+  if ((currentPage.value * rowPerPage.value) < countries.value.length) currentPage.value
 }
 
 const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
+  if (currentPage.value > 1) currentPage.value
 }
 
 // 👉 Computing pagination data
@@ -109,7 +109,7 @@ const formatDateTime = data => {
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="material-symbols:globe" size="24"></VIcon>
+        <VIcon icon="material-symbols:globe" size="24" color="primary"></VIcon>
         <span class="mx-1">البلاد</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
@@ -123,6 +123,7 @@ const formatDateTime = data => {
         </div>
         <!--         👉 Create product :to="{ name: 'apps-product-add' }"-->
         <VBtn
+          v-can="'create-country'"
           prepend-icon="tabler-plus"
           @click="isAddOpen = true"
         >
@@ -147,136 +148,138 @@ const formatDateTime = data => {
 
       <VTable class="text-no-wrap product-list-table">
         <thead>
-        <tr>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.id') }}
-          </th><th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.name') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.currency') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.phone_code') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.code') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.is_active') }} ( {{ t('forms.statuses.change') }} )
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.created_at') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.actions') }}
-          </th>
-        </tr>
+          <tr>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.id') }}
+            </th><th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.name') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.currency') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.phone_code') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.code') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.is_active') }} ( {{ t('forms.statuses.change') }} )
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.created_at') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.actions') }}
+            </th>
+          </tr>
         </thead>
 
         <tbody>
-        <tr
-          v-for="(country, i) in paginateCountries"
-          :key="country.id"
-        >
-          <td>
-            #{{ (++i) }}
-          </td>
-          <td>
-            {{ country.name_ar }}
-          </td>
-          <td>
-            {{ country.currency_ar }}
-          </td>
-          <td>
-            {{ (country.phone_code) }}
-          </td>
-          <td>
-            {{ (country.code) }}
-          </td>
-          <td @click="changeStatus(country)" style="cursor: pointer">
-            <VIcon icon="ph:dot-bold" :color="country.is_active == true ? '#008000' : '#f00000'" size="32"></VIcon>
-            <span>
-              {{ country.is_active == true ? t('forms.statuses.active') : t('forms.statuses.inactive') }}
-            </span>
-          </td>
-          <td>
-            {{ (formatDateTime(country.created_at).date) }}
-          </td>
-          <td>
-<!--            <VBtn-->
-<!--              icon-->
-<!--              variant="plain"-->
-<!--              color="default"-->
-<!--              size="x-small"-->
-<!--            >-->
-<!--              <VIcon-->
-<!--                :size="22"-->
-<!--                icon="tabler-eye"-->
-<!--              />-->
-<!--            </VBtn>-->
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-              @click="openEdit(country)"
-            >
-              <VIcon
-                :size="22"
-                icon="tabler-pencil"
-              />
-            </VBtn>
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-              @click="openDelete(country)"
-            >
-              <VIcon
-                :size="22"
-                icon="tabler-trash"
-              />
-            </VBtn>
-          </td>
-        </tr>
+          <tr
+            v-for="(country, i) in paginateCountries"
+            :key="country.id"
+          >
+            <td>
+              #{{ (++i) }}
+            </td>
+            <td>
+              {{ country.name_ar }}
+            </td>
+            <td>
+              {{ country.currency_ar }}
+            </td>
+            <td>
+              {{ (country.phone_code) }}
+            </td>
+            <td>
+              {{ (country.code) }}
+            </td>
+            <td @click="changeStatus(country)" style="cursor: pointer">
+              <VIcon icon="ph:dot-bold" :color="country.is_active == true ? '#008000' : '#f00000'" size="32"></VIcon>
+              <span>
+                {{ country.is_active == true ? t('forms.statuses.active') : t('forms.statuses.inactive') }}
+              </span>
+            </td>
+            <td>
+              {{ (formatDateTime(country.created_at).date) }}
+            </td>
+            <td>
+  <!--            <VBtn-->
+  <!--              icon-->
+  <!--              variant="plain"-->
+  <!--              color="default"-->
+  <!--              size="x-small"-->
+  <!--            >-->
+  <!--              <VIcon-->
+  <!--                :size="22"-->
+  <!--                icon="tabler-eye"-->
+  <!--              />-->
+  <!--            </VBtn>-->
+              <VBtn
+                v-can="'update-country'"
+                icon
+                variant="plain"
+                color="default"
+                size="x-small"
+                @click="openEdit(country)"
+              >
+                <VIcon
+                  :size="22"
+                  icon="tabler-pencil"
+                />
+              </VBtn>
+              <VBtn
+                v-can="'delete-country'"
+                icon
+                variant="plain"
+                color="default"
+                size="x-small"
+                @click="openDelete(country)"
+              >
+                <VIcon
+                  :size="22"
+                  icon="tabler-trash"
+                />
+              </VBtn>
+            </td>
+          </tr>
         </tbody>
 
         <!-- 👉 table footer  -->
         <tfoot v-show="!countries.length">
-        <tr>
-          <td
-            colspan="8"
-            class="text-center text-body-1"
-          >
-            لا يوجد بيانات
-          </td>
-        </tr>
+          <tr>
+            <td
+              colspan="8"
+              class="text-center text-body-1"
+            >
+              لا يوجد بيانات
+            </td>
+          </tr>
         </tfoot>
       </VTable>
       <!-- !SECTION -->

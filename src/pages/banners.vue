@@ -55,11 +55,11 @@ const paginateBanners = computed(() => {
 })
 
 const nextPage = () => {
-  if ((currentPage.value * rowPerPage.value) < banners.value.length) currentPage.value++
+  if ((currentPage.value * rowPerPage.value) < banners.value.length) currentPage.value
 }
 
 const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
+  if (currentPage.value > 1) currentPage.value
 }
 
 // 👉 Computing pagination data
@@ -85,7 +85,7 @@ const openEdit = banner => {
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="game-icons:vertical-banner" size="24"></VIcon>
+        <VIcon icon="game-icons:vertical-banner" size="24" color="primary"></VIcon>
         <span class="mx-1"> {{ t('Banners') }} </span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
@@ -101,6 +101,7 @@ const openEdit = banner => {
         <VBtn
           prepend-icon="tabler-plus"
           @click="isAddOpen = true"
+          v-can="'create-banner'"
         >
           {{ t('Add_Banner') }}
         </VBtn>
@@ -176,6 +177,7 @@ const openEdit = banner => {
             <th
               scope="col"
               class="font-weight-semibold"
+              v-can="'read-banner' || 'update-banner' || 'delete-banner'"
             >
               <span class="ms-2">{{ t('forms.actions') }}</span>
             </th>
@@ -231,12 +233,13 @@ const openEdit = banner => {
                 banner.category.description.toString().length > 20 ? banner.category.description.toString().slice(0, 20) + '...' : banner.category.description
               }}
             </td>
-            <td style="width: 7.5rem;">
+            <td style="width: 7.5rem;" v-can="'read-banner' || 'update-banner' || 'delete-banner'">
               <VBtn
                 icon
                 variant="plain"
                 color="default"
                 size="x-small"
+                v-can="'read-banner'"
               >
                 <VIcon
                   :size="22"
@@ -249,6 +252,7 @@ const openEdit = banner => {
                 color="default"
                 size="x-small"
                 @click="openEdit(banner)"
+                v-can="'update-banner'"
               >
                 <VIcon
                   :size="22"
@@ -261,6 +265,7 @@ const openEdit = banner => {
                 color="default"
                 size="x-small"
                 @click="openDelete(banner)"
+                v-can="'delete-banner'"
               >
                 <VIcon
                   :size="22"

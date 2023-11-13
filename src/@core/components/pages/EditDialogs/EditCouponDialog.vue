@@ -39,6 +39,7 @@ const cities = reactive([])
 const categories = reactive([])
 const subCategories = reactive([])
 const customers = reactive([])
+const isLoading = ref(false)
 
 onMounted(() => {
   countriesListStore.fetchCountries({ pageSize: -1 }).then(response => {
@@ -124,9 +125,27 @@ const resetForm = () => {
 }
 
 const onFormSubmit = () => {
+  isLoading.value = true
   couponsListStore.editCoupon(couponData).then(response => {
     emit('update:isEditOpen', false)
     emit('refreshTable')
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم حذف العنصر بنجاح"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+      isLoading.value = false
+    }, 1000)
+  }).catch(error => {
+    isLoading.value = false
+    settingsListStore.alertColor = "error"
+    settingsListStore.alertMessage = "حدث خطأ ما !"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
   })
 }
 
@@ -151,7 +170,7 @@ const dialogModelValueUpdate = val => {
       <!-- 👉 Title -->
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="bxs:coupon" size="24"></VIcon>
+          <VIcon icon="bxs:coupon" size="24" color="primary"></VIcon>
           <span class="mx-1 my-1">
             {{ t('Edit_Coupon') }}
           </span>
@@ -413,10 +432,18 @@ const dialogModelValueUpdate = val => {
               class="text-center"
             >
               <VBtn
+                v-if="!isLoading"
                 type="submit"
                 class="me-3"
               >
                 {{ t("buttons.save") }}
+              </VBtn>
+              <VBtn
+                v-else
+                type="submit"
+                class="position-relative me-3"
+              >
+                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
               </VBtn>
 
               <VBtn

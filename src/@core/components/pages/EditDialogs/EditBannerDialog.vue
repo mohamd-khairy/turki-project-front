@@ -4,6 +4,10 @@ import { useProductsStore } from "@/store/Products"
 import { useBannersStore } from "@/store/Banners"
 import { useCategoriesStore } from "@/store/Categories"
 import { useCitiesStore } from "@/store/Cities"
+import { useSettingsStore } from "@/store/Settings"
+import {
+  requiredValidator,
+} from '@validators'
 
 const props = defineProps({
   isEditOpen: {
@@ -25,8 +29,10 @@ const bannersList = useBannersStore()
 const productsList = useProductsStore()
 const categoriesList = useCategoriesStore()
 const citiesList = useCitiesStore()
+const settingsListStore = useSettingsStore()
 
 onUpdated(() => {
+  console.log(props.banner)
   productsList.fetchProducts().then(response => {
     products.value = response.data.data
   })
@@ -37,19 +43,19 @@ onUpdated(() => {
     cities.value = response.data.data
   })
   bannerData.id = props.banner.id,
-  bannerData.title = props.banner.title,
-  bannerData.title_color = props.banner.title_color,
-  bannerData.sub_title = props.banner.sub_title,
-  bannerData.sub_title_color = props.banner.sub_title_color,
-  bannerData.button_text = props.banner.button_text,
-  bannerData.button_text_color = props.banner.button_text_color,
-  bannerData.redirect_url = props.banner.redirect_url,
-  bannerData.is_active = props.banner.is_active,
-  bannerData.type = props.banner.type,
-  bannerData.redirect_mobile_url = props.banner.redirect_mobile_url,
-  bannerData.product_id = props.banner.product_id,
-  bannerData.category_id = props.banner.category_id,
-  bannerData.city_ids = props.banner.city_ids
+    bannerData.title = props.banner.title,
+    bannerData.title_color = props.banner.title_color,
+    bannerData.sub_title = props.banner.sub_title,
+    bannerData.sub_title_color = props.banner.sub_title_color,
+    bannerData.button_text = props.banner.button_text,
+    bannerData.button_text_color = props.banner.button_text_color,
+    bannerData.redirect_url = props.banner.redirect_url,
+    bannerData.is_active = props.banner.is_active,
+    bannerData.type = props.banner.type,
+    bannerData.redirect_mobile_url = props.banner.redirect_mobile_url,
+    bannerData.product_id = props.banner.product_id,
+    bannerData.category_id = props.banner.category,
+    bannerData.city_ids = props.banner.cities
 })
 
 const { t } = useI18n()
@@ -75,6 +81,7 @@ const bannerData = reactive({
 const products = reactive([])
 const categories = reactive([])
 const cities = reactive([])
+const isLoading = ref(false)
 
 const types = reactive([
   {
@@ -107,9 +114,27 @@ const resetForm = () => {
 }
 
 const onFormSubmit = () => {
+  isLoading.value = true
   bannersList.editBanner(bannerData).then(response => {
     emit('refreshTable')
     emit('update:isEditOpen', false)
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم تعديل العنصر بنجاح"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+      isLoading.value = false
+    }, 1000)
+  }).catch(error => {
+    isLoading.value = false
+    settingsListStore.alertColor = "error"
+    settingsListStore.alertMessage = "حدث خطأ ما !"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
   })
 }
 
@@ -141,6 +166,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="bannerData.title"
                 :label="t('forms.title')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -154,6 +180,7 @@ const dialogModelValueUpdate = val => {
                 :items="types"
                 item-title="name"
                 item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -164,6 +191,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="bannerData.redirect_url"
                 :label="t('forms.redirect_url')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -176,6 +204,7 @@ const dialogModelValueUpdate = val => {
                 :items="statuses"
                 item-title="name"
                 item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -188,6 +217,7 @@ const dialogModelValueUpdate = val => {
                 accept="image/*"
                 prepend-icon=""
                 prepend-inner-icon="mdi-image"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -200,6 +230,7 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.products')"
                 item-title="name_ar"
                 item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -212,6 +243,7 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.categories')"
                 item-title="type_ar"
                 item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -224,6 +256,7 @@ const dialogModelValueUpdate = val => {
                 :items="cities.value"
                 item-title="name_ar"
                 item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
 
@@ -232,10 +265,18 @@ const dialogModelValueUpdate = val => {
               class="text-center"
             >
               <VBtn
+                v-if="!isLoading"
                 type="submit"
                 class="me-3"
               >
                 {{ t('buttons.save') }}
+              </VBtn>
+              <VBtn
+                v-else
+                type="submit"
+                class="position-relative me-3"
+              >
+                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
               </VBtn>
 
               <VBtn

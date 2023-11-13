@@ -56,11 +56,11 @@ const paginateProducts = computed(() => {
 })
 
 const nextPage = () => {
-  if ((currentPage.value * rowPerPage.value) < products.value.length) currentPage.value++
+  if ((currentPage.value * rowPerPage.value) < products.value.length) currentPage.value
 }
 
 const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
+  if (currentPage.value > 1) currentPage.value
 }
 
 // 👉 Computing pagination data
@@ -101,7 +101,9 @@ const formatDateTime = data => {
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="streamline:shopping-bag-hand-bag-1-shopping-bag-purse-goods-item-products" size="24"></VIcon>
+        <VIcon icon="streamline:shopping-bag-hand-bag-1-shopping-bag-purse-goods-item-products" size="24"
+               color="primary"
+        ></VIcon>
         <span class="mx-1">المنتجات</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
@@ -116,11 +118,12 @@ const formatDateTime = data => {
         <!--         👉 Create product :to="{ name: 'apps-product-add' }"-->
         <VBtn
           prepend-icon="tabler-plus"
+          @click="isAddOpen = true"
         >
           إضافة منتج
         </VBtn>
 
-        <VSpacer />
+        <VSpacer/>
 
         <div class="w-25 d-flex align-center flex-wrap gap-2">
           <!-- 👉 Search  -->
@@ -134,182 +137,190 @@ const formatDateTime = data => {
         </div>
       </VCardText>
 
-      <VDivider />
+      <VDivider/>
 
       <VTable class="text-no-wrap product-list-table">
         <thead>
-          <tr>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.id') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.name') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.description') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.status') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.delivered') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.picked_up') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.price') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.sale_price') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.category') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.sub_category') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.created_at') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.actions') }}
-            </th>
-          </tr>
+        <tr>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.id') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.name') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.description') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.status') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.delivered') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.picked_up') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.price') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.sale_price') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.category') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.sub_category') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.created_at') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.actions') }}
+          </th>
+        </tr>
         </thead>
 
         <tbody>
-          <tr
-            v-for="(product, i) in paginateProducts"
-            :key="product.id"
-          >
-            <td>
-              #{{ ++i }}
-            </td>
-            <td>
-              {{ product.name_ar }}
-            </td>
-            <td>
-              {{ product.description_ar.toString().length > 20 ? product.description_ar.toString().slice(0, 20) + '...' : product.description_ar }}
-            </td>
-            <td>
-              <VIcon icon="ph:dot-bold" :color="product.is_active == true ? '#008000' : '#f00000'" size="32"></VIcon>
-              <span>
+        <tr
+          v-for="(product, i) in paginateProducts"
+          :key="product.id"
+        >
+          <td>
+            #{{ ++i }}
+          </td>
+          <td>
+            {{ product.name_ar }}
+          </td>
+          <td>
+            {{
+              product.description_ar.toString().length > 20 ? product.description_ar.toString().slice(0, 20) + '...' : product.description_ar
+            }}
+          </td>
+          <td>
+            <VIcon icon="ph:dot-bold" :color="product.is_active == true ? '#008000' : '#f00000'" size="32"></VIcon>
+            <span>
                 {{ product.is_active == true ? t('forms.statuses.active') : t('forms.statuses.inactive') }}
               </span>
-            </td>
-            <td>
-              <VIcon :icon="product.is_delivered == true ? 'material-symbols-light:done-all' : 'material-symbols-light:close'" :color="product.is_delivered == true ? '#008000' : '#f00000'" size="24"></VIcon>
-            </td>
-            <td>
-              <VIcon :icon="product.is_picked_up == true ? 'material-symbols-light:done-all' : 'material-symbols-light:close'" :color="product.is_picked_up == true ? '#008000' : '#f00000'" size="24"></VIcon>
-            </td>
-            <td>
-              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(product.price)) }} {{ t('riyal') }}
-            </td>
-            <td>
-              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(product['sale price'] ?? 0)) }} {{ t('riyal') }}
-            </td>
-            <td>
-              {{ product.category.type_ar }}
-            </td>
-            <td>
-              {{ product.sub_category.type_ar }}
-            </td>
-            <td>
-              {{ ConvertToArabicNumbers(formatDateTime(product.created_at).date) }}
-            </td>
-            <td style="width: 7.5rem;">
-              <VBtn
-                icon
-                variant="plain"
-                color="default"
-                size="x-small"
-              >
-                <VIcon
-                  :size="22"
-                  icon="tabler-eye"
-                />
-              </VBtn>
-              <VBtn
-                icon
-                variant="plain"
-                color="default"
-                size="x-small"
-                @click="openEdit(product)"
-              >
-                <VIcon
-                  :size="22"
-                  icon="tabler-pencil"
-                />
-              </VBtn>
-              <VBtn
-                icon
-                variant="plain"
-                color="default"
-                size="x-small"
-                @click="openDelete(product)"
-              >
-                <VIcon
-                  :size="22"
-                  icon="tabler-trash"
-                />
-              </VBtn>
-            </td>
-          </tr>
+          </td>
+          <td>
+            <VIcon
+              :icon="product.is_delivered == true ? 'material-symbols-light:done-all' : 'material-symbols-light:close'"
+              :color="product.is_delivered == true ? '#008000' : '#f00000'" size="24" color="primary"
+            ></VIcon>
+          </td>
+          <td>
+            <VIcon
+              :icon="product.is_picked_up == true ? 'material-symbols-light:done-all' : 'material-symbols-light:close'"
+              :color="product.is_picked_up == true ? '#008000' : '#f00000'" size="24" color="primary"
+            ></VIcon>
+          </td>
+          <td>
+            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(product.price)) }} {{ t('riyal') }}
+          </td>
+          <td>
+            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(product['sale price'] ?? 0)) }} {{ t('riyal') }}
+          </td>
+          <td>
+            {{ product.category.type_ar }}
+          </td>
+          <td>
+            {{ product.sub_category.type_ar }}
+          </td>
+          <td>
+            {{ ConvertToArabicNumbers(formatDateTime(product.created_at).date) }}
+          </td>
+          <td style="width: 7.5rem;">
+            <VBtn
+              icon
+              variant="plain"
+              color="default"
+              size="x-small"
+            >
+              <VIcon
+                :size="22"
+                icon="tabler-eye"
+              />
+            </VBtn>
+            <VBtn
+              icon
+              variant="plain"
+              color="default"
+              size="x-small"
+              @click="openEdit(product)"
+            >
+              <VIcon
+                :size="22"
+                icon="tabler-pencil"
+              />
+            </VBtn>
+            <VBtn
+              icon
+              variant="plain"
+              color="default"
+              size="x-small"
+              @click="openDelete(product)"
+            >
+              <VIcon
+                :size="22"
+                icon="tabler-trash"
+              />
+            </VBtn>
+          </td>
+        </tr>
         </tbody>
 
         <!-- 👉 table footer  -->
         <tfoot v-show="!products.length">
-          <tr>
-            <td
-              colspan="8"
-              class="text-center text-body-1"
-            >
-              لا يوجد بيانات
-            </td>
-          </tr>
+        <tr>
+          <td
+            colspan="8"
+            class="text-center text-body-1"
+          >
+            لا يوجد بيانات
+          </td>
+        </tr>
         </tfoot>
       </VTable>
       <!-- !SECTION -->
 
-      <VDivider />
+      <VDivider/>
 
       <!-- SECTION Pagination -->
       <VCardText class="d-flex align-center flex-wrap justify-space-between gap-4 py-3">
@@ -327,5 +338,9 @@ const formatDateTime = data => {
         />
       </VCardText>
     </VCard>
+
+    <AddProductDialog v-model:is-add-open="isAddOpen" @refreshTable="getProducts"/>
+    <EditProductDialog v-model:is-edit-open="isEditOpen" :item="selectedProduct" @refreshTable="getProducts"/>
+    <DeleteProductsDialog v-model:is-delete-open="isDeleteOpen" :item="selectedProduct" @refreshTable="getProducts"/>
   </div>
 </template>

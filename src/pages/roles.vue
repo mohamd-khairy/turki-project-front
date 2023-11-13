@@ -56,11 +56,11 @@ const paginateEmployees = computed(() => {
 })
 
 const nextPage = () => {
-  if ((currentPage.value * rowPerPage.value) < roles.value.length) currentPage.value++
+  if ((currentPage.value * rowPerPage.value) < roles.value.length) currentPage.value
 }
 
 const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
+  if (currentPage.value > 1) currentPage.value
 }
 
 // 👉 Computing pagination data
@@ -108,7 +108,7 @@ const formatDateTime = data => {
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="zondicons:shield" size="24"></VIcon>
+        <VIcon icon="zondicons:shield" size="24" color="primary"></VIcon>
         <span class="mx-1">{{ t('Roles') }}</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">

@@ -56,11 +56,11 @@ const paginateProducts = computed(() => {
 })
 
 const nextPage = () => {
-  if ((currentPage.value * rowPerPage.value) < sub_categories.value.length) currentPage.value++
+  if ((currentPage.value * rowPerPage.value) < sub_categories.value.length) currentPage.value
 }
 
 const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
+  if (currentPage.value > 1) currentPage.value
 }
 
 // 👉 Computing pagination data
@@ -101,7 +101,7 @@ const formatDateTime = data => {
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="carbon:category-new-each" size="24"></VIcon>
+        <VIcon icon="carbon:category-new-each" size="24" color="primary"></VIcon>
         <span class="mx-1">{{ t('Sub_Category') }}</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">

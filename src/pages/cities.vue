@@ -24,7 +24,6 @@ const getCities = () => {
   citiesListStore.fetchCities({
     q: searchQuery.value,
   }).then(response => {
-    console.log('Cities => ', response)
     cities.value = response.data.data
     totalPage.value = cities.value / rowPerPage
     totalCities.value = cities.value.length
@@ -58,11 +57,11 @@ const paginateCities = computed(() => {
 })
 
 const nextPage = () => {
-  if ((currentPage.value * rowPerPage.value) < cities.value.length) currentPage.value++
+  if ((currentPage.value * rowPerPage.value) < cities.value.length) currentPage.value
 }
 
 const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
+  if (currentPage.value > 1) currentPage.value
 }
 
 // 👉 Computing pagination data
@@ -110,7 +109,7 @@ const formatDateTime = data => {
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="solar:city-broken" size="24"></VIcon>
+        <VIcon icon="solar:city-broken" size="24" color="primary"></VIcon>
         <span class="mx-1">{{ t('Cities') }}</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
@@ -126,11 +125,12 @@ const formatDateTime = data => {
         <VBtn
           prepend-icon="tabler-plus"
           @click="isAddOpen = true"
+          v-can="'create-city'"
         >
           {{ t('Add_City') }}
         </VBtn>
 
-        <VSpacer />
+        <VSpacer/>
 
         <div class="w-25 d-flex align-center flex-wrap gap-2">
           <!-- 👉 Search  -->
@@ -144,7 +144,7 @@ const formatDateTime = data => {
         </div>
       </VCardText>
 
-      <VDivider />
+      <VDivider/>
 
       <VTable class="text-no-wrap product-list-table">
         <thead>
@@ -154,12 +154,13 @@ const formatDateTime = data => {
             class="font-weight-semibold"
           >
             {{ t('forms.id') }}
-          </th><th
-          scope="col"
-          class="font-weight-semibold"
-        >
-          {{ t('forms.name') }}
-        </th>
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.name') }}
+          </th>
           <th
             scope="col"
             class="font-weight-semibold"
@@ -195,25 +196,26 @@ const formatDateTime = data => {
           <td>
             {{ city.country ? city.country : "السعودية" }}
           </td>
-          <td @click="changeStatus(city)" style="cursor: pointer">
+          <td @click="changeStatus(city)" >
             <VIcon icon="ph:dot-bold" :color="city.is_active == true ? '#008000' : '#f00000'" size="32"></VIcon>
             <span>
               {{ city.is_active == true ? t('forms.statuses.active') : t('forms.statuses.inactive') }}
             </span>
           </td>
-          <td>
-<!--            <VBtn-->
-<!--              icon-->
-<!--              variant="plain"-->
-<!--              color="default"-->
-<!--              size="x-small"-->
-<!--            >-->
-<!--              <VIcon-->
-<!--                :size="22"-->
-<!--                icon="tabler-eye"-->
-<!--              />-->
-<!--            </VBtn>-->
+          <td v-can="'create-city' || 'update-city' || 'delete-city'">
+            <!--            <VBtn-->
+            <!--              icon-->
+            <!--              variant="plain"-->
+            <!--              color="default"-->
+            <!--              size="x-small"-->
+            <!--            >-->
+            <!--              <VIcon-->
+            <!--                :size="22"-->
+            <!--                icon="tabler-eye"-->
+            <!--              />-->
+            <!--            </VBtn>-->
             <VBtn
+              v-can="'update-city'"
               icon
               variant="plain"
               color="default"
@@ -226,6 +228,7 @@ const formatDateTime = data => {
               />
             </VBtn>
             <VBtn
+              v-can="'delete-city'"
               icon
               variant="plain"
               color="default"
@@ -255,7 +258,7 @@ const formatDateTime = data => {
       </VTable>
       <!-- !SECTION -->
 
-      <VDivider />
+      <VDivider/>
 
       <VCardText class="d-flex align-center flex-wrap justify-space-between gap-4 py-3">
         <span class="text-sm text-disabled">{{ paginationData }}</span>
@@ -270,7 +273,7 @@ const formatDateTime = data => {
         />
       </VCardText>
     </VCard>
-    <AddCityDialog v-model:isAddOpen="isAddOpen" @refreshTable="getCities" />
+    <AddCityDialog v-model:isAddOpen="isAddOpen" @refreshTable="getCities"/>
     <EditCityDialog
       v-model:isEditOpen="isEditOpen"
       :city="selectedCity"

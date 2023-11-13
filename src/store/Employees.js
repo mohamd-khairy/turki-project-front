@@ -55,9 +55,24 @@ export const useEmployeesStore = defineStore('EmployeesStore', {
 
       return axios.post(`users/${data.id}`, formData)
     },
+    editCustomer(data) {
+      const formData = new FormData()
+
+      // formData.append("_method", "PUT")
+      // formData.append("username", data.username)
+      formData.append("name", data.name)
+      formData.append("email", data.email)
+      formData.append("mobile", data.mobile)
+      formData.append("wallet", data.wallet)
+
+      return axios.post(`customers/${data.id}`, formData)
+    },
 
     deleteEmployee(data) {
       return axios.delete(`users/${data.id}`)
+    },
+    deleteCustomer(data) {
+      return axios.delete(`customers/${data.id}`)
     },
   },
 })

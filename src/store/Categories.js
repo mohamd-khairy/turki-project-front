@@ -57,13 +57,13 @@ export const useCategoriesStore = defineStore('CategoriesStore', {
 
       let cty_ids = " "
       Object.values(data.city_ids).map(ctid => {
-        cty_ids = cty_ids + ',' + ctid
+        cty_ids = cty_ids + ',' + ctid.id
       })
 
       formData.append("type_ar", data.type_ar)
       formData.append("type_en", data.type_en)
       formData.append("description", data.description)
-      formData.append("category_id", data.category_id)
+      formData.append("category_id", data.category_id.id)
       formData.append("city_ids", cty_ids.split(" ,")[1])
 
       return axios.post(`/sub-categories/update-sub-category/${data.id}`, formData)
@@ -73,7 +73,7 @@ export const useCategoriesStore = defineStore('CategoriesStore', {
       const formData = new FormData()
       let cty_ids = " "
       Object.values(data.city_ids).map(ctid => {
-        cty_ids = cty_ids + ',' + ctid
+        cty_ids = cty_ids + ',' + ctid.id
       })
 
       formData.append("type_ar", data.type_ar)
@@ -82,7 +82,9 @@ export const useCategoriesStore = defineStore('CategoriesStore', {
       formData.append("backgroundColor", data.backgroundColor)
       formData.append("color", data.color)
       formData.append("city_ids", cty_ids.split(" ,")[1])
-      formData.append("image", data.image[0])
+      if (data.image !== {} && data.image !== undefined) {
+        formData.append("image", data.image[0] ?? {})
+      }
 
       return axios.post(`/categories/update-category/${data.id}`, formData)
     },

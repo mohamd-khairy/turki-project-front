@@ -1,173 +1,492 @@
 <script setup>
+import { useI18n } from "vue-i18n"
+import {
+  requiredValidator,
+} from '@validators'
+import { useCitiesStore } from "@/store/Cities"
+import { useCategoriesStore } from "@/store/Categories"
+import { useProductsStore } from "@/store/Products"
+import { useSettingsStore } from "@/store/Settings"
+
 const props = defineProps({
-  billingAddress: {
-    type: Object,
-    required: true,
-  },
-  isAddOpen: {
+  isEditOpen: {
     type: Boolean,
     required: true,
   },
+  item: {
+    type: Object,
+    required: true,
+  },
+
 })
 
 const emit = defineEmits([
-  'update:isAddOpen',
-  'bannerData',
+  'update:isEditOpen',
+  'refreshTable',
 ])
 
-const billingAddress = ref(structuredClone(toRaw(props.billingAddress)))
+const settingsListStore = useSettingsStore()
+const productsListStore = useProductsStore()
+const citiesListStore = useCitiesStore()
+const categoryListStore = useCategoriesStore()
+const isLoading = ref(false)
+
+const { t } = useI18n()
+
+const cities = reactive([])
+const categories = reactive([])
+const sub_categories = reactive([])
+const preparations = reactive([])
+const sizes = reactive([])
+const cuts = reactive([])
+const payment_type_ids = reactive([])
+
+const itemData = reactive({
+  id: null,
+  name_ar: "",
+  name_en: "",
+  weight: "",
+  calories: "",
+  description_ar: "",
+  description_en: "",
+  sale_price: 0.00,
+  price: 0,
+  is_active: 0,
+  is_available: 0,
+  is_kwar3: 0,
+  is_Ras: 0,
+  is_lyh: 0,
+  is_karashah: 0,
+  category_id: null,
+  sub_category_id: null,
+  is_shalwata: 0,
+  is_delivered: 0,
+  is_picked_up: 0,
+  preparation_ids: [],
+  size_ids: [],
+  cut_ids: [],
+  payment_type_ids: [],
+  city_ids: [],
+  not_dates: [
+    {
+      date_mm_dd: null,
+      delivery_period_ids: [
+        {
+          delivery_period_id: null,
+          city_id: null,
+        },
+        {
+          delivery_period_id: null,
+          city_id: null,
+        },
+      ],
+    },
+  ],
+})
+
+onMounted(() => {
+  citiesListStore.fetchCities({ pageSize: -1 }).then(response => {
+    cities.value = response.data.data
+  })
+  categoryListStore.fetchCategories({ pageSize: -1 }).then(response => {
+    categories.value = response.data.data
+  })
+  categoryListStore.fetchSubCategories({ pageSize: -1 }).then(response => {
+    sub_categories.value = response.data.data
+  })
+  settingsListStore.fetchProductSize({ pageSize: -1 }).then(response => {
+    sizes.value = response.data.data
+  })
+  settingsListStore.fetchProductCut({ pageSize: -1 }).then(response => {
+    cuts.value = response.data.data
+  })
+  settingsListStore.fetchProductPerparation({ pageSize: -1 }).then(response => {
+    preparations.value = response.data.data
+  })
+  settingsListStore.fetchPaymentTypes({ pageSize: -1 }).then(response => {
+    payment_type_ids.value = response.data.data
+  })
+})
+
+onUpdated(() => {
+  itemData.id = props.item.id
+  itemData.name_ar = props.item.name_ar
+  itemData.name_en = props.item.name_en
+  itemData.weight = props.item.weight
+  itemData.calories = props.item.calories
+  itemData.description_ar = props.item.description_ar
+  itemData.description_en = props.item.description_en
+  itemData.sale_price = props.item['sale price']
+  itemData.price = props.item.price
+  itemData.is_active = props.item.is_active ?? 0
+  itemData.is_available = props.item.is_available ?? 0
+  itemData.is_kwar3 = props.item.is_kwar3 ?? 0
+  itemData.is_Ras = props.item.is_Ras ?? 0
+  itemData.is_lyh = props.item.is_lyh ?? 0
+  itemData.is_karashah = props.item.is_karashah ?? 0
+  itemData.category_id = props.item.category ?? 0
+  itemData.sub_category_id = props.item.sub_category ?? 0
+  itemData.is_shalwata = props.item.is_shalwata ?? 0
+  itemData.is_delivered = props.item.is_delivered ?? 0
+  itemData.is_picked_up = props.item.is_picked_up ?? 0
+  itemData.preparation_ids = props.item.preparation_ids ?? []
+  itemData.size_ids = props.item.size_ids ?? []
+  itemData.cut_ids = props.item.cut_ids ?? []
+  itemData.payment_type_ids = props.item.payment_types ?? []
+  itemData.city_ids = props.item.cities ?? []
+})
+
+const form = ref()
 
 const resetForm = () => {
-  emit('update:isAddOpen', false)
-  billingAddress.value = structuredClone(toRaw(props.billingAddress))
+  emit('update:isEditOpen', false)
 }
 
 const onFormSubmit = () => {
-  emit('update:isAddOpen', false)
-  emit('bannerData', billingAddress.value)
+  isLoading.value = true
+  productsListStore.editProduct(itemData).then(response => {
+    emit('refreshTable')
+    emit('update:isEditOpen', false)
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم تعديل العنصر بنجاح"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+      isLoading.value = false
+    }, 2000)
+  }).catch(error => {
+    isLoading.value = false
+    settingsListStore.alertColor = "error"
+    settingsListStore.alertMessage = "حدث خطأ ما !"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
+  })
 }
 
 const dialogModelValueUpdate = val => {
-  emit('update:isAddOpen', val)
+  emit('update:isEditOpen', val)
 }
 </script>
 
 <template>
   <VDialog
     :width="$vuetify.display.smAndDown ? 'auto' : 650 "
-    :model-value="props.isAddOpen"
+    :model-value="props.isEditOpen"
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
 
     <VCard
-      v-if="props.billingAddress"
       class="pa-sm-9 pa-5"
     >
-      <!-- 👉 Title -->
       <VCardItem>
-        <VCardTitle class="text-h5 text-center mb-3">
-          Edit Address
+        <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
+          <VIcon icon="streamline:shopping-bag-hand-bag-1-shopping-bag-purse-goods-item-products" size="24"
+                 color="primary"
+          ></VIcon>
+          <span class="mx-1 my-1">
+            {{ t('Add_Item') }}
+          </span>
         </VCardTitle>
-        <!-- 👉 Subtitle -->
-        <p class="text-center">
-          Edit Address for future billing
-        </p>
       </VCardItem>
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit">
+        <VForm @submit.prevent="onFormSubmit" ref="bannerData">
           <VRow>
-            <!-- 👉 Company Name -->
             <VCol
               cols="12"
               md="6"
             >
               <VTextField
-                v-model="billingAddress.companyName"
-                label="Company Name"
+                v-model="itemData.name_ar"
+                :label="t('forms.name_ar')"
+                :rules="[requiredValidator]"
               />
             </VCol>
-
-            <!-- 👉 Email -->
             <VCol
               cols="12"
               md="6"
             >
               <VTextField
-                v-model="billingAddress.billingEmail"
-                label="Email"
+                v-model="itemData.name_en"
+                :label="t('forms.name_en')"
+                :rules="[requiredValidator]"
               />
             </VCol>
-
-            <!-- 👉 Tax ID -->
             <VCol
               cols="12"
               md="6"
             >
               <VTextField
-                v-model="billingAddress.taxID"
-                label="Tax ID"
+                v-model="itemData.weight"
+                :label="t('forms.weight')"
+                :rules="[requiredValidator]"
               />
             </VCol>
-
-            <!-- 👉 VAT Number -->
             <VCol
               cols="12"
               md="6"
             >
               <VTextField
-                v-model="billingAddress.vatNumber"
-                label="VAT Number"
+                v-model="itemData.calories"
+                :label="t('forms.calories')"
+                :rules="[requiredValidator]"
               />
             </VCol>
-
-            <!-- 👉 Billing Address -->
-            <VCol cols="12">
-              <VTextarea
-                v-model="billingAddress.address"
-                rows="2"
-                label="Billing Address"
-              />
-            </VCol>
-
-            <!-- 👉 Contact -->
             <VCol
               cols="12"
               md="6"
             >
               <VTextField
-                v-model="billingAddress.contact"
-                label="Contact"
+                v-model="itemData.description_ar"
+                :label="t('forms.description_ar')"
+                :rules="[requiredValidator]"
               />
             </VCol>
-
-            <!-- 👉 Country -->
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VTextField
+                v-model="itemData.description_en"
+                :label="t('forms.description_en')"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VTextField
+                v-model="itemData.sale_price"
+                :label="t('forms.sale_price')"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VTextField
+                v-model="itemData.price"
+                :label="t('forms.price')"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
             <VCol
               cols="12"
               md="6"
             >
               <VSelect
-                v-model="billingAddress.country"
-                label="Country"
-                :items="['USA', 'Uk', 'France', 'Germany', 'Japan']"
+                v-model="itemData.category_id"
+                :items="categories.value"
+                :label="t('forms.categories')"
+                item-title="type_ar"
+                item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
-
-            <!-- 👉 State -->
             <VCol
               cols="12"
               md="6"
             >
-              <VTextField
-                v-model="billingAddress.state"
-                label="State"
+              <VSelect
+                v-model="itemData.sub_category_id"
+                :items="sub_categories.value"
+                :label="t('forms.sub_categories')"
+                item-title="type_ar"
+                item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
-
-            <!-- 👉 Zip Code -->
             <VCol
               cols="12"
               md="6"
             >
-              <VTextField
-                v-model="billingAddress.zipCode"
-                label="Zip Code"
+              <VSelect
+                v-model="itemData.cut_ids"
+                :items="cuts.value"
+                :label="t('forms.product_cut')"
+                item-title="name_ar"
+                item-value="id"
+                multiple
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSelect
+                v-model="itemData.size_ids"
+                :items="sizes.value"
+                :label="t('forms.product_size')"
+                item-title="name_ar"
+                item-value="id"
+                multiple
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSelect
+                v-model="itemData.preparation_ids"
+                :items="preparations.value"
+                :label="t('forms.product_preparation')"
+                item-title="name_ar"
+                item-value="id"
+                multiple
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSelect
+                v-model="itemData.city_ids"
+                :items="cities.value"
+                :label="t('forms.cities')"
+                item-title="name_ar"
+                item-value="id"
+                multiple
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSelect
+                v-model="itemData.payment_type_ids"
+                :items="payment_type_ids.value"
+                :label="t('forms.payment_type_ids')"
+                item-title="name_ar"
+                item-value="id"
+                multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
 
-            <!-- 👉 Submit and Cancel button -->
+            <VCol cols="12" md="6"></VCol>
+
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSwitch
+                v-model="itemData.is_active"
+                :label="t('forms.is_active')"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSwitch
+                v-model="itemData.is_available"
+                :label="t('forms.is_available')"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSwitch
+                v-model="itemData.is_kwar3"
+                :label="t('forms.is_kwar3')"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSwitch
+                v-model="itemData.is_Ras"
+                :label="t('forms.is_Ras')"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSwitch
+                v-model="itemData.is_lyh"
+                :label="t('forms.is_lyh')"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSwitch
+                v-model="itemData.is_karashah"
+                :label="t('forms.is_karashah')"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSwitch
+                v-model="itemData.is_shalwata"
+                :label="t('forms.is_shalwata')"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSwitch
+                v-model="itemData.is_delivered"
+                :label="t('forms.is_delivered')"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSwitch
+                v-model="itemData.is_picked_up"
+                :label="t('forms.is_picked_up')"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+
+
             <VCol
               cols="12"
               class="text-center"
             >
               <VBtn
+                v-if="!isLoading"
                 type="submit"
                 class="me-3"
               >
-                submit
+                {{ t('buttons.save') }}
+              </VBtn>
+              <VBtn
+                v-else
+                type="submit"
+                class="position-relative me-3"
+              >
+                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
               </VBtn>
 
               <VBtn
@@ -175,7 +494,7 @@ const dialogModelValueUpdate = val => {
                 color="secondary"
                 @click="resetForm"
               >
-                Cancel
+                {{ t('buttons.cancel') }}
               </VBtn>
             </VCol>
           </VRow>

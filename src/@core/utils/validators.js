@@ -5,7 +5,7 @@ export const requiredValidator = value => {
   if (isNullOrUndefined(value) || isEmptyArray(value) || value === false)
     return 'هذا الحقل مطلوب'
   
-  return !!String(value).trim().length || 'This field is required'
+  return !!String(value).trim().length || 'هذا الحقل مطلوب'
 }
 
 // 👉 Email Validator
