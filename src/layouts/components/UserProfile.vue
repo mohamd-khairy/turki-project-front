@@ -70,9 +70,10 @@ const logout = () => {
             </template>
 
             <VListItemTitle class="font-weight-semibold">
-              {{ user.username ?? "مستخدم نجدي" }}
+              {{ user.username ?? "مستخدم نجدية" }}
             </VListItemTitle>
             <VListItemSubtitle>
+              {{user.is_active}}
               <VIcon icon="octicon:dot-fill-24" :color="user.is_active == true ? '#008000' : '#f00000'" size="16"
               ></VIcon>
               <span class="mx-1">

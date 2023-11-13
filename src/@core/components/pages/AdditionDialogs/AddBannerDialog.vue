@@ -108,7 +108,7 @@ const resetForm = () => {
   bannerData.redirect_mobile_url =  null,
   bannerData.product_id =  null,
   bannerData.category_id =  null,
-  bannerData.city_ids =  null,
+  bannerData.city_ids =  [],
   emit('update:isAddOpen', false)
 }
 
@@ -264,6 +264,7 @@ const dialogModelValueUpdate = val => {
                 :items="cities.value"
                 item-title="name_ar"
                 item-value="id"
+                multiple
                 :rules="[requiredValidator]"
               />
             </VCol>
