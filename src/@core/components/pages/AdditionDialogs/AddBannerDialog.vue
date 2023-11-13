@@ -1,13 +1,13 @@
 <script setup>
-import { useI18n } from "vue-i18n"
-import { useProductsStore } from "@/store/Products"
 import { useBannersStore } from "@/store/Banners"
 import { useCategoriesStore } from "@/store/Categories"
 import { useCitiesStore } from "@/store/Cities"
-import {
-  requiredValidator,
-} from '@validators'
+import { useProductsStore } from "@/store/Products"
 import { useSettingsStore } from "@/store/Settings"
+import {
+requiredValidator,
+} from '@validators'
+import { useI18n } from "vue-i18n"
 
 const props = defineProps({
   isAddOpen: {
@@ -95,7 +95,6 @@ const statuses = reactive([
 ])
 
 const resetForm = () => {
-  emit('update:isAddOpen', false)
   bannerData.title =  null,
   bannerData.title_color =  null,
   bannerData.sub_title =  null,
@@ -110,6 +109,7 @@ const resetForm = () => {
   bannerData.product_id =  null,
   bannerData.category_id =  null,
   bannerData.city_ids =  null,
+  emit('update:isAddOpen', false)
 }
 
 const onFormSubmit = () => {

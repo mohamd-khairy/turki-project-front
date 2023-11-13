@@ -45,6 +45,7 @@ declare module '@vue/runtime-core' {
     DeleteCityDialog: typeof import('./src/@core/components/pages/DeleteDialogs/DeleteCityDialog.vue')['default']
     DeleteCountryDialog: typeof import('./src/@core/components/pages/DeleteDialogs/DeleteCountryDialog.vue')['default']
     DeleteCouponsDialog: typeof import('./src/@core/components/pages/DeleteDialogs/DeleteCouponsDialog.vue')['default']
+    DeleteCustomerDialog: typeof import('./src/@core/components/pages/DeleteDialogs/DeleteCustomerDialog.vue')['default']
     DeleteEmployeeDialog: typeof import('./src/@core/components/pages/DeleteDialogs/DeleteEmployeeDialog.vue')['default']
     DeleteoOrdersDialog: typeof import('./src/@core/components/pages/DeleteDialogs/DeleteoOrdersDialog.vue')['default']
     DeletePaymentTypeDialog: typeof import('./src/@core/components/pages/DeleteDialogs/DeletePaymentTypeDialog.vue')['default']
