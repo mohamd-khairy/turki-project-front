@@ -11,29 +11,52 @@ export const useProductsStore = defineStore('ProductsStore', {
     // 👉 Fetch single banner
     storeProduct(data) {
       const formData = new FormData()
+
       let cty_ids = " "
       Object.values(data.city_ids).map(ctid => {
-        cty_ids = cty_ids + ',' + ctid
+        if (typeof ctid == "object") {
+          cty_ids = cty_ids.length == 0 ? `${ctid.id}` : cty_ids + ',' + ctid.id
+        } else {
+          cty_ids = cty_ids.length == 0 ? `${ctid}` : cty_ids + ',' + ctid
+        }
       })
 
       let prep_ids = " "
       Object.values(data.preparation_ids).map(prpid => {
-        prep_ids = prep_ids + ',' + prpid
+        if (typeof prpid == "object") {
+          prep_ids = prep_ids.length == 0 ? `${prpid.id}` : prep_ids + ',' + prpid.id
+        } else {
+          prep_ids = prep_ids.length == 0 ? `${prpid}` : prep_ids + ',' + prpid
+        }
       })
 
       let size_ids = " "
       Object.values(data.size_ids).map(prpid => {
-        size_ids = size_ids + ',' + prpid
+        if (typeof prpid == "object") {
+          size_ids = size_ids.length == 0 ? `${prpid.id}` : size_ids + ',' + prpid.id
+        } else {
+          size_ids = size_ids.length == 0 ? `${prpid}` : size_ids + ',' + prpid
+        }
       })
 
       let cut_ids = " "
       Object.values(data.cut_ids).map(prpid => {
-        cut_ids = cut_ids + ',' + prpid
+        // cut_ids = cut_ids + ',' + prpid
+        if (typeof prpid == "object") {
+          cut_ids = cut_ids.length == 0 ? `${prpid.id}` : cut_ids + ',' + prpid.id
+        } else {
+          cut_ids = cut_ids.length == 0 ? `${prpid}` : cut_ids + ',' + prpid
+        }
       })
 
       let payment_ids = " "
       Object.values(data.payment_type_ids).map(prpid => {
-        payment_ids = payment_ids + ',' + prpid
+        // payment_ids = payment_ids + ',' + prpid
+        if (typeof prpid == "object") {
+          payment_ids = payment_ids.length == 0 ? `${prpid.id}` : payment_ids + ',' + prpid.id
+        } else {
+          payment_ids = payment_ids.length == 0 ? `${prpid}` : payment_ids + ',' + prpid
+        }
       })
 
       formData.append("name_ar", data.name_ar)
@@ -66,58 +89,52 @@ export const useProductsStore = defineStore('ProductsStore', {
 
     editProduct(data) {
       const formData = new FormData()
+
       let cty_ids = " "
       Object.values(data.city_ids).map(ctid => {
-        if(typeof ctid == 'object') {
-          cty_ids = cty_ids + ',' + ctid.id
-        }
-        else {
-          cty_ids = cty_ids + ',' + ctid
+        if (typeof ctid == "object") {
+          cty_ids = cty_ids.length == 0 ? `${ctid.id}` : cty_ids + ',' + ctid.id
+        } else {
+          cty_ids = cty_ids.length == 0 ? `${ctid}` : cty_ids + ',' + ctid
         }
       })
 
       let prep_ids = " "
       Object.values(data.preparation_ids).map(prpid => {
-        if(typeof prpid == 'object') {
-          prep_ids = prep_ids + ',' + prpid.id
+        if (typeof prpid == "object") {
+          prep_ids = prep_ids.length == 0 ? `${prpid.id}` : prep_ids + ',' + prpid.id
+        } else {
+          prep_ids = prep_ids.length == 0 ? `${prpid}` : prep_ids + ',' + prpid
         }
-        else {
-          prep_ids = prep_ids + ',' + prpid
-        }
-        // prep_ids = prep_ids + ',' + prpid
       })
 
       let size_ids = " "
       Object.values(data.size_ids).map(prpid => {
-        // size_ids = size_ids + ',' + prpid
-        if(typeof prpid == 'object') {
-          size_ids = size_ids + ',' + prpid.id
-        }
-        else {
-          size_ids = size_ids + ',' + prpid
+        if (typeof prpid == "object") {
+          size_ids = size_ids.length == 0 ? `${prpid.id}` : size_ids + ',' + prpid.id
+        } else {
+          size_ids = size_ids.length == 0 ? `${prpid}` : size_ids + ',' + prpid
         }
       })
 
       let cut_ids = " "
       Object.values(data.cut_ids).map(prpid => {
         // cut_ids = cut_ids + ',' + prpid
-        if(typeof prpid == 'object') {
-          cut_ids = cut_ids + ',' + prpid.id
-        }
-        else {
-          cut_ids = cut_ids + ',' + prpid
+        if (typeof prpid == "object") {
+          cut_ids = cut_ids.length == 0 ? `${prpid.id}` : cut_ids + ',' + prpid.id
+        } else {
+          cut_ids = cut_ids.length == 0 ? `${prpid}` : cut_ids + ',' + prpid
         }
       })
 
       let payment_ids = " "
       Object.values(data.payment_type_ids).map(prpid => {
-        if(typeof prpid == 'object') {
-          payment_ids = payment_ids + ',' + prpid.id
+        // payment_ids = payment_ids + ',' + prpid
+        if (typeof prpid == "object") {
+          payment_ids = payment_ids.length == 0 ? `${prpid.id}` : payment_ids + ',' + prpid.id
+        } else {
+          payment_ids = payment_ids.length == 0 ? `${prpid}` : payment_ids + ',' + prpid
         }
-        else {
-          payment_ids = payment_ids + ',' + prpid
-        }
-        // payment_ids = payment_ids + ',' + prpid.id
       })
 
       formData.append("name_ar", data.name_ar)
