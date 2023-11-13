@@ -17,7 +17,7 @@ export const useBannersStore = defineStore('BannersStore', {
     storeBanner(banner) {
       const formData = new FormData()
 
-      let cty_ids = " "
+      let cty_ids = ""
       Object.values(banner.city_ids).map(ctid => {
         if (typeof ctid == "object") {
           cty_ids = cty_ids.length == 0 ? `${ctid.id}` : cty_ids + ',' + ctid.id
@@ -70,7 +70,7 @@ export const useBannersStore = defineStore('BannersStore', {
       formData.append("product_id", banner.product_id)
       formData.append("category_id", typeof banner.category_id == 'object' ? banner.category_id.id : banner.category_id)
       formData.append("city_ids", cty_ids)
-      if (typeof banner.image !== "object" && banner.image !== {}) {
+      if (typeof banner.image !== undefined && banner.image !== {}) {
         formData.append("image", banner.image[0])
       }
 
