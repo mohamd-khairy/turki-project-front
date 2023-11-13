@@ -18,3 +18,29 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+.loading {
+  //position: absolute;
+  //top: 10%;
+  //right: 23%;
+  inset-inline-start: calc(0%);
+  animation: spinner 0.3s infinite backwards;
+  &.fixed{
+    position: relative !important;
+  }
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

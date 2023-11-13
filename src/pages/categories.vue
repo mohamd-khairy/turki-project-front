@@ -56,11 +56,11 @@ const paginateCategories = computed(() => {
 })
 
 const nextPage = () => {
-  if ((currentPage.value * rowPerPage.value) < categories.value.length) currentPage.value++
+  if ((currentPage.value * rowPerPage.value) < categories.value.length) currentPage.value
 }
 
 const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
+  if (currentPage.value > 1) currentPage.value
 }
 
 // 👉 Computing pagination data
@@ -101,7 +101,7 @@ const formatDateTime = data => {
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="carbon:categories" size="24"></VIcon>
+        <VIcon icon="carbon:categories" size="24" color="primary"></VIcon>
         <span class="mx-1">{{ t('Categories') }}</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
@@ -117,6 +117,7 @@ const formatDateTime = data => {
         <VBtn
           prepend-icon="tabler-plus"
           @click="isAddOpen = true"
+          v-can="'create-category'"
         >
           {{ t('Add_Category') }}
         </VBtn>
@@ -179,6 +180,7 @@ const formatDateTime = data => {
             <th
               scope="col"
               class="font-weight-semibold"
+              v-can="'read-category' || 'update-category' || 'delete-category'"
             >
               {{ t('forms.actions') }}
             </th>
@@ -194,14 +196,14 @@ const formatDateTime = data => {
               #{{ ++i }}
             </td>
             <td>
-              <img :src="category.image_url" alt="منتج" width="50" v-if="category.image_url.toString().split('storage/')[1] !== '' && category.image_url !== null">
+              <img :src="category.image_url" alt="منتج" width="50" height="50" v-if="category.image_url.toString().split('storage/')[1] !== '' && category.image_url !== null">
               <VIcon icon="iconoir:n-square" size="32" v-else></VIcon>
             </td>
             <td>
                 {{ category.type_ar }}
             </td>
             <td>
-                {{ category.description }}
+                {{ category.description.toString().length > 30 ? category.description.toString().slice(0,30) : category.description  }}
             </td>
             <td>
               <VChip v-for="(city , i) in category.cities" :key="city.id" class="mx-1" :style="{display: i < 1 ? '' : 'none'}">
@@ -214,7 +216,7 @@ const formatDateTime = data => {
             <td>
               {{ ConvertToArabicNumbers(formatDateTime(category.created_at).date) }}
             </td>
-            <td>
+            <td v-can="'read-category' || 'update-category' || 'delete-category'">
 <!--              <VBtn-->
 <!--                icon-->
 <!--                variant="plain"-->
@@ -227,6 +229,7 @@ const formatDateTime = data => {
 <!--                />-->
 <!--              </VBtn>-->
               <VBtn
+                v-can="'update-category'"
                 icon
                 variant="plain"
                 color="default"
@@ -239,6 +242,7 @@ const formatDateTime = data => {
                 />
               </VBtn>
               <VBtn
+                v-can="'delete-category'"
                 icon
                 variant="plain"
                 color="default"

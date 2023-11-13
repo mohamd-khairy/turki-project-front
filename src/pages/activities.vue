@@ -1,46 +1,54 @@
 <script setup>
-// import { useActivitiesStore } from '@/store/Orders'
+import moment from "moment"
 import { useI18n } from "vue-i18n"
+import { useActivitiesStore } from "@/store/Activities"
+
 const { t } = useI18n()
 
-const activitiesListStore = useActivitiesStore()
+const activitesListStore = useActivitiesStore()
 const searchQuery = ref('')
 const selectedStatus = ref()
-const rowPerPage = ref(7)
+const rowPerPage = ref(5)
 const currentPage = ref(1)
 const totalPage = ref(1)
-const totalActivities = ref(0)
-const activities = ref([])
+const totalActivites = ref(0)
+const activites = ref([])
 const selectedRows = ref([])
+const isAddOpen = ref(false)
+const isDeleteOpen = ref(false)
+const selectedOrder = ref({})
+const isEditOpen = ref(false)
 
-// 👉 Fetch Activities
-watchEffect(() => {
-  activitiesListStore.fetchActivities({
+const getActivites = () => {
+  activitesListStore.fetchActivities({
     q: searchQuery.value,
-    status: selectedStatus.value,
-    perPage: rowPerPage.value,
-    currentPage: currentPage.value,
   }).then(response => {
-    activities.value = response.data.activities
-    totalPage.value = response.data.activities
-    totalActivities.value = response.data.totalActivities
+    activites.value = response.data.data.data
+    totalPage.value = activites.value / rowPerPage
+    totalActivites.value = activites.value.length
+    currentPage.value = 1
   }).catch(error => {
     console.log(error)
   })
+}
+
+// 👉 Fetch Categories
+watchEffect(() => {
+  getActivites()
 })
 
 
-// 👉 Fetch Banners
+// 👉 Fetch Countrys
 watchEffect(() => {
   if (rowPerPage.value) {
     currentPage.value = 1
   }
 })
 
-const paginateBanners = computed(() => {
-  totalPage.value = Math.ceil(banners.value.length / rowPerPage.value)
+const paginateActivites = computed(() => {
+  totalPage.value = Math.ceil(activites.value.length / rowPerPage.value)
 
-  return banners.value.filter((row, index) => {
+  return activites.value.filter((row, index) => {
     let start = (currentPage.value - 1) * rowPerPage.value
     let end = currentPage.value * rowPerPage.value
     if (index >= start && index < end) return true
@@ -48,28 +56,44 @@ const paginateBanners = computed(() => {
 })
 
 const nextPage = () => {
-  if ((currentPage.value * rowPerPage.value) < banners.value.length) currentPage.value++
+  if ((currentPage.value * rowPerPage.value) < activites.value.length) currentPage.value
 }
 
 const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
+  if (currentPage.value > 1) currentPage.value
 }
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
-  const firstIndex = banners.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
-  const lastIndex = firstIndex + (rowPerPage.value - 1) <= banners.value.length ? firstIndex + (rowPerPage.value - 1) : totalBanners.value
+  const firstIndex = activites.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
+  const lastIndex = firstIndex + (rowPerPage.value - 1) <= activites.value.length ? firstIndex + (rowPerPage.value - 1) : totalActivites.value
 
-  return ` عرض من ${firstIndex} إلي ${lastIndex} من ${totalBanners.value} الإجمالي `
+  return ` عرض من ${ConvertToArabicNumbers(firstIndex)} إلي ${ConvertToArabicNumbers(lastIndex)} من ${ConvertToArabicNumbers(totalActivites.value)} الإجمالي `
 })
+
+// Functions
+const ConvertToArabicNumbers = num => {
+  const arabicNumbers = "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669"
+
+  return String(num).replace(/[0123456789]/g, d => {
+    return arabicNumbers[d]
+  })
+}
+
+const formatDateTime = data => {
+  let date = moment(data).format("DD-MM-YYYY")
+  let time = moment(data).format("hh:mm:ss A")
+
+  return { date, time }
+}
 </script>
 
 <template>
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="game-icons:vertical-activitie" size="24"></VIcon>
-        <span class="mx-1"> {{ t('Activities') }} </span>
+        <VIcon icon="octicon:log-24" size="24" color="primary"></VIcon>
+        <span class="mx-1">{{ t('Activites') }}</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
         <!-- 👉 Rows per page -->
@@ -77,194 +101,105 @@ const paginationData = computed(() => {
           <VSelect
             v-model="rowPerPage"
             variant="outlined"
-            :items="[7, 10, 20, 30, 50]"
+            :items="[5, 10, 20, 30, 50]"
           />
         </div>
 
-        <div class="w-25 d-flex align-center flex-wrap gap-1">
-          <!-- 👉 Search  -->
-          <div class="w-100 Activitie-list-search">
-            <VTextField
-              v-model="searchQuery"
-              placeholder="بحث"
-              density="compact"
-              full-width
-            />
-          </div>
-        </div>
+        <VSpacer/>
+
+
       </VCardText>
 
-      <VDivider />
+      <VDivider/>
 
-      <!-- SECTION Table -->
-      <VTable class="text-no-wrap activitie-list-table">
-        <!-- 👉 Table head -->
+      <VTable class="text-no-wrap product-list-table">
         <thead>
         <tr>
           <th
             scope="col"
             class="font-weight-semibold"
           >
-            ID
           </th>
           <th
             scope="col"
             class="font-weight-semibold"
           >
-            <VIcon icon="tabler-trending-up" />
-          </th>
-          <th
-            scope="col"
-            class="text-center font-weight-semibold"
-          >
-            TOTAL
-          </th>
-          <th
-            scope="col"
-            class="text-center font-weight-semibold"
-          >
-            ISSUED DATE
+            {{ t('forms.log_name') }}
           </th>
           <th
             scope="col"
             class="font-weight-semibold"
           >
-            <span class="ms-2">ACTIONS</span>
+            {{ t('forms.causer') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.causer_type') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.description') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.subject') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.subject_type') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.created_at') }}
           </th>
         </tr>
         </thead>
 
-        <!-- 👉 Table Body -->
         <tbody>
         <tr
-          v-for="activitie in activities"
-          :key="activitie.id"
+          v-for="(order, i) in paginateActivites"
+          :key="order.id"
         >
-          <!-- 👉 Id -->
           <td>
-            <RouterLink :to="{ name: 'apps-activitie-preview-id', params: { id: activitie.id } }">
-              #{{ activitie.id }}
-            </RouterLink>
+            #{{ ConvertToArabicNumbers(Intl.NumberFormat().format(++i)) }}
           </td>
-
-          <!-- 👉 Trending -->
           <td>
-            <VTooltip>
-              <template #activator="{ props }">
-                <VAvatar
-                  :size="30"
-                  v-bind="props"
-                  variant="tonal"
-                >
-                  <VIcon
-                    :size="20"
-                  />
-                </VAvatar>
-              </template>
-              <p class="mb-0">
-                {{ activitie.activitieStatus }}
-              </p>
-              <p class="mb-0">
-                Balance: {{ activitie.balance }}
-              </p>
-              <p class="mb-0">
-                Due date: {{ activitie.dueDate }}
-              </p>
-            </VTooltip>
+            {{ order.log_name }}
+          </td>
+          <td>
+            {{ order.causer ? order.causer.username ? order.causer.username : '-'  : '-' }}
+          </td>
+          <td>
+            {{ order.causer_type }}
+          </td>
+          <td>
+            {{ order.description ? order.description : '-' }}
+          </td>
+          <td>
+            {{ order.subject ? order.subject.name_ar ? order.subject.name_ar : '-' : '-' }}
+          </td>
+          <td>
+            {{ order.subject_type }}
           </td>
 
-          <!-- 👉 total -->
-          <td class="text-center text-medium-emphasis">
-            ${{ activitie.total }}
-          </td>
-
-          <!-- 👉 Date -->
-          <td class="text-center text-medium-emphasis">
-            {{ activitie.issuedDate }}
-          </td>
-
-          <!-- 👉 Actions -->
-          <td style="width: 7.5rem;">
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-            >
-              <VIcon
-                icon="tabler-mail"
-                :size="22"
-              />
-            </VBtn>
-
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-              :to="{ name: 'apps-activitie-preview-id', params: { id: activitie.id } }"
-            >
-              <VIcon
-                :size="22"
-                icon="tabler-eye"
-              />
-            </VBtn>
-
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-            >
-              <VIcon
-                :size="22"
-                icon="tabler-dots-vertical"
-              />
-              <VMenu activator="parent">
-                <VList density="compact">
-                  <VListItem value="Download">
-                    <template #prepend>
-                      <VIcon
-                        size="22"
-                        class="me-3"
-                        icon="tabler-download"
-                      />
-                    </template>
-
-                    <VListItemTitle>Download</VListItemTitle>
-                  </VListItem>
-
-                  <VListItem :to="{ name: '/apps/activities/edit/[id]', params: { id: activitie.id } }">
-                    <template #prepend>
-                      <VIcon
-                        size="22"
-                        class="me-3"
-                        icon="tabler-pencil"
-                      />
-                    </template>
-
-                    <VListItemTitle>Edit</VListItemTitle>
-                  </VListItem>
-                  <VListItem value="Duplicate">
-                    <template #prepend>
-                      <VIcon
-                        size="22"
-                        class="me-3"
-                        icon="tabler-stack"
-                      />
-                    </template>
-
-                    <VListItemTitle>Duplicate</VListItemTitle>
-                  </VListItem>
-                </VList>
-              </VMenu>
-            </VBtn>
+          <td>
+            {{ ConvertToArabicNumbers(formatDateTime(order.created_at).date) }}
           </td>
         </tr>
         </tbody>
 
         <!-- 👉 table footer  -->
-        <tfoot v-show="!activities.length">
+        <tfoot v-show="!activites.length">
         <tr>
           <td
             colspan="8"
@@ -277,25 +212,21 @@ const paginationData = computed(() => {
       </VTable>
       <!-- !SECTION -->
 
-      <VDivider />
+      <VDivider/>
 
-      <!-- SECTION Pagination -->
       <VCardText class="d-flex align-center flex-wrap justify-space-between gap-4 py-3">
-        <!-- 👉 Pagination meta -->
         <span class="text-sm text-disabled">{{ paginationData }}</span>
 
-        <!-- 👉 Pagination -->
         <VPagination
           v-model="currentPage"
           size="small"
-          :total-visible="5"
+          :total-visible="rowPerPage"
           :length="totalPage"
-          @next="selectedRows = []"
-          @prev="selectedRows = []"
+          @next="nextPage"
+          @prev="prevPage"
         />
       </VCardText>
     </VCard>
+
   </div>
 </template>
-<script setup>
-</script>

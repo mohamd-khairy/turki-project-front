@@ -19,12 +19,15 @@ const emit = defineEmits([
 ])
 
 import { useI18n } from "vue-i18n"
+import { useSettingsStore } from "@/store/Settings"
 
 const { t } = useI18n()
 const citiesListStore = useCitiesStore()
 const categoriesListStore = useCategoriesStore()
+const settingsListStore = useSettingsStore()
 const categories = reactive([])
 const cities = reactive([])
+const isLoading = ref(false)
 
 onMounted(() => {
   citiesListStore.fetchCities({ pageSize: -1 }).then(response => {
@@ -51,7 +54,7 @@ const categoryData = reactive({
   type_en: null,
   description: null,
   category_id: null,
-  city_ids: null,
+  city_ids: [],
 })
 
 // Functions
@@ -60,9 +63,27 @@ const resetForm = () => {
 }
 
 const onFormSubmit = () => {
+  isLoading.value = true
   categoriesListStore.editSubCategory(categoryData).then(response => {
     emit('update:isEditOpen', false)
     emit('refreshTable')
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم تعديل العنصر بنجاح"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+      isLoading.value = false
+    }, 1000)
+  }).catch(error => {
+    isLoading.value = false
+    settingsListStore.alertColor = "error"
+    settingsListStore.alertMessage = "حدث خطأ ما !"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
   })
 }
 
@@ -86,7 +107,7 @@ const dialogModelValueUpdate = val => {
       <!-- 👉 Title -->
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="carbon:category-new-each" size="24"></VIcon>
+          <VIcon icon="carbon:category-new-each" size="24" color="primary"></VIcon>
           <span class="mx-1 my-1">
             {{ t('Edit_Sub_Category') }}
           </span>
@@ -170,10 +191,18 @@ const dialogModelValueUpdate = val => {
               class="text-center"
             >
               <VBtn
+                v-if="!isLoading"
                 type="submit"
                 class="me-3"
               >
                 {{ t("buttons.save") }}
+              </VBtn>
+              <VBtn
+                v-else
+                type="submit"
+                class="position-relative me-3"
+              >
+                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
               </VBtn>
 
               <VBtn

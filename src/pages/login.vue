@@ -1,5 +1,4 @@
 <script setup>
-// import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
@@ -15,14 +14,16 @@ import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
 import { useAuthStore } from "@/store/Auth"
 import axiosIns from "@axios"
+import { useSettingsStore } from "@/store/Settings"
 
 const authThemeImg = useGenerateImageVariant(authV2LoginIllustrationLight, authV2LoginIllustrationDark, authV2LoginIllustrationBorderedLight, authV2LoginIllustrationBorderedDark, true)
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 const isPasswordVisible = ref(false)
+const settingsListStore = useSettingsStore()
 
 const user = reactive({
-  email: ref('admin@admin.com'),
-  password: ref('password'),
+  email: ref(''),
+  password: ref(''),
 })
 
 const rememberMe = ref(false)
@@ -30,12 +31,38 @@ const rememberMe = ref(false)
 const auth = useAuthStore()
 const router = useRouter()
 
+const isLoading = ref(false)
+const isError = ref(false)
+const alertMessage = ref("")
+
 const loginUser = () => {
+  isLoading.value = true
   auth.login(user).then(res => {
     localStorage.setItem("najdUser", JSON.stringify(res.data.data))
     localStorage.setItem("najdToken", res.data.data.api_token)
+    localStorage.setItem("najdPermissions", JSON.stringify(res.data.data.permissions))
     axiosIns.defaults.headers.Authorization = `Bearer ${res.data.data.api_token}`
     router.push({ name: 'index' })
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم تسجيل الدخول بنجاح"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 3000)
+  }).catch(error => {
+    isLoading.value = false
+    settingsListStore.alertColor = "error"
+    settingsListStore.alertMessage = "حدث خطأ ما !"
+    if(error.response.status == 400) {
+      isError.value = true
+      alertMessage.value = "بيانات تسجيل الدخول خاطئة"
+    }
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 3000)
   })
 }
 </script>
@@ -91,6 +118,14 @@ const loginUser = () => {
         <VCardText>
           <VForm @submit.prevent="loginUser">
             <VRow>
+              <VCol v-if="isError">
+                <p class="mb-0 text-danger">
+                  <VIcon icon="carbon:close-filled" color="danger"></VIcon>
+                  <span class="mx-2">
+                    {{ alertMessage}}
+                  </span>
+                </p>
+              </VCol>
               <!-- email -->
               <VCol cols="12">
                 <VTextField
@@ -125,15 +160,23 @@ const loginUser = () => {
                 </div>
 
                 <VBtn
+                  v-if="!isLoading"
                   block
                   type="submit"
                   size="large"
                 >
                   تسجيل الدخول
                 </VBtn>
+                <VBtn
+                  v-else
+                  type="submit"
+                  size="large"
+                  class="w-100 position-relative me-3"
+                >
+                  <VIcon icon="mingcute:loading-line" class="fixed loading" size="32"></VIcon>
+                </VBtn>
               </VCol>
 
-              <!-- create account -->
               <VCol
                 cols="12"
                 class="text-center"
@@ -161,6 +204,9 @@ const loginUser = () => {
 
 <style lang="scss">
 @use "@core/scss/template/pages/page-auth.scss";
+.text-danger {
+  color: red;
+}
 </style>
 
 <route lang="yaml">

@@ -20,8 +20,9 @@ const ConvertToArabicNumbers = num => {
 <template>
   <VRow>
     <VCol
-      cols="6"
+      cols="12"
       md="3"
+      sm="6"
     >
       <VCard class="d-flex pa-5" :loading="!props.statistics.value">
         <VAvatar
@@ -46,8 +47,9 @@ const ConvertToArabicNumbers = num => {
       </VCard>
     </VCol>
     <VCol
-      cols="6"
+      cols="12"
       md="3"
+      sm="6"
     >
       <VCard class="d-flex pa-5" :loading="!props.statistics.value">
         <VAvatar
@@ -72,8 +74,9 @@ const ConvertToArabicNumbers = num => {
       </VCard>
     </VCol>
     <VCol
-      cols="6"
+      cols="12"
       md="3"
+      sm="6"
     >
       <VCard class="d-flex pa-5" :loading="!props.statistics.value">
         <VAvatar
@@ -98,8 +101,9 @@ const ConvertToArabicNumbers = num => {
       </VCard>
     </VCol>
     <VCol
-      cols="6"
+      cols="12"
       md="3"
+      sm="6"
     >
       <VCard class="d-flex pa-5" :loading="!props.statistics.value">
         <VAvatar

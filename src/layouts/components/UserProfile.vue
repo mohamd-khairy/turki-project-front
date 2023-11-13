@@ -1,12 +1,24 @@
 <script setup>
 import avatar1 from '@images/avatars/avatar-1.png'
+import { useSettingsStore } from "@/store/Settings"
 
 const user = JSON.parse(localStorage.getItem('najdUser'))
+const settingsListStore = useSettingsStore()
+const isLoading = ref(false)
 
 const logout = () => {
+  isLoading.value = true
   localStorage.removeItem('najdToken')
   localStorage.removeItem('najdUser')
+  localStorage.removeItem('najdPermissions')
   location.reload()
+  settingsListStore.alertColor = "error"
+  settingsListStore.alertMessage = "تم تسجيل الخروج"
+  settingsListStore.isAlertShow = true
+  setTimeout(() => {
+    settingsListStore.isAlertShow = false
+    settingsListStore.alertMessage = ""
+  }, 3000)
 }
 </script>
 
@@ -24,7 +36,7 @@ const logout = () => {
       color="primary"
       variant="tonal"
     >
-      <VImg :src="user.avatar ?? avatar1" v-if="user.avatar" />
+      <VImg :src="user.avatar ?? avatar1" v-if="user.avatar"/>
       <VIcon icon="iconoir:n-square" size="32" v-else></VIcon>
 
       <!-- SECTION Menu -->
@@ -50,7 +62,7 @@ const logout = () => {
                     color="primary"
                     variant="tonal"
                   >
-                    <VImg :src="user.avatar ?? avatar1" v-if="user.avatar" />
+                    <VImg :src="user.avatar ?? avatar1" v-if="user.avatar"/>
                     <VIcon icon="iconoir:n-square" size="32" v-else></VIcon>
                   </VAvatar>
                 </VBadge>
@@ -61,71 +73,16 @@ const logout = () => {
               {{ user.username ?? "مستخدم نجدي" }}
             </VListItemTitle>
             <VListItemSubtitle>
-              <VIcon icon="octicon:dot-fill-24" :color="user.is_active == true ? '#008000' : '#f00000'" size="16"></VIcon>
+              <VIcon icon="octicon:dot-fill-24" :color="user.is_active == true ? '#008000' : '#f00000'" size="16"
+              ></VIcon>
               <span class="mx-1">
                 {{ user.is_active == true ? 'نشط' : 'غير نشط' }}
               </span>
             </VListItemSubtitle>
           </VListItem>
 
-          <VDivider class="my-2" />
+          <VDivider class="my-2"/>
 
-          <!-- 👉 Profile -->
-<!--          <VListItem link>-->
-<!--            <template #prepend>-->
-<!--              <VIcon-->
-<!--                class="me-2"-->
-<!--                icon="tabler-user"-->
-<!--                size="22"-->
-<!--              />-->
-<!--            </template>-->
-
-<!--            <VListItemTitle>Profile</VListItemTitle>-->
-<!--          </VListItem>-->
-
-          <!-- 👉 Settings -->
-<!--          <VListItem link>-->
-<!--            <template #prepend>-->
-<!--              <VIcon-->
-<!--                class="me-2"-->
-<!--                icon="tabler-settings"-->
-<!--                size="22"-->
-<!--              />-->
-<!--            </template>-->
-
-<!--            <VListItemTitle>Settings</VListItemTitle>-->
-<!--          </VListItem>-->
-
-          <!-- 👉 Pricing -->
-<!--          <VListItem link>-->
-<!--            <template #prepend>-->
-<!--              <VIcon-->
-<!--                class="me-2"-->
-<!--                icon="tabler-currency-dollar"-->
-<!--                size="22"-->
-<!--              />-->
-<!--            </template>-->
-
-<!--            <VListItemTitle>Pricing</VListItemTitle>-->
-<!--          </VListItem>-->
-
-          <!-- 👉 FAQ -->
-<!--          <VListItem link>-->
-<!--            <template #prepend>-->
-<!--              <VIcon-->
-<!--                class="me-2"-->
-<!--                icon="tabler-help"-->
-<!--                size="22"-->
-<!--              />-->
-<!--            </template>-->
-
-<!--            <VListItemTitle>FAQ</VListItemTitle>-->
-<!--          </VListItem>-->
-
-          <!-- Divider -->
-<!--          <VDivider class="my-2" />-->
-
-          <!-- 👉 Logout   to="/login" -->
           <VListItem @click="logout">
             <template #prepend>
               <VIcon
@@ -135,7 +92,10 @@ const logout = () => {
               />
             </template>
 
-            <VListItemTitle>تسجيل الخروج</VListItemTitle>
+            <VListItemTitle>
+              <span v-if="!isLoading">تسجيل الخروج</span>
+              <VIcon icon="mingcute:loading-line" class="fixed loading" size="32" v-else></VIcon>
+            </VListItemTitle>
           </VListItem>
         </VList>
       </VMenu>

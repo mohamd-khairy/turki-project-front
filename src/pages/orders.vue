@@ -56,11 +56,11 @@ const paginateOrders = computed(() => {
 })
 
 const nextPage = () => {
-  if ((currentPage.value * rowPerPage.value) < orders.value.length) currentPage.value++
+  if ((currentPage.value * rowPerPage.value) < orders.value.length) currentPage.value
 }
 
 const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
+  if (currentPage.value > 1) currentPage.value
 }
 
 // 👉 Computing pagination data
@@ -108,7 +108,7 @@ const formatDateTime = data => {
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="solar:delivery-broken" size="24"></VIcon>
+        <VIcon icon="solar:delivery-broken" size="24" color="primary"></VIcon>
         <span class="mx-1">{{ t('Orders') }}</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
@@ -120,12 +120,6 @@ const formatDateTime = data => {
             :items="[5, 10, 20, 30, 50]"
           />
         </div>
-<!--        <VBtn-->
-<!--          prepend-icon="tabler-plus"-->
-<!--          @click="isAddOpen = true"-->
-<!--        >-->
-<!--          {{ t('Add_Order') }}-->
-<!--        </VBtn>-->
 
         <VSpacer/>
 
@@ -207,12 +201,6 @@ const formatDateTime = data => {
             >
               {{ t('forms.created_at') }}
             </th>
-<!--            <th-->
-<!--              scope="col"-->
-<!--              class="font-weight-semibold"-->
-<!--            >-->
-<!--              {{ t('forms.actions') }}-->
-<!--            </th>-->
           </tr>
         </thead>
 
@@ -251,44 +239,6 @@ const formatDateTime = data => {
             <td>
               {{ ConvertToArabicNumbers(formatDateTime(order.created_at).date) }}
             </td>
-
-<!--            <td>-->
-<!--              <VBtn-->
-<!--                icon-->
-<!--                variant="plain"-->
-<!--                color="default"-->
-<!--                size="x-small"-->
-<!--              >-->
-<!--                <VIcon-->
-<!--                  :size="22"-->
-<!--                  icon="tabler-eye"-->
-<!--                />-->
-<!--              </VBtn>-->
-<!--              <VBtn-->
-<!--                icon-->
-<!--                variant="plain"-->
-<!--                color="default"-->
-<!--                size="x-small"-->
-<!--                @click="openEdit(order)"-->
-<!--              >-->
-<!--                <VIcon-->
-<!--                  :size="22"-->
-<!--                  icon="tabler-pencil"-->
-<!--                />-->
-<!--              </VBtn>-->
-<!--              <VBtn-->
-<!--                icon-->
-<!--                variant="plain"-->
-<!--                color="default"-->
-<!--                size="x-small"-->
-<!--                @click="openDelete(order)"-->
-<!--              >-->
-<!--                <VIcon-->
-<!--                  :size="22"-->
-<!--                  icon="tabler-trash"-->
-<!--                />-->
-<!--              </VBtn>-->
-<!--            </td>-->
           </tr>
         </tbody>
 

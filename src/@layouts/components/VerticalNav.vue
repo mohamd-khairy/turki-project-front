@@ -55,15 +55,24 @@ const resolveNavItemComponent = item => {
     return VerticalNavSectionTitle
   if ('children' in item)
     return VerticalNavGroup
-  
+
   return VerticalNavLink
 }
 
 const route = useRoute()
+const user_permissions = reactive([])
 
 watch(() => route.name, () => {
   props.toggleIsOverlayNavActive(false)
 })
+
+onMounted(() => {
+  user_permissions.value = JSON.parse(localStorage.getItem("najdUser"))
+})
+
+// const userNavItems = computed(() => {
+//   return props.navItems
+// })
 
 const isVerticalNavScrolled = ref(false)
 const updateIsVerticalNavScrolled = val => isVerticalNavScrolled.value = val
@@ -94,8 +103,8 @@ const handleNavScroll = evt => {
           to="/"
           class="app-logo d-flex align-center gap-x-3 app-title-wrapper"
         >
-<!--          <VNodeRenderer :nodes="config.app.logo" />-->
-          <VIcon icon="iconoir:n-square" size="36" ></VIcon>
+          <!--          <VNodeRenderer :nodes="config.app.logo" />-->
+          <VIcon icon="iconoir:n-square" size="36"></VIcon>
           <Transition name="vertical-nav-app-title">
             <h1
               v-show="!hideTitleAndIcon"
@@ -134,7 +143,7 @@ const handleNavScroll = evt => {
       </slot>
     </div>
     <slot name="before-nav-items">
-      <div class="vertical-nav-items-shadow" />
+      <div class="vertical-nav-items-shadow"/>
     </slot>
     <slot
       name="nav-items"
@@ -151,7 +160,9 @@ const handleNavScroll = evt => {
           :is="resolveNavItemComponent(item)"
           v-for="(item, index) in navItems"
           :key="index"
+          v-can="item.permission"
           :item="item"
+          :class="item.permission"
         />
       </PerfectScrollbar>
     </slot>

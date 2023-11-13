@@ -7,6 +7,7 @@ import { useCitiesStore } from "@/store/Cities"
 import {
   requiredValidator,
 } from '@validators'
+import { useSettingsStore } from "@/store/Settings"
 
 const props = defineProps({
   isAddOpen: {
@@ -28,6 +29,8 @@ const bannersList = useBannersStore()
 const productsList = useProductsStore()
 const categoriesList = useCategoriesStore()
 const citiesList = useCitiesStore()
+const settingsListStore = useSettingsStore()
+const isLoading = ref(false)
 
 onUpdated(() => {
   productsList.fetchProducts().then(response => {
@@ -93,12 +96,44 @@ const statuses = reactive([
 
 const resetForm = () => {
   emit('update:isAddOpen', false)
+  bannerData.title =  null,
+  bannerData.title_color =  null,
+  bannerData.sub_title =  null,
+  bannerData.sub_title_color =  null,
+  bannerData.button_text =  null,
+  bannerData.button_text_color =  null,
+  bannerData.redirect_url =  null,
+  bannerData.is_active =  null,
+  bannerData.type =  null,
+  bannerData.image =  {},
+  bannerData.redirect_mobile_url =  null,
+  bannerData.product_id =  null,
+  bannerData.category_id =  null,
+  bannerData.city_ids =  null,
 }
 
 const onFormSubmit = () => {
+  isLoading.value = true
   bannersList.storeBanner(bannerData).then(response => {
     emit('refreshTable')
     emit('update:isAddOpen', false)
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
+    resetForm()
+  }).catch(error => {
+    isLoading.value = false
+    settingsListStore.alertColor = "error"
+    settingsListStore.alertMessage = "حدث خطأ ما !"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
   })
 }
 
@@ -121,7 +156,7 @@ const dialogModelValueUpdate = val => {
     >
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="game-icons:vertical-banner" size="24"></VIcon>
+          <VIcon icon="game-icons:vertical-banner" size="24" color="primary"></VIcon>
           <span class="mx-1 my-1">
             {{ t('Add_Banner') }}
           </span>
@@ -130,7 +165,7 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit" ref="bannerData">
+        <VForm @submit.prevent="onFormSubmit">
           <VRow>
             <VCol
               cols="12"
@@ -238,10 +273,18 @@ const dialogModelValueUpdate = val => {
               class="text-center"
             >
               <VBtn
+                v-if="!isLoading"
                 type="submit"
                 class="me-3"
               >
                 {{ t('buttons.save') }}
+              </VBtn>
+              <VBtn
+                v-else
+                type="submit"
+                class="position-relative me-3"
+              >
+                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
               </VBtn>
 
               <VBtn

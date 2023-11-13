@@ -42,27 +42,29 @@ onMounted(() => {
 </script>
 
 <template>
-  <VRow>
-    <VCol
-      cols="12"
-      lg="12"
-    >
-      <EcommerceStatistics :statistics="cards" class="h-100"/>
-    </VCol>
+  <div class="dashboard-page">
+    <VRow v-can="'read-dashboard'">
+      <VCol
+        cols="12"
+        lg="12"
+      >
+        <EcommerceStatistics :statistics="cards" class="h-100"/>
+      </VCol>
 
-    <VCol
-      cols="12"
-      lg="6"
-    >
-      <BarChart :colors="chartJsCustomColors" :title="t('monthly_orders')" :chartData="chart.value"/>
-    </VCol>
-    <VCol
-      cols="12"
-      lg="6"
-    >
-      <DashboardOrdersTable :orders="table.value"></DashboardOrdersTable>
-    </VCol>
-  </VRow>
+      <VCol
+        cols="12"
+        lg="6"
+      >
+        <BarChart :colors="chartJsCustomColors" :title="t('monthly_orders')" :chartData="chart.value"/>
+      </VCol>
+      <VCol
+        cols="12"
+        lg="6"
+      >
+        <DashboardOrdersTable :orders="table.value"></DashboardOrdersTable>
+      </VCol>
+    </VRow>
+  </div>
 </template>
 
 <style lang="scss">

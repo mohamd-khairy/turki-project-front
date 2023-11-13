@@ -57,11 +57,11 @@ const paginateCoupons = computed(() => {
 })
 
 const nextPage = () => {
-  if ((currentPage.value * rowPerPage.value) < coupons.value.length) currentPage.value++
+  if ((currentPage.value * rowPerPage.value) < coupons.value.length) currentPage.value
 }
 
 const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
+  if (currentPage.value > 1) currentPage.value
 }
 
 // 👉 Computing pagination data
@@ -109,7 +109,7 @@ const formatDateTime = data => {
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="bxs:coupon" size="24"></VIcon>
+        <VIcon icon="bxs:coupon" size="24" color="primary"></VIcon>
         <span class="mx-1">{{ t('Coupons') }}</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
@@ -191,6 +191,7 @@ const formatDateTime = data => {
               {{ t('forms.created_at') }}
             </th>
             <th
+              v-can="'update-discount' || 'delete-discount'"
               scope="col"
               class="font-weight-semibold"
             >
@@ -230,8 +231,9 @@ const formatDateTime = data => {
               {{ ConvertToArabicNumbers(formatDateTime(coupon.created_at).date) }}
             </td>
 
-            <td>
+            <td v-can="'update-discount' || 'delete-discount'">
               <VBtn
+                v-can="'update-discount'"
                 icon
                 variant="plain"
                 color="default"
@@ -244,6 +246,7 @@ const formatDateTime = data => {
                 />
               </VBtn>
               <VBtn
+                v-can="'delete-discount'"
                 icon
                 variant="plain"
                 color="default"

@@ -56,11 +56,11 @@ const paginateEmployees = computed(() => {
 })
 
 const nextPage = () => {
-  if ((currentPage.value * rowPerPage.value) < employees.value.length) currentPage.value++
+  if ((currentPage.value * rowPerPage.value) < employees.value.length) currentPage.value
 }
 
 const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
+  if (currentPage.value > 1) currentPage.value
 }
 
 // 👉 Computing pagination data
@@ -108,7 +108,7 @@ const formatDateTime = data => {
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="ph:users-four" size="24"></VIcon>
+        <VIcon icon="ph:users-four" size="24" color="primary"></VIcon>
         <span class="mx-1">{{ t('Employees') }}</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
@@ -122,6 +122,7 @@ const formatDateTime = data => {
         </div>
         <!--         👉 Create product :to="{ name: 'apps-product-add' }"-->
         <VBtn
+          v-can="'create-user'"
           prepend-icon="tabler-plus"
           @click="isAddOpen = true"
         >
@@ -196,6 +197,7 @@ const formatDateTime = data => {
               {{ t('forms.created_at') }}
             </th>
             <th
+              v-can="'read-user' || 'update-user' || 'delete-user'"
               scope="col"
               class="font-weight-semibold"
             >
@@ -240,7 +242,7 @@ const formatDateTime = data => {
               {{ (formatDateTime(employee.created_at).date) }}
             </td>
 
-            <td>
+            <td v-can="'read-user' || 'update-user' || 'delete-user'">
 <!--              <VBtn-->
 <!--                icon-->
 <!--                variant="plain"-->
@@ -253,6 +255,7 @@ const formatDateTime = data => {
 <!--                />-->
 <!--              </VBtn>-->
               <VBtn
+                v-can="'update-user'"
                 icon
                 variant="plain"
                 color="default"
@@ -265,6 +268,7 @@ const formatDateTime = data => {
                 />
               </VBtn>
               <VBtn
+                v-can="'delete-user'"
                 icon
                 variant="plain"
                 color="default"

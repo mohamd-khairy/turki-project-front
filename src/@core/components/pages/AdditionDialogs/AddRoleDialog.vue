@@ -19,11 +19,14 @@ const emit = defineEmits([
 ])
 
 import { useI18n } from "vue-i18n"
+import { useSettingsStore } from "@/store/Settings"
 
 const { t } = useI18n()
 const permissionsListStore = usePermissionsStore()
 const rolesListStore = useRolesStore()
+const settingsListStore = useSettingsStore()
 const permissions = reactive([])
+const isLoading = ref(false)
 
 onMounted(() => {
   permissionsListStore.fetchPermissions({}).then(response => {
@@ -45,9 +48,26 @@ const resetForm = () => {
 }
 
 const onFormSubmit = () => {
+  isLoading.value = true
   rolesListStore.storeRole(role).then(response => {
     emit('update:isAddOpen', false)
     emit('refreshTable')
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
+  }).catch(error => {
+    isLoading.value = false
+    settingsListStore.alertColor = "error"
+    settingsListStore.alertMessage = "حدث خطأ ما !"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
   })
 }
 
@@ -71,7 +91,7 @@ const dialogModelValueUpdate = val => {
       <!-- 👉 Title -->
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="zondicons:shield" size="24"></VIcon>
+          <VIcon icon="zondicons:shield" size="24" color="primary"></VIcon>
           <span class="mx-1 my-1">
             {{ t('Add_Role') }}
           </span>
@@ -124,10 +144,18 @@ const dialogModelValueUpdate = val => {
               class="text-center"
             >
               <VBtn
+                v-if="!isLoading"
                 type="submit"
                 class="me-3"
               >
                 {{ t("buttons.save") }}
+              </VBtn>
+              <VBtn
+                v-else
+                type="submit"
+                class="position-relative me-3"
+              >
+                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
               </VBtn>
 
               <VBtn
