@@ -24,6 +24,8 @@ const emit = defineEmits([
 ])
 
 import { useI18n } from "vue-i18n"
+import { useSettingsStore } from "@/store/Settings"
+import { requiredValidator } from "@validators"
 
 const { t } = useI18n()
 const citiesListStore = useCitiesStore()
@@ -32,6 +34,7 @@ const categoriesListStore = useCategoriesStore()
 const productsListStore = useProductsStore()
 const couponsListStore = useCouponsStore()
 const employeesListStore = useEmployeesStore()
+const settingsListStore = useSettingsStore()
 
 const products = reactive([])
 const countries = reactive([])
@@ -63,29 +66,30 @@ onMounted(() => {
 })
 
 onUpdated(() => {
+  console.log("Coupon => ", props.coupon)
   couponData.id = props.coupon.id
   couponData.name = props.coupon.name
   couponData.code = props.coupon.code
-  couponData.product_ids = props.coupon.product_ids
+  couponData.product_ids = props.coupon.product_ids == "" ? [] : props.coupon.product_ids
   couponData.discount_amount_percent = props.coupon.discount_amount_percent
   couponData.description_ar = props.coupon.description_ar
   couponData.description_en = props.coupon.description_en
   couponData.min_applied_amount = props.coupon.min_applied_amount
   couponData.max_discount = props.coupon.max_discount
-  couponData.is_for_all = props.coupon.is_for_all
-  couponData.is_by_city = props.coupon.is_by_city
-  couponData.is_by_product = props.coupon.is_by_product
-  couponData.is_by_country = props.coupon.is_by_country
-  couponData.is_by_category = props.coupon.is_by_category
-  couponData.is_by_subcategory = props.coupon.is_by_subcategory
-  couponData.is_percent = props.coupon.is_percent
-  couponData.for_clients_only = props.coupon.for_clients_only
-  couponData.is_active = props.coupon.is_active
-  couponData.category_parent_ids = props.coupon.category_parent_ids
-  couponData.city_ids = props.coupon.city_ids
-  couponData.country_ids = props.coupon.country_ids
-  couponData.client_ids = props.coupon.client_ids
-  couponData.category_child_ids = props.coupon.category_child_ids
+  couponData.is_for_all = props.coupon.is_for_all == 0 ? false : true
+  couponData.is_by_city = props.coupon.is_by_city == 0 ? false : true
+  couponData.is_by_product = props.coupon.is_by_product == 0 ? false : true
+  couponData.is_by_country = props.coupon.is_by_country == 0 ? false : true
+  couponData.is_by_category = props.coupon.is_by_category == 0 ? false : true
+  couponData.is_by_subcategory = props.coupon.is_by_subcategory == 0 ? false : true
+  couponData.is_percent = props.coupon.is_percent == 0 ? false : true
+  couponData.for_clients_only = props.coupon.for_clients_only == 0 ? false : true
+  couponData.is_active = props.coupon.is_active == 0 ? false : true
+  couponData.category_parent_ids = props.coupon.category_parent_ids == "" ? [] : props.coupon.category_parent_ids
+  couponData.city_ids = props.coupon.city_ids == "" ? [] : props.coupon.city_ids
+  couponData.country_ids = props.coupon.country_ids == "" ? [] : props.coupon.country_ids
+  couponData.client_ids = props.coupon.client_ids == "" ? [] : props.coupon.client_ids
+  couponData.category_child_ids = props.coupon.category_child_ids == "" ? [] : props.coupon.category_child_ids
   couponData.expire_at = props.coupon.expire_at
   couponData.use_times_per_user = props.coupon.use_times_per_user
 })
@@ -189,6 +193,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="couponData.name"
                 :label="t('forms.name')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -199,16 +204,19 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="couponData.code"
                 :label="t('forms.code')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
+              v-if="couponData.is_percent"
               cols="12"
               lg="12"
               sm="6"
             >
               <VTextField
                 v-model="couponData.discount_amount_percent"
-                :label="t('forms.discount_amount_percent')"
+                :label="t('forms.discount_amount_percent') + ' %'"
+                :rules="[requiredValidator]"
                 type="number"
                 min="0"
                 max="100"
@@ -222,6 +230,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="couponData.min_applied_amount"
                 :label="t('forms.min_applied_amount')"
+                :rules="[requiredValidator]"
                 type="number"
                 min="0"
               />
@@ -234,6 +243,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="couponData.max_discount"
                 :label="t('forms.max_discount')"
+                :rules="[requiredValidator]"
                 type="number"
                 min="0"
               />
@@ -246,6 +256,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="couponData.description_ar"
                 :label="t('forms.description_ar')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -256,9 +267,11 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="couponData.description_en"
                 :label="t('forms.description_en')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
+              v-if="couponData.for_clients_only"
               cols="12"
               lg="12"
               sm="6"
@@ -270,9 +283,11 @@ const dialogModelValueUpdate = val => {
                 item-title="username"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
+              v-if="couponData.is_by_product"
               cols="12"
               lg="12"
               sm="6"
@@ -284,9 +299,11 @@ const dialogModelValueUpdate = val => {
                 item-title="name_ar"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
+              v-if="couponData.is_by_country"
               cols="12"
               lg="12"
               sm="6"
@@ -298,9 +315,11 @@ const dialogModelValueUpdate = val => {
                 item-title="name_ar"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
+              v-if="couponData.is_by_city"
               cols="12"
               lg="12"
               sm="6"
@@ -312,9 +331,11 @@ const dialogModelValueUpdate = val => {
                 item-title="name_ar"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
+              v-if="couponData.is_by_category"
               cols="12"
               lg="12"
               sm="6"
@@ -326,9 +347,11 @@ const dialogModelValueUpdate = val => {
                 item-title="type_ar"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
+              v-if="couponData.is_by_subcategory"
               cols="12"
               lg="12"
               sm="6"
@@ -340,6 +363,7 @@ const dialogModelValueUpdate = val => {
                 item-title="type_ar"
                 item-value="id"
                 multiple
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -350,6 +374,7 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="couponData.use_times_per_user"
                 :label="t('forms.use_times_per_user')"
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -361,7 +386,7 @@ const dialogModelValueUpdate = val => {
                 v-model="couponData.expire_at"
                 :label="t('forms.expire_at')"
                 :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
-                @click.stop
+                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol

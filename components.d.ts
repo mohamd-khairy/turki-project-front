@@ -89,6 +89,7 @@ declare module '@vue/runtime-core' {
     EditSubCategoryDialog: typeof import('./src/@core/components/pages/EditDialogs/EditSubCategoryDialog.vue')['default']
     EnableOneTimePasswordDialog: typeof import('./src/@core/components/EnableOneTimePasswordDialog.vue')['default']
     ErrorHeader: typeof import('./src/@core/components/ErrorHeader.vue')['default']
+    GoogleMaps: typeof import('./src/@core/components/GLobal/GoogleMaps.vue')['default']
     I18n: typeof import('./src/@core/components/I18n.vue')['default']
     Notifications: typeof import('./src/@core/components/Notifications.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

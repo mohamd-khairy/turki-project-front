@@ -436,6 +436,21 @@
     "@fullcalendar/core" "~5.11.3"
     tslib "^2.1.0"
 
+"@googlemaps/js-api-loader@^1.16.2":
+  version "1.16.2"
+  resolved "https://registry.yarnpkg.com/@googlemaps/js-api-loader/-/js-api-loader-1.16.2.tgz#3fe748e21243f8e8322c677a5525c569ae9cdbe9"
+  integrity sha512-psGw5u0QM6humao48Hn4lrChOM2/rA43ZCm3tKK9qQsEj1/VzqkCqnvGfEOshDbBQflydfaRovbKwZMF4AyqbA==
+  dependencies:
+    fast-deep-equal "^3.1.3"
+
+"@googlemaps/markerclusterer@^2.4.0":
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/@googlemaps/markerclusterer/-/markerclusterer-2.5.1.tgz#a15b58da349a967177975ffe64b445abcf49c0c9"
+  integrity sha512-TLASLyWPoJiTdbuPtqIzQS8t/+JIvd+whoNkeSxWpP2eIoTscgsWt72Is3Cu5I68GuX3qn+oUSxqagFYc1O+wg==
+  dependencies:
+    fast-deep-equal "^3.1.3"
+    supercluster "^8.0.1"
+
 "@humanwhocodes/config-array@^0.11.6":
   version "0.11.7"
   resolved "https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.11.7.tgz"
@@ -3194,6 +3209,11 @@ jwt-decode@^3.1.2:
   resolved "https://registry.npmjs.org/jwt-decode/-/jwt-decode-3.1.2.tgz"
   integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
 
+kdbush@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/kdbush/-/kdbush-4.0.2.tgz#2f7b7246328b4657dd122b6c7f025fbc2c868e39"
+  integrity sha512-WbCVYJ27Sz8zi9Q7Q0xHC+05iwkm3Znipc2XTlrnJbsHMYktW4hPhXUE8Ys1engBrvffoSCqbil1JQAa7clRpA==
+
 kind-of@^6.0.2, kind-of@^6.0.3:
   version "6.0.3"
   resolved "https://registry.npmjs.org/kind-of/-/kind-of-6.0.3.tgz"
@@ -4552,6 +4572,13 @@ stylelint@^14.15.0:
     v8-compile-cache "^2.3.0"
     write-file-atomic "^4.0.2"
 
+supercluster@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/supercluster/-/supercluster-8.0.1.tgz#9946ba123538e9e9ab15de472531f604e7372df5"
+  integrity sha512-IiOea5kJ9iqzD2t7QJq/cREyLHTtSmUT6gQsweojg9WH2sYJqZK9SswTu6jrscO6D1G5v5vYZ9ru/eq85lXeZQ==
+  dependencies:
+    kdbush "^4.0.2"
+
 supports-color@^5.3.0:
   version "5.5.0"
   resolved "https://registry.npmjs.org/supports-color/-/supports-color-5.5.0.tgz"
@@ -4998,6 +5025,15 @@ vue3-apexcharts@^1.4.1:
   version "1.4.1"
   resolved "https://registry.npmjs.org/vue3-apexcharts/-/vue3-apexcharts-1.4.1.tgz"
   integrity sha512-96qP8JDqB9vwU7bkG5nVU+E0UGQn7yYQVqUUCLQMYWDuQyu2vE77H/UFZ1yI+hwzlSTBKT9BqnNG8JsFegB3eg==
+
+vue3-google-map@^0.18.0:
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/vue3-google-map/-/vue3-google-map-0.18.0.tgz#a190e279d6ccf64fe08a5bd2a7b71082819d8224"
+  integrity sha512-dhDlXK5XxKxH3Mj6n6C7y99M5LRwPDHlgGWgfLkmzVMpwlxBhaSxDhSTaduAFUjeHVusEfYdPxJSSP7yPJr8sg==
+  dependencies:
+    "@googlemaps/js-api-loader" "^1.16.2"
+    "@googlemaps/markerclusterer" "^2.4.0"
+    fast-deep-equal "^3.1.3"
 
 vue3-perfect-scrollbar@^1.6.0:
   version "1.6.1"

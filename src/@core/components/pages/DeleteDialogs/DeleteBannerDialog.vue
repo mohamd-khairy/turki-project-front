@@ -30,6 +30,7 @@ const resetForm = () => {
 
 const onFormSubmit = () => {
   // Delete
+  isLoading.value = true
   bannersListStore.deleteBanner(props.banner).then(() => {
     settingsListStore.alertColor = "success"
     settingsListStore.alertMessage = "تم حذف البنر بنجاح"
@@ -39,8 +40,10 @@ const onFormSubmit = () => {
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
+      isLoading.value = false
     }, 1000)
   }).catch(error => {
+    isLoading.value = false
     settingsListStore.alertColor = "error"
     settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
