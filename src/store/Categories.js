@@ -57,7 +57,12 @@ export const useCategoriesStore = defineStore('CategoriesStore', {
 
       let cty_ids = " "
       Object.values(data.city_ids).map(ctid => {
-        cty_ids = cty_ids + ',' + ctid.id
+        // cty_ids = cty_ids + ',' + ctid.id
+        if (typeof ctid == "object") {
+          cty_ids = cty_ids.length == 0 ? `${ctid.id}` : cty_ids + ',' + ctid.id
+        } else {
+          cty_ids = cty_ids.length == 0 ? `${ctid}` : cty_ids + ',' + ctid
+        }
       })
 
       formData.append("type_ar", data.type_ar)
