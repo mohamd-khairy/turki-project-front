@@ -8,7 +8,7 @@ const { t } = useI18n()
 const ordersListStore = useOrdersStore()
 const searchQuery = ref('')
 const selectedStatus = ref()
-const rowPerPage = ref(5)
+const rowPerPage = ref(10)
 const currentPage = ref(1)
 const totalPage = ref(1)
 const totalOrders = ref(0)
@@ -22,6 +22,7 @@ const isEditOpen = ref(false)
 const getOrders = () => {
   ordersListStore.fetchOrders({
     q: searchQuery.value,
+    per_page: rowPerPage.value,
   }).then(response => {
     orders.value = response.data.data.data
     totalPage.value = orders.value / rowPerPage
