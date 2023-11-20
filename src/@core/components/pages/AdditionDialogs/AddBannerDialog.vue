@@ -59,7 +59,7 @@ const bannerData = reactive({
   image: {},
   redirect_mobile_url: null,
   product_id: null,
-  category_id: null,
+  category_ids: null,
   city_ids: null,
 })
 
@@ -70,16 +70,16 @@ const form = ref()
 
 const types = reactive([
   {
-    id: 0,
-    name: "بنر عادي",
-  },
-  {
     id: 1,
     name: "رابط بنر خارجي",
   },
   {
     id: 2,
     name: "رابط بنر داخلي",
+  },
+  {
+    id: 3,
+    name: "بنر عادي",
   },
 ])
 
@@ -107,7 +107,7 @@ const resetForm = () => {
   bannerData.image =  {},
   bannerData.redirect_mobile_url =  null,
   bannerData.product_id =  null,
-  bannerData.category_id =  null,
+  bannerData.category_ids =  null,
   bannerData.city_ids =  null
   emit('update:isAddOpen', false)
 }
@@ -231,6 +231,7 @@ const dialogModelValueUpdate = val => {
             <VCol
               cols="12"
               md="6"
+              v-if="bannerData.type == 2"
             >
               <VSelect
                 v-model="bannerData.product_id"
@@ -246,11 +247,12 @@ const dialogModelValueUpdate = val => {
               md="6"
             >
               <VSelect
-                v-model="bannerData.category_id"
+                v-model="bannerData.category_ids"
                 :items="categories.value"
                 :label="t('forms.categories')"
                 item-title="type_ar"
                 item-value="id"
+                multiple
                 :rules="[requiredValidator]"
               />
             </VCol>

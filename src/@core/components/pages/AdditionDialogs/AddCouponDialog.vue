@@ -156,7 +156,6 @@ const dialogModelValueUpdate = val => {
             <VCol
               cols="12"
               lg="12"
-              sm="6"
             >
               <VTextField
                 v-model="coupon.name"
@@ -167,7 +166,6 @@ const dialogModelValueUpdate = val => {
             <VCol
               cols="12"
               lg="12"
-              sm="6"
             >
               <VTextField
                 v-model="coupon.code"
@@ -178,21 +176,26 @@ const dialogModelValueUpdate = val => {
             <VCol
               cols="12"
               lg="12"
-              sm="6"
             >
-              <VTextField
-                v-model="coupon.discount_amount_percent"
-                :label="t('forms.discount_amount_percent')"
-                :rules="[requiredValidator]"
-                type="number"
-                min="0"
-                max="100"
-              />
+              <VRow>
+                <VCol cols="12" sm="3">
+                  <VSwitch :label="t('forms.is_percent')" v-model="coupon.is_percent"></VSwitch>
+                </VCol>
+                <VCol cols="12" sm="9">
+                  <VTextField
+                    v-model="coupon.discount_amount_percent"
+                    :label="coupon.is_percent ? t('forms.discount_amount_percent') + ' %' : t('forms.discount_amount_percent')"
+                    :rules="[requiredValidator]"
+                    type="number"
+                    min="0"
+                    max="100"
+                  />
+                </VCol>
+              </VRow>
             </VCol>
             <VCol
               cols="12"
               lg="12"
-              sm="6"
             >
               <VTextField
                 v-model="coupon.min_applied_amount"
@@ -205,7 +208,6 @@ const dialogModelValueUpdate = val => {
             <VCol
               cols="12"
               lg="12"
-              sm="6"
             >
               <VTextField
                 v-model="coupon.max_discount"
@@ -218,7 +220,6 @@ const dialogModelValueUpdate = val => {
             <VCol
               cols="12"
               lg="12"
-              sm="6"
             >
               <VTextField
                 v-model="coupon.description_ar"
@@ -229,7 +230,6 @@ const dialogModelValueUpdate = val => {
             <VCol
               cols="12"
               lg="12"
-              sm="6"
             >
               <VTextField
                 v-model="coupon.description_en"
@@ -238,105 +238,108 @@ const dialogModelValueUpdate = val => {
               />
             </VCol>
             <VCol
-              v-if="coupon.for_clients_only"
               cols="12"
               lg="12"
-              sm="6"
             >
-              <VSelect
-                v-model="coupon.client_ids"
-                :items="customers.value"
-                :label="t('forms.customers')"
-                item-title="username"
-                item-value="id"
-                multiple
-                :rules="[requiredValidator]"
-              />
+              <VSwitch :label="t('forms.for_clients_only')" v-model="coupon.for_clients_only"></VSwitch>
+              <div v-if="coupon.for_clients_only">
+                <VSelect
+                  v-model="coupon.client_ids"
+                  :items="customers.value"
+                  :label="t('forms.customers')"
+                  item-title="username"
+                  item-value="id"
+                  multiple
+                  :rules="[requiredValidator]"
+                />
+              </div>
             </VCol>
             <VCol
-              v-if="coupon.is_by_product"
+
               cols="12"
               lg="12"
-              sm="6"
             >
-              <VSelect
-                v-model="coupon.product_ids"
-                :items="products.value"
-                :label="t('forms.products')"
-                item-title="name_ar"
-                item-value="id"
-                multiple
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              v-if="coupon.is_by_country"
-              cols="12"
-              lg="12"
-              sm="6"
-            >
-              <VSelect
-                v-model="coupon.country_ids"
-                :items="countries.value"
-                :label="t('forms.countries')"
-                item-title="name_ar"
-                item-value="id"
-                multiple
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              v-if="coupon.is_by_city"
-              cols="12"
-              lg="12"
-              sm="6"
-            >
-              <VSelect
-                v-model="coupon.city_ids"
-                :items="cities.value"
-                :label="t('forms.cities')"
-                item-title="name_ar"
-                item-value="id"
-                multiple
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              v-if="coupon.is_by_category"
-              cols="12"
-              lg="12"
-              sm="6"
-            >
-              <VSelect
-                v-model="coupon.category_parent_ids"
-                :items="categories.value"
-                :label="t('forms.categories')"
-                item-title="type_ar"
-                item-value="id"
-                multiple
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              v-if="coupon.is_by_subcategory"
-              cols="12"
-              lg="12"
-              sm="6"
-            >
-              <VSelect
-                v-model="coupon.category_child_ids"
-                :items="subCategories.value"
-                :label="t('forms.sub_categories')"
-                item-title="type_ar"
-                item-value="id"
-                multiple
-                :rules="[requiredValidator]"
-              />
+              <VSwitch :label="t('forms.is_by_product')" v-model="coupon.is_by_product"></VSwitch>
+              <div v-if="coupon.is_by_product">
+                <VSelect
+                  v-model="coupon.product_ids"
+                  :items="products.value"
+                  :label="t('forms.products')"
+                  item-title="name_ar"
+                  item-value="id"
+                  multiple
+                  :rules="[requiredValidator]"
+                />
+              </div>
             </VCol>
             <VCol
               cols="12"
               lg="12"
-              sm="6"
+            >
+              <VSwitch :label="t('forms.is_by_country')" v-model="coupon.is_by_country"></VSwitch>
+              <div v-if="coupon.is_by_country">
+                <VSelect
+                  v-model="coupon.country_ids"
+                  :items="countries.value"
+                  :label="t('forms.countries')"
+                  item-title="name_ar"
+                  item-value="id"
+                  multiple
+                  :rules="[requiredValidator]"
+                />
+              </div>
+            </VCol>
+            <VCol cols="12">
+              <VSwitch :label="t('forms.is_by_city')" v-model="coupon.is_by_city"></VSwitch>
+              <div v-if="coupon.is_by_city">
+                <VSelect
+                  v-model="coupon.city_ids"
+                  :items="cities.value"
+                  :label="t('forms.cities')"
+                  item-title="name_ar"
+                  item-value="id"
+                  multiple
+                  :rules="[requiredValidator]"
+                />
+              </div>
+            </VCol>
+            <VCol
+              cols="12"
+              lg="12"
+            >
+              <VSwitch :label="t('forms.is_by_category')" v-model="coupon.is_by_category"></VSwitch>
+              <div v-if="coupon.is_by_category">
+                <VSelect
+                  v-model="coupon.category_parent_ids"
+                  :items="categories.value"
+                  :label="t('forms.categories')"
+                  item-title="type_ar"
+                  item-value="id"
+                  multiple
+                  :rules="[requiredValidator]"
+                />
+              </div>
+            </VCol>
+            <VCol
+              cols="12"
+              lg="12"
+            >
+              <VSwitch :label="t('forms.is_by_subcategory')" v-model="coupon.is_by_subcategory"></VSwitch>
+              <div v-if="coupon.is_by_subcategory">
+                <VSelect
+                  v-model="coupon.category_child_ids"
+                  :items="subCategories.value"
+                  :label="t('forms.sub_categories')"
+                  item-title="type_ar"
+                  item-value="id"
+                  multiple
+                  :rules="[requiredValidator]"
+                />
+              </div>
+            </VCol>
+            <VCol
+              cols="12"
+              lg="12"
             >
               <VTextField
                 v-model="coupon.use_times_per_user"
@@ -347,7 +350,6 @@ const dialogModelValueUpdate = val => {
             <VCol
               cols="12"
               lg="12"
-              sm="6"
             >
               <AppDateTimePicker
                 v-model="coupon.expire_at"
@@ -359,65 +361,14 @@ const dialogModelValueUpdate = val => {
             <VCol
               cols="12"
               lg="6"
-              sm="6"
             >
               <VSwitch :label="t('forms.is_active')" v-model="coupon.is_active"></VSwitch>
             </VCol>
             <VCol
               cols="12"
               lg="6"
-              sm="6"
             >
               <VSwitch :label="t('forms.is_for_all')" v-model="coupon.is_for_all"></VSwitch>
-            </VCol>
-            <VCol
-              cols="12"
-              lg="6"
-              sm="6"
-            >
-              <VSwitch :label="t('forms.is_by_city')" v-model="coupon.is_by_city"></VSwitch>
-            </VCol>
-            <VCol
-              cols="12"
-              lg="6"
-              sm="6"
-            >
-              <VSwitch :label="t('forms.is_by_product')" v-model="coupon.is_by_product"></VSwitch>
-            </VCol>
-            <VCol
-              cols="12"
-              lg="6"
-              sm="6"
-            >
-              <VSwitch :label="t('forms.is_by_country')" v-model="coupon.is_by_country"></VSwitch>
-            </VCol>
-            <VCol
-              cols="12"
-              lg="6"
-              sm="6"
-            >
-              <VSwitch :label="t('forms.is_by_category')" v-model="coupon.is_by_category"></VSwitch>
-            </VCol>
-            <VCol
-              cols="12"
-              lg="6"
-              sm="6"
-            >
-              <VSwitch :label="t('forms.is_by_subcategory')" v-model="coupon.is_by_subcategory"></VSwitch>
-            </VCol>
-            <VCol
-              cols="12"
-              lg="6"
-              sm="6"
-            >
-              <VSwitch :label="t('forms.is_percent')" v-model="coupon.is_percent"></VSwitch>
-            </VCol>
-            <VCol
-              cols="12"
-              lg="6"
-              sm="6"
-            >
-              <VSwitch :label="t('forms.for_clients_only')" v-model="coupon.for_clients_only"></VSwitch>
             </VCol>
             <VCol
               cols="12"

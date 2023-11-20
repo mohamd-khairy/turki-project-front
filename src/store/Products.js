@@ -11,53 +11,73 @@ export const useProductsStore = defineStore('ProductsStore', {
     // 👉 Fetch single banner
     storeProduct(data) {
       const formData = new FormData()
-
+      console.log("PD => ", data)
       let cty_ids = " "
-      Object.values(data.city_ids).map(ctid => {
-        if (typeof ctid == "object") {
-          cty_ids = cty_ids.length == 0 ? `${ctid.id}` : cty_ids + ',' + ctid.id
-        } else {
-          cty_ids = cty_ids.length == 0 ? `${ctid}` : cty_ids + ',' + ctid
-        }
-      })
+      if(data.city_ids.length > 0) {
+        Object.values(data.city_ids).map(ctid => {
+          if (typeof ctid == "object") {
+            cty_ids = cty_ids.length == 0 ? `${ctid.id}` : cty_ids + ',' + ctid.id
+          } else {
+            cty_ids = cty_ids.length == 0 ? `${ctid}` : cty_ids + ',' + ctid
+          }
+        })
+      } else {
+        cty_ids = ""
+      }
 
       let prep_ids = " "
-      Object.values(data.preparation_ids).map(prpid => {
-        if (typeof prpid == "object") {
-          prep_ids = prep_ids.length == 0 ? `${prpid.id}` : prep_ids + ',' + prpid.id
-        } else {
-          prep_ids = prep_ids.length == 0 ? `${prpid}` : prep_ids + ',' + prpid
-        }
-      })
+      if(data.preparation_ids.length > 0) {
+        Object.values(data.preparation_ids).map(prpid => {
+          if (typeof prpid == "object") {
+            prep_ids = prep_ids.length == 0 ? `${prpid.id}` : prep_ids + ',' + prpid.id
+          } else {
+            prep_ids = prep_ids.length == 0 ? `${prpid}` : prep_ids + ',' + prpid
+          }
+        })
+      } else {
+        prep_ids = ""
+      }
 
       let size_ids = " "
-      Object.values(data.size_ids).map(prpid => {
-        if (typeof prpid == "object") {
-          size_ids = size_ids.length == 0 ? `${prpid.id}` : size_ids + ',' + prpid.id
-        } else {
-          size_ids = size_ids.length == 0 ? `${prpid}` : size_ids + ',' + prpid
-        }
-      })
+      if(data.size_ids.length > 0) {
+        Object.values(data.size_ids).map(prpid => {
+          if (typeof prpid == "object") {
+            size_ids = size_ids.length == 0 ? `${prpid.id}` : size_ids + ',' + prpid.id
+          } else {
+            size_ids = size_ids.length == 0 ? `${prpid}` : size_ids + ',' + prpid
+          }
+        })
+      }  else {
+        size_ids = ""
+      }
 
       let cut_ids = " "
-      Object.values(data.cut_ids).map(prpid => {
-        // cut_ids = cut_ids + ',' + prpid
-        if (typeof prpid == "object") {
-          cut_ids = cut_ids.length == 0 ? `${prpid.id}` : cut_ids + ',' + prpid.id
-        } else {
-          cut_ids = cut_ids.length == 0 ? `${prpid}` : cut_ids + ',' + prpid
-        }
-      })
+      if(data.cut_ids.length > 0) {
+        Object.values(data.cut_ids).map(prpid => {
+          // cut_ids = cut_ids + ',' + prpid
+          if (typeof prpid == "object") {
+            cut_ids = cut_ids.length == 0 ? `${prpid.id}` : cut_ids + ',' + prpid.id
+          } else {
+            cut_ids = cut_ids.length == 0 ? `${prpid}` : cut_ids + ',' + prpid
+          }
+        })
+      } else {
+        cut_ids = ""
+      }
 
       let payment_ids = " "
-      Object.values(data.payment_type_ids).map(prpid => {
-        // payment_ids = payment_ids + ',' + prpid
-        if (typeof prpid == "object") {
-          payment_ids = payment_ids.length == 0 ? `${prpid.id}` : payment_ids + ',' + prpid.id
-        } else {
-          payment_ids = payment_ids.length == 0 ? `${prpid}` : payment_ids + ',' + prpid
-        }
-      })
+      if(data.payment_type_ids.length > 0) {
+        Object.values(data.payment_type_ids).map(prpid => {
+          // payment_ids = payment_ids + ',' + prpid
+          if (typeof prpid == "object") {
+            payment_ids = payment_ids.length == 0 ? `${prpid.id}` : payment_ids + ',' + prpid.id
+          } else {
+            payment_ids = payment_ids.length == 0 ? `${prpid}` : payment_ids + ',' + prpid
+          }
+        })
+      } else {
+        payment_ids = ""
+      }
 
       formData.append("name_ar", data.name_ar)
       formData.append("name_en", data.name_en)
@@ -78,11 +98,15 @@ export const useProductsStore = defineStore('ProductsStore', {
       formData.append("is_shalwata", data.is_shalwata === true ? 1 : 0)
       formData.append("is_delivered", data.is_delivered === true ? 1 : 0)
       formData.append("is_picked_up", data.is_picked_up === true ? 1 : 0)
-      formData.append("preparation_ids", prep_ids.split(" ,")[1])
-      formData.append("size_ids", size_ids.split(" ,")[1])
-      formData.append("cut_ids", cut_ids.split(" ,")[1])
-      formData.append("payment_type_ids", payment_ids.split(" ,")[1])
-      formData.append("city_ids", cty_ids.split(" ,")[1])
+      formData.append("preparation_ids", prep_ids.split(" ,")[1] ?? "")
+      formData.append("size_ids", size_ids.split(" ,")[1] ?? "")
+      formData.append("cut_ids", cut_ids.split(" ,")[1] ?? "")
+      formData.append("payment_type_ids", payment_ids.split(" ,")[1] ?? "")
+      formData.append("city_ids", cty_ids.split(" ,")[1] ?? "")
+      for(let i = 0; i < data.images.length; i++) {
+        // console.log(`Image[${i}] => `, data.images[i])
+        formData.append(`images[${i}]`, data.images[i])
+      }
 
       return axios.post(`products/add-products`, formData)
     },
@@ -156,12 +180,14 @@ export const useProductsStore = defineStore('ProductsStore', {
       formData.append("is_shalwata", data.is_shalwata === true ? 1 : 0)
       formData.append("is_delivered", data.is_delivered === true ? 1 : 0)
       formData.append("is_picked_up", data.is_picked_up === true ? 1 : 0)
-      formData.append("preparation_ids", prep_ids.split(" ,")[1])
-      formData.append("size_ids", size_ids.split(" ,")[1])
-      formData.append("cut_ids", cut_ids.split(" ,")[1])
-      formData.append("payment_type_ids", payment_ids.split(" ,")[1])
-      formData.append("city_ids", cty_ids.split(" ,")[1])
-
+      formData.append("preparation_ids", prep_ids.split(" ,")[1] ?? "")
+      formData.append("size_ids", size_ids.split(" ,")[1] ?? "")
+      formData.append("cut_ids", cut_ids.split(" ,")[1] ?? "")
+      formData.append("payment_type_ids", payment_ids.split(" ,")[1] ?? "")
+      formData.append("city_ids", cty_ids.split(" ,")[1] ?? "")
+      for(let i = 0; i < data.images.length; i++) {
+        formData.append(`images[${i}]`, data.images[i])
+      }
       return axios.post(`products/update-products/${data.id}`, formData)
     },
 

@@ -10,6 +10,9 @@ export const useSettingsStore = defineStore('SettingsStore', {
     }
   },
   actions: {
+    fetchDelivery_Periods(params) {
+      return axios.get('delivery-period', { params })
+    },
     fetchProductCut(params) {
       return axios.get('product-cuts', { params })
     },

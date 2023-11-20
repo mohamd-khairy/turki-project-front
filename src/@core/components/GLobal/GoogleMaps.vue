@@ -34,10 +34,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <GoogleMap api-key="" style="width: 100%; height: 500px" :center="center"
-             :zoom="15"
+  <GoogleMap
+    api-key="AIzaSyCM2TngqydZtVlZ5hkKjY7x56ut59TTI88"
+    style="width: 100%; height: 500px"
+    :center="center"
+    :zoom="15"
   >
-    <Marker :options="{ position: center }"/>
+    <Marker :options="{ position: center }" />
   </GoogleMap>
 </template>
 
