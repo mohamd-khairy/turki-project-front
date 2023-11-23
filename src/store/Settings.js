@@ -29,6 +29,9 @@ export const useSettingsStore = defineStore('SettingsStore', {
       return axios.get('product-sizes', { params })
     },
 
+    storeDeliveryTime(data) {
+      return axios.post(`delivery-period/add-period`, data)
+    },
     storeProductCut(data) {
       return axios.post(`product-cuts/add-cut`, data)
     },
@@ -45,6 +48,9 @@ export const useSettingsStore = defineStore('SettingsStore', {
       return axios.post(`product-sizes/add-size`, data)
     },
 
+    editDeliveryTime(data) {
+      return axios.post(`delivery-period/update-period`, data)
+    },
     editProductCut(data) {
       return axios.post(`product-cuts/update-cut/${data.id}`, data)
     },
@@ -61,6 +67,9 @@ export const useSettingsStore = defineStore('SettingsStore', {
       return axios.post(`product-sizes/update-size/${data.id}`, data)
     },
 
+    deleteDeliveryTime(data) {
+      return axios.post(`delivery-period/delete/${data.id}`)
+    },
     deleteProductCut(data) {
       return axios.post(`product-cuts/delete-productCut/${data.id}`, data)
     },
