@@ -233,19 +233,19 @@ const openEdit = banner => {
                 banner.category.description.toString().length > 20 ? banner.category.description.toString().slice(0, 20) + '...' : banner.category.description
               }}
             </td>
-            <td style="width: 7.5rem;" v-can="'read-banner' || 'update-banner' || 'delete-banner'">
-              <VBtn
-                icon
-                variant="plain"
-                color="default"
-                size="x-small"
-                v-can="'read-banner'"
-              >
-                <VIcon
-                  :size="22"
-                  icon="tabler-eye"
-                />
-              </VBtn>
+            <td style="width: 7.5rem;" v-can="'update-banner' || 'delete-banner'">
+<!--              <VBtn-->
+<!--                icon-->
+<!--                variant="plain"-->
+<!--                color="default"-->
+<!--                size="x-small"-->
+<!--                v-can="'read-banner'"-->
+<!--              >-->
+<!--                <VIcon-->
+<!--                  :size="22"-->
+<!--                  icon="tabler-eye"-->
+<!--                />-->
+<!--              </VBtn>-->
               <VBtn
                 icon
                 variant="plain"

@@ -2,6 +2,8 @@
 import moment from "moment"
 import { useI18n } from "vue-i18n"
 import { useSettingsStore } from "@/store/Settings"
+import EditDeliveryTimeDialog from "@core/components/pages/EditDialogs/EditDeliveryTimeDialog.vue"
+import DeleteDeliveryTime from "@core/components/pages/DeleteDialogs/DeleteDeliveryTime.vue"
 
 const { t } = useI18n()
 
@@ -187,7 +189,7 @@ const formatDateTime = data => {
               {{ item.name_ar }}
             </td>
             <td>
-              {{ item.time_hhmm !== 'null' || item.time_hhmm !== null ? ConvertToArabicNumbers(item.time_hhmm) : "-"}}
+              {{ item.time_hhmm == 'null' || item.time_hhmm === null ? "-" : ConvertToArabicNumbers(item.time_hhmm) }}
             </td>
             <td>
               <VBtn
@@ -247,13 +249,13 @@ const formatDateTime = data => {
         />
       </VCardText>
     </VCard>
-    <AddProductCutDialog v-model:isAddOpen="isAddOpen" @refreshTable="getItems"/>
-    <EditProductCutDialog
+    <AddDeliveryTimeDialog v-model:isAddOpen="isAddOpen" @refreshTable="getItems"/>
+    <EditDeliveryTimeDialog
       v-model:isEditOpen="isEditOpen"
       :item="selectedItem"
       @refreshTable="getItems"
     />
-    <DeleteProductCutDialog
+    <DeleteDeliveryTime
       v-model:isDeleteOpen="isDeleteOpen"
       :item="selectedItem"
       @refreshTable="getItems"
