@@ -8,7 +8,7 @@ const { t } = useI18n()
 const ordersListStore = useOrdersStore()
 const searchQuery = ref('')
 const selectedStatus = ref()
-const rowPerPage = ref(5)
+const rowPerPage = ref(10)
 const currentPage = ref(1)
 const totalPage = ref(1)
 const totalOrders = ref(0)
@@ -22,6 +22,7 @@ const isEditOpen = ref(false)
 const getOrders = () => {
   ordersListStore.fetchOrders({
     q: searchQuery.value,
+    per_page: rowPerPage.value,
   }).then(response => {
     orders.value = response.data.data.data
     totalPage.value = orders.value / rowPerPage
@@ -85,6 +86,7 @@ const openDelete = order => {
 const openEdit = order => {
   isEditOpen.value = true
   selectedOrder.value = order
+  console.log("EWFWEFWEFE")
 }
 
 // Functions
@@ -139,119 +141,119 @@ const formatDateTime = data => {
 
       <VTable class="text-no-wrap product-list-table">
         <thead>
-          <tr>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.id') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.customer_name') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.address_address') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.delivery_date') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.order_state_ar') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.order_subtotal') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.payment_type_name') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.total_amount') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.total_amount_after_discount') }}
-            </th>
+        <tr>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.id') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.customer_name') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.address_address') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.delivery_date') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.order_state_ar') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.order_subtotal') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.payment_type_name') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.total_amount') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.total_amount_after_discount') }}
+          </th>
 
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.created_at') }}
-            </th>
-          </tr>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.created_at') }}
+          </th>
+        </tr>
         </thead>
 
         <tbody>
-          <tr
-            v-for="(order, i) in paginateOrders"
-            :key="order.id"
-          >
-            <td>
-              #{{ ConvertToArabicNumbers(Intl.NumberFormat().format(++i)) }}
-            </td>
-            <td>
-              {{ order.customer_name }}
-            </td>
-            <td>
-              {{ order.address_address }}
-            </td>
-            <td>
-              {{ ConvertToArabicNumbers(order.delivery_date) }}
-            </td>
-            <td>
-              {{ order.order_state_ar }}
-            </td>
-            <td>
-              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.order_subtotal)) }}
-            </td>
-            <td>
-              {{ order.payment_type_name }}
-            </td>
-            <td>
-              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount)) }}
-            </td>
-            <td>
-              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount_after_discount)) }}
-            </td>
-            <td>
-              {{ ConvertToArabicNumbers(formatDateTime(order.created_at).date) }}
-            </td>
-          </tr>
+        <tr
+          v-for="(order, i) in paginateOrders"
+          :key="order.id"
+        >
+          <td>
+            #{{ ConvertToArabicNumbers(Intl.NumberFormat().format(++i)) }}
+          </td>
+          <td>
+            {{ order.customer_name }}
+          </td>
+          <td>
+            {{ order.address_address }}
+          </td>
+          <td>
+            {{ ConvertToArabicNumbers(order.delivery_date) }}
+          </td>
+          <td @click="openEdit(order)">
+            <VChip style="cursor: pointer">{{ order.order_state_ar }}</VChip>
+          </td>
+          <td>
+            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.order_subtotal)) }}
+          </td>
+          <td>
+            {{ order.payment_type_name }}
+          </td>
+          <td>
+            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount)) }}
+          </td>
+          <td>
+            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount_after_discount)) }}
+          </td>
+          <td>
+            {{ ConvertToArabicNumbers(formatDateTime(order.created_at).date) }}
+          </td>
+        </tr>
         </tbody>
 
         <!-- 👉 table footer  -->
         <tfoot v-show="!orders.length">
-          <tr>
-            <td
-              colspan="8"
-              class="text-center text-body-1"
-            >
-              لا يوجد بيانات
-            </td>
-          </tr>
+        <tr>
+          <td
+            colspan="8"
+            class="text-center text-body-1"
+          >
+            لا يوجد بيانات
+          </td>
+        </tr>
         </tfoot>
       </VTable>
       <!-- !SECTION -->
@@ -271,6 +273,7 @@ const formatDateTime = data => {
         />
       </VCardText>
     </VCard>
-
+    <EditOrderDialog :item="selectedOrder" v-model:is-edit-open="isEditOpen" @refreshTable="getOrders"
+    ></EditOrderDialog>
   </div>
 </template>

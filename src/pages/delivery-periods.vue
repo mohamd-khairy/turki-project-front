@@ -1,32 +1,31 @@
 <script setup>
 import moment from "moment"
 import { useI18n } from "vue-i18n"
-import { useEmployeesStore } from "@/store/Employees"
+import { useSettingsStore } from "@/store/Settings"
 
 const { t } = useI18n()
 
-const employeesListStore = useEmployeesStore()
+const settingsListStore = useSettingsStore()
 const searchQuery = ref('')
 const selectedStatus = ref()
-const rowPerPage = ref(10)
+const rowPerPage = ref(5)
 const currentPage = ref(1)
 const totalPage = ref(1)
-const totalCities = ref(0)
-const employees = ref([])
+const totalItems = ref(0)
+const items = ref([])
 const selectedRows = ref([])
 const isAddOpen = ref(false)
 const isDeleteOpen = ref(false)
-const selectedEmployee = ref({})
+const selectedItem = ref({})
 const isEditOpen = ref(false)
 
-const getEmployees = () => {
-  employeesListStore.fetchEmployees({
+const getItems = () => {
+  settingsListStore.fetchDelivery_Periods({
     q: searchQuery.value,
-    per_page: rowPerPage.value
   }).then(response => {
-    employees.value = response.data.data.data
-    totalPage.value = employees.value / rowPerPage
-    totalCities.value = employees.value.length
+    items.value = response.data.data
+    totalPage.value = items.value / rowPerPage
+    totalItems.value = items.value.length
     currentPage.value = 1
   }).catch(error => {
     console.log(error)
@@ -35,7 +34,7 @@ const getEmployees = () => {
 
 // 👉 Fetch Categories
 watchEffect(() => {
-  getEmployees()
+  getItems()
 })
 
 
@@ -46,10 +45,10 @@ watchEffect(() => {
   }
 })
 
-const paginateEmployees = computed(() => {
-  totalPage.value = Math.ceil(employees.value.length / rowPerPage.value)
+const paginateItems = computed(() => {
+  totalPage.value = Math.ceil(items.value.length / rowPerPage.value)
 
-  return employees.value.filter((row, index) => {
+  return items.value.filter((row, index) => {
     let start = (currentPage.value - 1) * rowPerPage.value
     let end = currentPage.value * rowPerPage.value
     if (index >= start && index < end) return true
@@ -57,7 +56,7 @@ const paginateEmployees = computed(() => {
 })
 
 const nextPage = () => {
-  if ((currentPage.value * rowPerPage.value) < employees.value.length) currentPage.value
+  if ((currentPage.value * rowPerPage.value) < items.value.length) currentPage.value
 }
 
 const prevPage = () => {
@@ -66,26 +65,26 @@ const prevPage = () => {
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
-  const firstIndex = employees.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
-  const lastIndex = firstIndex + (rowPerPage.value - 1) <= employees.value.length ? firstIndex + (rowPerPage.value - 1) : totalCities.value
+  const firstIndex = items.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
+  const lastIndex = firstIndex + (rowPerPage.value - 1) <= items.value.length ? firstIndex + (rowPerPage.value - 1) : totalItems.value
 
-  return ` عرض من ${ConvertToArabicNumbers(firstIndex)} إلي ${ConvertToArabicNumbers(lastIndex)} من ${ConvertToArabicNumbers(totalCities.value)} الإجمالي `
+  return ` عرض من ${ConvertToArabicNumbers(firstIndex)} إلي ${ConvertToArabicNumbers(lastIndex)} من ${ConvertToArabicNumbers(totalItems.value)} الإجمالي `
 })
 
 const changeStatus = data => {
-  // employeesListStore.changeCountryStatus(data).then(response => {
-  //   getCities()
+  // itemsListStore.changeCountryStatus(data).then(response => {
+  //   getItems()
   // })
 }
 
-const openDelete = employee => {
+const openDelete = city => {
   isDeleteOpen.value = true
-  selectedEmployee.value = employee
+  selectedItem.value = city
 }
 
-const openEdit = employee => {
+const openEdit = city => {
   isEditOpen.value = true
-  selectedEmployee.value = employee
+  selectedItem.value = city
 }
 
 // Functions
@@ -109,8 +108,8 @@ const formatDateTime = data => {
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="ph:users-four" size="24" color="primary"></VIcon>
-        <span class="mx-1">{{ t('Employees') }}</span>
+        <VIcon icon="fluent-mdl2:date-time" size="24" color="primary"></VIcon>
+        <span class="mx-1">{{ t('Delivery_Periods') }}</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
         <!-- 👉 Rows per page -->
@@ -123,14 +122,14 @@ const formatDateTime = data => {
         </div>
         <!--         👉 Create product :to="{ name: 'apps-product-add' }"-->
         <VBtn
-          v-can="'create-user'"
           prepend-icon="tabler-plus"
           @click="isAddOpen = true"
+          v-can="'create-city'"
         >
-          {{ t('Add_Employee') }}
+          {{ t('Add_Item') }}
         </VBtn>
 
-        <VSpacer />
+        <VSpacer/>
 
         <div class="w-25 d-flex align-center flex-wrap gap-2">
           <!-- 👉 Search  -->
@@ -144,7 +143,7 @@ const formatDateTime = data => {
         </div>
       </VCardText>
 
-      <VDivider />
+      <VDivider/>
 
       <VTable class="text-no-wrap product-list-table">
         <thead>
@@ -165,40 +164,9 @@ const formatDateTime = data => {
               scope="col"
               class="font-weight-semibold"
             >
-              {{ t('forms.age') }}
+              {{ t('forms.delivery_time') }}
             </th>
             <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.gender') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.email') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.phone') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.status') }}
-            </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.created_at') }}
-            </th>
-            <th
-              v-can="'read-user' || 'update-user' || 'delete-user'"
               scope="col"
               class="font-weight-semibold"
             >
@@ -209,59 +177,25 @@ const formatDateTime = data => {
 
         <tbody>
           <tr
-            v-for="(employee, i) in paginateEmployees"
-            :key="employee.id"
+            v-for="(item, i) in paginateItems"
+            :key="item.id"
           >
             <td>
-              #{{ (++i) }}
+              #{{ ConvertToArabicNumbers(++i) }}
             </td>
             <td>
-              {{ employee.username }}
+              {{ item.name_ar }}
             </td>
             <td>
-              {{ employee.age }}
+              {{ item.time_hhmm !== 'null' || item.time_hhmm !== null ? ConvertToArabicNumbers(item.time_hhmm) : "-"}}
             </td>
             <td>
-              <VIcon :icon="employee.gender == 0 ? 'material-symbols-light:female' : 'material-symbols-light:male'"></VIcon>
-              <span class="mx-1">
-                {{ employee.gender == 0 ? 'أنثي' : 'ذكر'}}
-              </span>
-            </td>
-            <td>
-              {{ employee.email }}
-            </td>
-            <td>
-              {{ employee.mobile }}
-            </td>
-            <td>
-              <VIcon icon="ph:dot-bold" :color="employee.is_active == true ? '#008000' : '#f00000'" size="32"></VIcon>
-              <span>
-                {{ employee.is_active == true ? t('forms.statuses.active') : t('forms.statuses.inactive') }}
-              </span>
-            </td>
-            <td>
-              {{ (formatDateTime(employee.created_at).date) }}
-            </td>
-
-            <td v-can="'read-user' || 'update-user' || 'delete-user'">
-<!--              <VBtn-->
-<!--                icon-->
-<!--                variant="plain"-->
-<!--                color="default"-->
-<!--                size="x-small"-->
-<!--              >-->
-<!--                <VIcon-->
-<!--                  :size="22"-->
-<!--                  icon="tabler-eye"-->
-<!--                />-->
-<!--              </VBtn>-->
               <VBtn
-                v-can="'update-user'"
                 icon
                 variant="plain"
                 color="default"
                 size="x-small"
-                @click="openEdit(employee)"
+                @click="openEdit(item)"
               >
                 <VIcon
                   :size="22"
@@ -269,12 +203,11 @@ const formatDateTime = data => {
                 />
               </VBtn>
               <VBtn
-                v-can="'delete-user'"
                 icon
                 variant="plain"
                 color="default"
                 size="x-small"
-                @click="openDelete(employee)"
+                @click="openDelete(item)"
               >
                 <VIcon
                   :size="22"
@@ -286,7 +219,7 @@ const formatDateTime = data => {
         </tbody>
 
         <!-- 👉 table footer  -->
-        <tfoot v-show="!employees.length">
+        <tfoot v-show="!items.length">
           <tr>
             <td
               colspan="8"
@@ -314,9 +247,16 @@ const formatDateTime = data => {
         />
       </VCardText>
     </VCard>
-
-    <AddEmployeeDialog v-model:isAddOpen="isAddOpen" @refreshTable="getEmployees" ></AddEmployeeDialog>
-    <EditEmployeeDialog v-model:isEditOpen="isEditOpen" :employee="selectedEmployee" @refreshTable="getEmployees" ></EditEmployeeDialog>
-    <DeleteEmployeeDialog v-model:isDeleteOpen="isDeleteOpen" :employee="selectedEmployee" @refreshTable="getEmployees" ></DeleteEmployeeDialog>
+    <AddProductCutDialog v-model:isAddOpen="isAddOpen" @refreshTable="getItems"/>
+    <EditProductCutDialog
+      v-model:isEditOpen="isEditOpen"
+      :item="selectedItem"
+      @refreshTable="getItems"
+    />
+    <DeleteProductCutDialog
+      v-model:isDeleteOpen="isDeleteOpen"
+      :item="selectedItem"
+      @refreshTable="getItems"
+    />
   </div>
 </template>

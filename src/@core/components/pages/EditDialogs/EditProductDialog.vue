@@ -67,6 +67,7 @@ const itemData = reactive({
   cut_ids: [],
   payment_type_ids: [],
   city_ids: [],
+  images: [],
   not_dates: [
     {
       date_mm_dd: null,
@@ -375,6 +376,20 @@ const dialogModelValueUpdate = val => {
                 :rules="[requiredValidator]"
               />
             </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VFileInput
+                v-model="itemData.images"
+                :label="t('forms.product_images')"
+                accept="image/*"
+                prepend-icon=""
+                prepend-inner-icon="mdi-image"
+                multiple
+                :rules="[requiredValidator]"
+              />
+            </VCol>
 
             <VCol cols="12" md="6"></VCol>
 
@@ -385,7 +400,6 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_active"
                 :label="t('forms.is_active')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -395,7 +409,6 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_available"
                 :label="t('forms.is_available')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -405,7 +418,6 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_kwar3"
                 :label="t('forms.is_kwar3')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -415,7 +427,6 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_Ras"
                 :label="t('forms.is_Ras')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -425,7 +436,6 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_lyh"
                 :label="t('forms.is_lyh')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -435,7 +445,6 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_karashah"
                 :label="t('forms.is_karashah')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -445,30 +454,8 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_shalwata"
                 :label="t('forms.is_shalwata')"
-                :rules="[requiredValidator]"
               />
             </VCol>
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VSwitch
-                v-model="itemData.is_delivered"
-                :label="t('forms.is_delivered')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VSwitch
-                v-model="itemData.is_picked_up"
-                :label="t('forms.is_picked_up')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-
 
             <VCol
               cols="12"

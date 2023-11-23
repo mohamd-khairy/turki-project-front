@@ -86,6 +86,7 @@ export default [
       { title: 'Product_Size', to: 'product-size' },
       { title: 'Product_Shalwata', to: 'product-shalwata' },
       { title: 'Payment_Types', to: 'payment-types' },
+      { title: 'Delivery_Periods', to: 'delivery-periods' },
     ],
     permission: "read-permission",
   },

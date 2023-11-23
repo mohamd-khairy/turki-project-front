@@ -12,5 +12,8 @@ export const useOrdersStore = defineStore('OrdersStore', {
     fetchOrder(id) {
       return axios.get(`/orders/${id}`)
     },
+    editOrder(data) {
+      return axios.post(`/orders/edit-order`, data)
+    },
   },
 })

@@ -44,6 +44,10 @@ const city = reactive({
 
 // Functions
 const resetForm = () => {
+  city.name_ar = null,
+  city.name_en = null,
+  city.country_id = null,
+  city.is_available_for_delivery = 0
   emit('update:isAddOpen', false)
 }
 
@@ -59,6 +63,7 @@ const onFormSubmit = () => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
+    resetForm()
   }).catch(error => {
     isLoading.value = false
     settingsListStore.alertColor = "error"

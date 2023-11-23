@@ -46,6 +46,13 @@ const category = reactive({
 
 // Functions
 const resetForm = () => {
+  category.type_ar = null,
+  category.type_en = null,
+  category.description = null,
+  category.city_ids = [],
+  category.backgroundColor = "#fff",
+  category.color = "#fff",
+  category.image = {}
   emit('update:isAddOpen', false)
 }
 
@@ -60,7 +67,9 @@ const onFormSubmit = () => {
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
+      isLoading.value = false
     }, 2000)
+    resetForm()
   }).catch(error => {
     console.log(error)
     isLoading.value = false
@@ -86,7 +95,7 @@ const dialogModelValueUpdate = val => {
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
 
     <VCard
       class="pa-sm-9 pa-5"

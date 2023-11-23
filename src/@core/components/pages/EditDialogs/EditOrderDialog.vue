@@ -1,173 +1,145 @@
 <script setup>
+import { useI18n } from "vue-i18n"
+import {
+  requiredValidator,
+} from '@validators'
+import { useSettingsStore } from "@/store/Settings"
+import { useOrdersStore } from "@/store/Orders"
+
 const props = defineProps({
-  billingAddress: {
-    type: Object,
+  isEditOpen: {
+    type: Boolean,
     required: true,
   },
-  isAddOpen: {
-    type: Boolean,
+  item: {
+    type: Object,
     required: true,
   },
 })
 
 const emit = defineEmits([
-  'update:isAddOpen',
-  'bannerData',
+  'update:isEditOpen',
+  'refreshTable',
 ])
 
-const billingAddress = ref(structuredClone(toRaw(props.billingAddress)))
+const ordersListStore = useOrdersStore()
+const settingsListStore = useSettingsStore()
+const isLoading = ref(false)
+
+const { t } = useI18n()
+
+const itemData = reactive({
+  order_state_id: null,
+})
+
+const statues = reactive([
+  {
+    id: 100,
+    name: "تم إرسال الطلب",
+  },
+  {
+    id: 101,
+    name: "تم قبول الطلب",
+  },
+])
+
+const form = ref()
 
 const resetForm = () => {
-  emit('update:isAddOpen', false)
-  billingAddress.value = structuredClone(toRaw(props.billingAddress))
+  emit('update:isEditOpen', false)
 }
 
+onUpdated(() => {
+  itemData.id = props.item.id
+  itemData.order_state_id = props.item.order_state_id
+})
+
 const onFormSubmit = () => {
-  emit('update:isAddOpen', false)
-  emit('bannerData', billingAddress.value)
+  isLoading.value = true
+  ordersListStore.editOrder(itemData).then(response => {
+    emit('refreshTable')
+    emit('update:isEditOpen', false)
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم تعديل حالة الطلب بنجاح"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+      isLoading.value = false
+    }, 1000)
+  }).catch(error => {
+    isLoading.value = false
+    settingsListStore.alertColor = "error"
+    settingsListStore.alertMessage = "حدث خطأ ما !"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
+  })
 }
 
 const dialogModelValueUpdate = val => {
-  emit('update:isAddOpen', val)
+  emit('update:isEditOpen', val)
 }
 </script>
 
 <template>
   <VDialog
     :width="$vuetify.display.smAndDown ? 'auto' : 650 "
-    :model-value="props.isAddOpen"
+    :model-value="props.isEditOpen"
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
 
     <VCard
-      v-if="props.billingAddress"
       class="pa-sm-9 pa-5"
     >
-      <!-- 👉 Title -->
       <VCardItem>
-        <VCardTitle class="text-h5 text-center mb-3">
-          Edit Address
+        <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
+          <VIcon icon="solar:delivery-broken" size="24" color="primary"></VIcon>
+          <span class="mx-1 my-1">
+            {{ t('تعديل حالةالطلب') }}
+          </span>
         </VCardTitle>
-        <!-- 👉 Subtitle -->
-        <p class="text-center">
-          Edit Address for future billing
-        </p>
       </VCardItem>
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit">
+        <VForm @submit.prevent="onFormSubmit" ref="bannerData">
           <VRow>
-            <!-- 👉 Company Name -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VTextField
-                v-model="billingAddress.companyName"
-                label="Company Name"
-              />
-            </VCol>
-
-            <!-- 👉 Email -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VTextField
-                v-model="billingAddress.billingEmail"
-                label="Email"
-              />
-            </VCol>
-
-            <!-- 👉 Tax ID -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VTextField
-                v-model="billingAddress.taxID"
-                label="Tax ID"
-              />
-            </VCol>
-
-            <!-- 👉 VAT Number -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VTextField
-                v-model="billingAddress.vatNumber"
-                label="VAT Number"
-              />
-            </VCol>
-
-            <!-- 👉 Billing Address -->
-            <VCol cols="12">
-              <VTextarea
-                v-model="billingAddress.address"
-                rows="2"
-                label="Billing Address"
-              />
-            </VCol>
-
-            <!-- 👉 Contact -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VTextField
-                v-model="billingAddress.contact"
-                label="Contact"
-              />
-            </VCol>
-
-            <!-- 👉 Country -->
             <VCol
               cols="12"
               md="6"
             >
               <VSelect
-                v-model="billingAddress.country"
-                label="Country"
-                :items="['USA', 'Uk', 'France', 'Germany', 'Japan']"
+                v-model="itemData.order_state_id"
+                :items="statues"
+                :label="t('forms.order_state')"
+                item-title="name"
+                item-value="id"
+                :rules="[requiredValidator]"
               />
             </VCol>
 
-            <!-- 👉 State -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VTextField
-                v-model="billingAddress.state"
-                label="State"
-              />
-            </VCol>
-
-            <!-- 👉 Zip Code -->
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VTextField
-                v-model="billingAddress.zipCode"
-                label="Zip Code"
-              />
-            </VCol>
-
-            <!-- 👉 Submit and Cancel button -->
             <VCol
               cols="12"
               class="text-center"
             >
               <VBtn
+                v-if="!isLoading"
                 type="submit"
                 class="me-3"
               >
-                submit
+                {{ t('buttons.save') }}
+              </VBtn>
+              <VBtn
+                v-else
+                type="submit"
+                class="position-relative me-3"
+              >
+                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
               </VBtn>
 
               <VBtn
@@ -175,7 +147,7 @@ const dialogModelValueUpdate = val => {
                 color="secondary"
                 @click="resetForm"
               >
-                Cancel
+                {{ t('buttons.cancel') }}
               </VBtn>
             </VCol>
           </VRow>

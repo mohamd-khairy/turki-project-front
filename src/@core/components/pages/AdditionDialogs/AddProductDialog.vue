@@ -42,8 +42,8 @@ const itemData = reactive({
   calories: "",
   description_ar: "",
   description_en: "",
-  sale_price: 0.00,
-  price: 0,
+  sale_price: null,
+  price: null,
   is_active: 0,
   is_available: 0,
   is_kwar3: 0,
@@ -53,13 +53,12 @@ const itemData = reactive({
   category_id: null,
   sub_category_id: null,
   is_shalwata: 0,
-  is_delivered: 0,
-  is_picked_up: 0,
   preparation_ids: [],
   size_ids: [],
   cut_ids: [],
   payment_type_ids: [],
   city_ids: [],
+  images: [],
   not_dates: [
     {
       date_mm_dd: null,
@@ -77,6 +76,30 @@ const itemData = reactive({
   ],
 })
 
+const getProductSizes = () => {
+  settingsListStore.fetchProductSize({ pageSize: -1 }).then(response => {
+    sizes.value = response.data.data
+  })
+}
+
+const getProductCuts = () => {
+  settingsListStore.fetchProductCut({ pageSize: -1 }).then(response => {
+    cuts.value = response.data.data
+  })
+}
+
+const getProductPerparation = () => {
+  settingsListStore.fetchProductPerparation({ pageSize: -1 }).then(response => {
+    preparations.value = response.data.data
+  })
+}
+
+const getPaymentTypes = () => {
+  settingsListStore.fetchPaymentTypes({ pageSize: -1 }).then(response => {
+    payment_type_ids.value = response.data.data
+  })
+}
+
 onMounted(() => {
   citiesListStore.fetchCities({ pageSize: -1 }).then(response => {
     cities.value = response.data.data
@@ -87,22 +110,17 @@ onMounted(() => {
   categoryListStore.fetchSubCategories({ pageSize: -1 }).then(response => {
     sub_categories.value = response.data.data
   })
-  settingsListStore.fetchProductSize({ pageSize: -1 }).then(response => {
-    sizes.value = response.data.data
-  })
-  settingsListStore.fetchProductCut({ pageSize: -1 }).then(response => {
-    cuts.value = response.data.data
-  })
-  settingsListStore.fetchProductPerparation({ pageSize: -1 }).then(response => {
-    preparations.value = response.data.data
-  })
-  settingsListStore.fetchPaymentTypes({ pageSize: -1 }).then(response => {
-    payment_type_ids.value = response.data.data
-  })
+  getProductSizes()
+  getProductCuts()
+  getProductPerparation()
+  getPaymentTypes()
 })
 
 const form = ref()
 const isLoading = ref(false)
+const isAddSizeOpen = ref(false)
+const isAddCutsOpen = ref(false)
+const isAddPreparationOpen = ref(false)
 
 const resetForm = () => {
   emit('update:isAddOpen', false)
@@ -274,43 +292,84 @@ const dialogModelValueUpdate = val => {
               cols="12"
               md="6"
             >
-              <VSelect
-                v-model="itemData.cut_ids"
-                :items="cuts.value"
-                :label="t('forms.product_cut')"
-                item-title="name_ar"
-                item-value="id"
-                multiple
-                :rules="[requiredValidator]"
-              />
+              <VRow align="center">
+                <VCol cols="12" lg="9" sm="12">
+                  <VSelect
+                    v-model="itemData.cut_ids"
+                    :items="cuts.value"
+                    :label="t('forms.product_cut')"
+                    item-title="name_ar"
+                    item-value="id"
+                    multiple
+                  />
+                </VCol>
+                <VCol cols="12" lg="3" sm="12">
+                  <VBtn
+                    type="button"
+                    size="small"
+                    class="position-relative me-3"
+                    @click="isAddCutsOpen = true"
+                  >
+                    <VIcon icon="material-symbols-light:add" size="20"></VIcon>
+                  </VBtn>
+                </VCol>
+              </VRow>
             </VCol>
             <VCol
               cols="12"
               md="6"
             >
-              <VSelect
-                v-model="itemData.size_ids"
-                :items="sizes.value"
-                :label="t('forms.product_size')"
-                item-title="name_ar"
-                item-value="id"
-                multiple
-                :rules="[requiredValidator]"
-              />
+              <VRow align="center">
+                <VCol cols="12" lg="9" sm="12">
+                  <VSelect
+                    v-model="itemData.size_ids"
+                    :items="sizes.value"
+                    :label="t('forms.product_size')"
+                    item-title="name_ar"
+                    item-value="id"
+                    multiple
+                    :rules="[requiredValidator]"
+                  />
+                </VCol>
+                <VCol cols="12" lg="3" sm="12">
+                  <VBtn
+                    type="button"
+                    size="small"
+                    class="position-relative me-3"
+                    @click="isAddSizeOpen = true"
+                  >
+                    <VIcon icon="material-symbols-light:add"  size="20"></VIcon>
+                  </VBtn>
+                </VCol>
+              </VRow>
             </VCol>
             <VCol
               cols="12"
               md="6"
             >
-              <VSelect
-                v-model="itemData.preparation_ids"
-                :items="preparations.value"
-                :label="t('forms.product_preparation')"
-                item-title="name_ar"
-                item-value="id"
-                multiple
-                :rules="[requiredValidator]"
-              />
+              <VRow align="center">
+
+                <VCol cols="12" lg="9" sm="12">
+                  <VSelect
+                    v-model="itemData.preparation_ids"
+                    :items="preparations.value"
+                    :label="t('forms.product_preparation')"
+                    item-title="name_ar"
+                    item-value="id"
+                    multiple
+                  />
+                </VCol>
+                <VCol cols="12" lg="3" sm="12">
+                  <VBtn
+                    type="button"
+                    size="small"
+                    class="position-relative me-3"
+                    @click="isAddPreparationOpen = true"
+                  >
+                    <VIcon icon="material-symbols-light:add"  size="20"></VIcon>
+                  </VBtn>
+                </VCol>
+              </VRow>
             </VCol>
             <VCol
               cols="12"
@@ -340,6 +399,20 @@ const dialogModelValueUpdate = val => {
                 :rules="[requiredValidator]"
               />
             </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VFileInput
+                v-model="itemData.images"
+                :label="t('forms.product_images')"
+                accept="image/*"
+                prepend-icon=""
+                prepend-inner-icon="mdi-image"
+                multiple
+                :rules="[requiredValidator]"
+              />
+            </VCol>
 
             <VCol cols="12" md="6"></VCol>
 
@@ -350,7 +423,6 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_active"
                 :label="t('forms.is_active')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -360,7 +432,6 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_available"
                 :label="t('forms.is_available')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -370,7 +441,6 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_kwar3"
                 :label="t('forms.is_kwar3')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -380,7 +450,6 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_Ras"
                 :label="t('forms.is_Ras')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -390,7 +459,6 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_lyh"
                 :label="t('forms.is_lyh')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -400,7 +468,6 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_karashah"
                 :label="t('forms.is_karashah')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -410,27 +477,6 @@ const dialogModelValueUpdate = val => {
               <VSwitch
                 v-model="itemData.is_shalwata"
                 :label="t('forms.is_shalwata')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VSwitch
-                v-model="itemData.is_delivered"
-                :label="t('forms.is_delivered')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VSwitch
-                v-model="itemData.is_picked_up"
-                :label="t('forms.is_picked_up')"
-                :rules="[requiredValidator]"
               />
             </VCol>
 
@@ -466,5 +512,8 @@ const dialogModelValueUpdate = val => {
         </VForm>
       </VCardText>
     </VCard>
+    <AddProductSizeDialog v-model:is-add-open="isAddSizeOpen" @refreshTable="getProductSizes"></AddProductSizeDialog>
+    <AddProductPreparationDialog v-model:is-add-open="isAddPreparationOpen" @refreshTable="getProductPerparation"></AddProductPreparationDialog>
+    <AddProductCutDialog v-model:is-add-open="isAddCutsOpen" @refreshTable="getProductCuts"></AddProductCutDialog>
   </VDialog>
 </template>

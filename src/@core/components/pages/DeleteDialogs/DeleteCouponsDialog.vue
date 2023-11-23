@@ -29,6 +29,7 @@ const resetForm = () => {
 
 const onFormSubmit = () => {
   // Delete
+  isLoading.value = true
   couponsListStore.deleteCoupon(props.coupon).then(() => {
     emit('refreshTable')
     emit('update:isDeleteOpen', false)
@@ -38,8 +39,10 @@ const onFormSubmit = () => {
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
+      isLoading.value = false
     }, 1000)
   }).catch(error => {
+    isLoading.value = false
     settingsListStore.alertColor = "error"
     settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true

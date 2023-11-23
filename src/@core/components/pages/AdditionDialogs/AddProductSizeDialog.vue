@@ -27,6 +27,7 @@ const itemData = reactive({
   price: null,
   sale_price: null,
   weight: null,
+  is_available_for_use: 0,
 })
 
 const form = ref()
@@ -67,7 +68,7 @@ const dialogModelValueUpdate = val => {
 
 <template>
   <VDialog
-    :width="$vuetify.display.smAndDown ? 'auto' : 650 "
+    :width="$vuetify.display.smAndDown ? 'auto' : 650"
     :model-value="props.isAddOpen"
     @update:model-value="dialogModelValueUpdate"
   >
@@ -142,6 +143,12 @@ const dialogModelValueUpdate = val => {
                 :rules="[requiredValidator]"
                 type="number"
               />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSwitch :label="t('forms.available_for_use')" v-model="itemData.is_available_for_use"></VSwitch>
             </VCol>
 
 

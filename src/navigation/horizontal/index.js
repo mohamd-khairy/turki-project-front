@@ -85,6 +85,7 @@ export default [
       { title: 'Product_Preparation', to: 'product-preparation' },
       { title: 'Product_Size', to: 'product-size' },
       { title: 'Product_Shalwata', to: 'product-shalwata' },
+      { title: 'Delivery_Periods', to: 'delivery-periods' },
     ],
     permission: "read-permission",
   },

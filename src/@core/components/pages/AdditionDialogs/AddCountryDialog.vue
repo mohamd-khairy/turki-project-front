@@ -38,7 +38,6 @@ const country = reactive({
 
 // Functions
 const resetForm = () => {
-  emit('update:isAddOpen', false)
   country.name_ar = null,
   country.name_en = null,
   country.currency_ar = null,
@@ -47,6 +46,7 @@ const resetForm = () => {
   country.code = null,
   country.latitude = 0,
   country.longitude = 0
+  emit('update:isAddOpen', false)
 }
 
 const onFormSubmit = () => {
@@ -172,6 +172,13 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.code')"
                 :rules="[requiredValidator]"
               />
+            </VCol>
+            <VCol
+              cols="12"
+              lg="12"
+              sm="6"
+            >
+              <GoogleMaps></GoogleMaps>
             </VCol>
             <VCol
               cols="12"
