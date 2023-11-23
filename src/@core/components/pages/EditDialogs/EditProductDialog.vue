@@ -191,7 +191,7 @@ const dialogModelValueUpdate = val => {
                  color="primary"
           ></VIcon>
           <span class="mx-1 my-1">
-            {{ t('Add_Item') }}
+            {{ t('Edit_Item') }}
           </span>
         </VCardTitle>
       </VCardItem>

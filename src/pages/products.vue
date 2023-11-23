@@ -8,6 +8,8 @@ const selectedStatus = ref()
 const rowPerPage = ref(5)
 const currentPage = ref(1)
 const totalPage = ref(1)
+const dataFrom = ref(1)
+const dataTo = ref(1)
 const totalProducts = ref(0)
 const products = ref([])
 const selectedRows = ref([])
@@ -20,16 +22,17 @@ const { t } = useI18n()
 
 // 👉 Fetch Categories
 const getProducts = () => {
+
   productListStore.fetchProducts({
     q: searchQuery.value,
-    // status: selectedStatus.value,
-    // perPage: rowPerPage.value,
-    // currentPage: currentPage.value,
+    per_page: rowPerPage.value,
+    page: currentPage.value,
   }).then(response => {
-    products.value = response.data.data
-    totalPage.value = products.value / rowPerPage
-    totalProducts.value = products.value.length
-    currentPage.value = 1
+    products.value = response.data.data.data
+    totalPage.value = response.data.data.last_page
+    dataFrom.value = response.data.data.from
+    dataTo.value = response.data.data.to
+    totalProducts.value = response.data.data.total
   }).catch(error => {
     console.log(error)
   })
@@ -46,7 +49,7 @@ watchEffect(() => {
 })
 
 const paginateProducts = computed(() => {
-  totalPage.value = Math.ceil(products.value.length / rowPerPage.value)
+  // totalPage.value = Math.ceil(totalPage.value / rowPerPage.value)
 
   return products.value.filter((row, index) => {
     let start = (currentPage.value - 1) * rowPerPage.value
@@ -65,10 +68,10 @@ const prevPage = () => {
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
-  const firstIndex = products.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
-  const lastIndex = firstIndex + (rowPerPage.value - 1) <= products.value.length ? firstIndex + (rowPerPage.value - 1) : totalProducts.value
+  // const firstIndex = products.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
+  // const lastIndex = firstIndex + (rowPerPage.value - 1) <= products.value.length ? firstIndex + (rowPerPage.value - 1) : totalProducts.value
 
-  return ` عرض من ${ConvertToArabicNumbers(firstIndex)} إلي ${ConvertToArabicNumbers(lastIndex)} من ${ConvertToArabicNumbers(totalProducts.value)} الإجمالي `
+  return ` عرض من ${ConvertToArabicNumbers(dataFrom.value)} إلي ${ConvertToArabicNumbers(dataTo.value)} من ${ConvertToArabicNumbers(totalProducts.value)} الإجمالي `
 })
 
 const openDelete = product => {
@@ -112,7 +115,7 @@ const formatDateTime = data => {
           <VSelect
             v-model="rowPerPage"
             variant="outlined"
-            :items="[5, 10, 20, 30, 50]"
+            :items="[5, 10, 20, 30, 50, 100]"
           />
         </div>
         <!--         👉 Create product :to="{ name: 'apps-product-add' }"-->
@@ -219,7 +222,7 @@ const formatDateTime = data => {
 
         <tbody>
         <tr
-          v-for="(product, i) in paginateProducts"
+          v-for="(product, i) in products"
           :key="product.id"
         >
           <td>
@@ -230,7 +233,7 @@ const formatDateTime = data => {
           </td>
           <td>
             {{
-              product.description_ar.toString().length > 20 ? product.description_ar.toString().slice(0, 20) + '...' : product.description_ar
+              product.description_ar ? product.description_ar.toString().length > 20 ? product.description_ar.toString().slice(0, 20) + '...' : product.description_ar : "-"
             }}
           </td>
           <td>
@@ -258,10 +261,10 @@ const formatDateTime = data => {
             {{ ConvertToArabicNumbers(Intl.NumberFormat().format(product['sale price'] ?? 0)) }} {{ t('riyal') }}
           </td>
           <td>
-            {{ product.category.type_ar }}
+            {{ product.category ? product.category.type_ar : "-" }}
           </td>
           <td>
-            {{ product.sub_category.type_ar }}
+            {{ product.sub_category ? product.sub_category.type_ar : "-" }}
           </td>
           <td>
             {{ ConvertToArabicNumbers(formatDateTime(product.created_at).date) }}

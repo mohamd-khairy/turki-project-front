@@ -11,7 +11,6 @@ export const useProductsStore = defineStore('ProductsStore', {
     // 👉 Fetch single banner
     storeProduct(data) {
       const formData = new FormData()
-      console.log("PD => ", data)
       let cty_ids = " "
       if(data.city_ids.length > 0) {
         Object.values(data.city_ids).map(ctid => {

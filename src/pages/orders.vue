@@ -86,7 +86,6 @@ const openDelete = order => {
 const openEdit = order => {
   isEditOpen.value = true
   selectedOrder.value = order
-  console.log("EWFWEFWEFE")
 }
 
 // Functions
@@ -170,7 +169,7 @@ const formatDateTime = data => {
             scope="col"
             class="font-weight-semibold"
           >
-            {{ t('forms.order_state_ar') }}
+            {{ t('forms.order_state_ar') }} <span class="text-primary">( {{ t('forms.click_change_status') }} )</span>
           </th>
           <th
             scope="col"
@@ -273,7 +272,6 @@ const formatDateTime = data => {
         />
       </VCardText>
     </VCard>
-    <EditOrderDialog :item="selectedOrder" v-model:is-edit-open="isEditOpen" @refreshTable="getOrders"
-    ></EditOrderDialog>
+    <EditOrderDialog :item="selectedOrder" v-model:is-edit-open="isEditOpen" @refreshTable="getOrders" />
   </div>
 </template>

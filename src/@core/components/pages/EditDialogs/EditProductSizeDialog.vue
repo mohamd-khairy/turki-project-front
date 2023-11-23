@@ -31,6 +31,7 @@ const itemData = reactive({
   price: null,
   sale_price: null,
   weight: null,
+  use_again: 0,
 })
 
 const form = ref()
@@ -92,9 +93,9 @@ const dialogModelValueUpdate = val => {
     >
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="ph:knife-thin" size="24" color="primary"></VIcon>
+          <VIcon icon="game-icons:weight-scale" size="24" color="primary"></VIcon>
           <span class="mx-1 my-1">
-            {{ t('Add_Item') }}
+            {{ t('Edit_Item') }}
           </span>
         </VCardTitle>
       </VCardItem>
@@ -155,6 +156,12 @@ const dialogModelValueUpdate = val => {
                 :rules="[requiredValidator]"
                 type="number"
               />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSwitch :label="t('forms.available_for_use')" v-model="itemData.use_again"></VSwitch>
             </VCol>
 
 

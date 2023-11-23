@@ -155,6 +155,14 @@ const dialogModelValueUpdate = val => {
     <VCard
       class="pa-sm-9 pa-5"
     >
+      <VCardItem>
+        <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
+          <VIcon icon="game-icons:vertical-banner" size="24" color="primary"></VIcon>
+          <span class="mx-1 my-1">
+            {{ t('Edit_Item') }}
+          </span>
+        </VCardTitle>
+      </VCardItem>
       <VCardText>
         <!-- 👉 Form -->
         <VForm @submit.prevent="onFormSubmit">

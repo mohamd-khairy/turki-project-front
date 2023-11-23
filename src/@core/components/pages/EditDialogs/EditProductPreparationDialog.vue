@@ -91,7 +91,7 @@ const dialogModelValueUpdate = val => {
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
           <VIcon icon="clarity:process-on-vm-line" size="24" color="primary"></VIcon>
           <span class="mx-1 my-1">
-            {{ t('Add_Item') }}
+            {{ t('Edit_Item') }}
           </span>
         </VCardTitle>
       </VCardItem>

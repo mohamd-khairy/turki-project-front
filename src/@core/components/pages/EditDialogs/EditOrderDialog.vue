@@ -32,22 +32,19 @@ const itemData = reactive({
   order_state_id: null,
 })
 
-const statues = reactive([
-  {
-    id: 100,
-    name: "تم إرسال الطلب",
-  },
-  {
-    id: 101,
-    name: "تم قبول الطلب",
-  },
-])
+const statues = reactive([])
 
 const form = ref()
 
 const resetForm = () => {
   emit('update:isEditOpen', false)
 }
+
+onMounted(() => {
+  ordersListStore.fetchOrderStatus().then(response => {
+    statues.value = response.data.data
+  })
+})
 
 onUpdated(() => {
   itemData.id = props.item.id
@@ -100,7 +97,7 @@ const dialogModelValueUpdate = val => {
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
           <VIcon icon="solar:delivery-broken" size="24" color="primary"></VIcon>
           <span class="mx-1 my-1">
-            {{ t('تعديل حالةالطلب') }}
+            {{ t('تعديل حالة الطلب') }}
           </span>
         </VCardTitle>
       </VCardItem>
@@ -115,10 +112,10 @@ const dialogModelValueUpdate = val => {
             >
               <VSelect
                 v-model="itemData.order_state_id"
-                :items="statues"
+                :items="statues.value"
                 :label="t('forms.order_state')"
-                item-title="name"
-                item-value="id"
+                item-title="customer_state_ar"
+                item-value="code"
                 :rules="[requiredValidator]"
               />
             </VCol>
