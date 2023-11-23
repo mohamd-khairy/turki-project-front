@@ -11,7 +11,9 @@ const selectedStatus = ref()
 const rowPerPage = ref(10)
 const currentPage = ref(1)
 const totalPage = ref(1)
-const totalCities = ref(0)
+const totalEmployees = ref(0)
+const dataFrom = ref(1)
+const dataTo = ref(1)
 const employees = ref([])
 const selectedRows = ref([])
 const isAddOpen = ref(false)
@@ -22,11 +24,14 @@ const isEditOpen = ref(false)
 const getEmployees = () => {
   employeesListStore.fetchEmployees({
     q: searchQuery.value,
-    per_page: rowPerPage.value
+    per_page: rowPerPage.value,
+    page: currentPage.value,
   }).then(response => {
     employees.value = response.data.data.data
-    totalPage.value = employees.value / rowPerPage
-    totalCities.value = employees.value.length
+    totalPage.value = response.data.data.last_page
+    dataFrom.value = response.data.data.from
+    dataTo.value = response.data.data.to
+    totalEmployees.value = response.data.data.total
     currentPage.value = 1
   }).catch(error => {
     console.log(error)
@@ -66,10 +71,10 @@ const prevPage = () => {
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
-  const firstIndex = employees.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
-  const lastIndex = firstIndex + (rowPerPage.value - 1) <= employees.value.length ? firstIndex + (rowPerPage.value - 1) : totalCities.value
+  // const firstIndex = products.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
+  // const lastIndex = firstIndex + (rowPerPage.value - 1) <= products.value.length ? firstIndex + (rowPerPage.value - 1) : totalProducts.value
 
-  return ` عرض من ${ConvertToArabicNumbers(firstIndex)} إلي ${ConvertToArabicNumbers(lastIndex)} من ${ConvertToArabicNumbers(totalCities.value)} الإجمالي `
+  return ` عرض من ${ConvertToArabicNumbers(dataFrom.value)} إلي ${ConvertToArabicNumbers(dataTo.value)} من ${ConvertToArabicNumbers(totalEmployees.value)} الإجمالي `
 })
 
 const changeStatus = data => {
@@ -209,7 +214,7 @@ const formatDateTime = data => {
 
         <tbody>
           <tr
-            v-for="(employee, i) in paginateEmployees"
+            v-for="(employee, i) in employees"
             :key="employee.id"
           >
             <td>
@@ -307,10 +312,10 @@ const formatDateTime = data => {
         <VPagination
           v-model="currentPage"
           size="small"
-          :total-visible="rowPerPage"
+          :total-visible="5"
           :length="totalPage"
-          @next="nextPage"
-          @prev="prevPage"
+          @next="selectedRows = []"
+          @prev="selectedRows = []"
         />
       </VCardText>
     </VCard>

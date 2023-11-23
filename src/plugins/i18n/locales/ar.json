@@ -163,6 +163,7 @@
   "Product_Shalwata": "منتجات شلوطة",
   "Payment_Type": "وسائل الدفع",
   "Add_Item": "إضافة عنصر",
+  "Edit_Item": "تعديل عنصر",
   "forms": {
     "permissions": "الصلاحيات",
     "display_name": "الاسم المعروض",
@@ -197,7 +198,8 @@
     "address_address": "العنوان",
     "delivery_date":  "تاريخ التسليم",
     "delivery_period_name": "فترة التسليم",
-    "order_state_ar":  "حالة الطلب ( إضغط لتغيير الحالة )",
+    "order_state_ar":  "حالة الطلب",
+    "click_change_status":  "إضغط علي الحالة لتغييرها",
     "order_subtotal": "المجموع الفرعي للطلب",
     "payment_type_name":  "طريقة الدفع",
     "total_amount_after_discount":  "المبلغ الإجمالي بعد الخصم",

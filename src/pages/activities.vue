@@ -12,6 +12,8 @@ const rowPerPage = ref(5)
 const currentPage = ref(1)
 const totalPage = ref(1)
 const totalActivites = ref(0)
+const dataFrom = ref(0)
+const dataTo = ref(0)
 const activites = ref([])
 const selectedRows = ref([])
 const isAddOpen = ref(false)
@@ -22,11 +24,14 @@ const isEditOpen = ref(false)
 const getActivites = () => {
   activitesListStore.fetchActivities({
     q: searchQuery.value,
+    per_page: rowPerPage.value,
+    page: currentPage.value,
   }).then(response => {
     activites.value = response.data.data.data
-    totalPage.value = activites.value / rowPerPage
-    totalActivites.value = activites.value.length
-    currentPage.value = 1
+    totalPage.value = response.data.data.last_page
+    dataFrom.value = response.data.data.from
+    dataTo.value = response.data.data.to
+    totalActivites.value = response.data.data.total
   }).catch(error => {
     console.log(error)
   })
@@ -65,10 +70,10 @@ const prevPage = () => {
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
-  const firstIndex = activites.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
-  const lastIndex = firstIndex + (rowPerPage.value - 1) <= activites.value.length ? firstIndex + (rowPerPage.value - 1) : totalActivites.value
+  // const firstIndex = products.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
+  // const lastIndex = firstIndex + (rowPerPage.value - 1) <= products.value.length ? firstIndex + (rowPerPage.value - 1) : totalProducts.value
 
-  return ` عرض من ${ConvertToArabicNumbers(firstIndex)} إلي ${ConvertToArabicNumbers(lastIndex)} من ${ConvertToArabicNumbers(totalActivites.value)} الإجمالي `
+  return ` عرض من ${ConvertToArabicNumbers(dataFrom.value)} إلي ${ConvertToArabicNumbers(dataTo.value)} من ${ConvertToArabicNumbers(totalActivites.value)} الإجمالي `
 })
 
 // Functions
@@ -167,7 +172,7 @@ const formatDateTime = data => {
 
         <tbody>
         <tr
-          v-for="(order, i) in paginateActivites"
+          v-for="(order, i) in activites"
           :key="order.id"
         >
           <td>
@@ -177,7 +182,7 @@ const formatDateTime = data => {
             {{ order.log_name }}
           </td>
           <td>
-            {{ order.causer ? order.causer.username ? order.causer.username : '-'  : '-' }}
+            {{ order.causer ? order.causer.username ? order.causer.username : '-' : '-' }}
           </td>
           <td>
             {{ order.causer_type }}
@@ -222,8 +227,8 @@ const formatDateTime = data => {
           size="small"
           :total-visible="rowPerPage"
           :length="totalPage"
-          @next="nextPage"
-          @prev="prevPage"
+          @next="selectedRows = []"
+          @prev="selectedRows = []"
         />
       </VCardText>
     </VCard>

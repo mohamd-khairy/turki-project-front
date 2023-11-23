@@ -27,7 +27,7 @@ const itemData = reactive({
   price: null,
   sale_price: null,
   weight: null,
-  is_available_for_use: 0,
+  use_again: 0,
 })
 
 const form = ref()
@@ -148,7 +148,7 @@ const dialogModelValueUpdate = val => {
               cols="12"
               md="6"
             >
-              <VSwitch :label="t('forms.available_for_use')" v-model="itemData.is_available_for_use"></VSwitch>
+              <VSwitch :label="t('forms.available_for_use')" v-model="itemData.use_again"></VSwitch>
             </VCol>
 
 
