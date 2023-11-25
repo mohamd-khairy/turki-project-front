@@ -95,6 +95,7 @@ declare module '@vue/runtime-core' {
     GoogleMaps: typeof import('./src/@core/components/GLobal/GoogleMaps.vue')['default']
     I18n: typeof import('./src/@core/components/I18n.vue')['default']
     Notifications: typeof import('./src/@core/components/Notifications.vue')['default']
+    OrderInvoice: typeof import('./src/@core/components/pages/OrderInvoice.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Shortcuts: typeof import('./src/@core/components/Shortcuts.vue')['default']

@@ -164,6 +164,8 @@
   "Payment_Type": "وسائل الدفع",
   "Add_Item": "إضافة عنصر",
   "Edit_Item": "تعديل عنصر",
+  "Filter": "تصفية النتائج",
+  "Clear_Filter": "إزالة التصفية",
   "forms": {
     "permissions": "الصلاحيات",
     "display_name": "الاسم المعروض",
@@ -189,6 +191,8 @@
     "status":  "الحالة",
     "type":  "النوع",
     "age":  "العمر",
+    "from":  "الفترة من",
+    "to":  "الفترة إلي",
     "expire_at":  "تاريخ الإنتهاء",
     "discount_amount_percent":  "نسبة الخصم",
     "nationality":  "الجنسية",

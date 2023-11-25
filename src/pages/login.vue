@@ -77,12 +77,12 @@ const loginUser = () => {
       class="d-none d-lg-flex"
     >
       <div class="position-relative auth-bg rounded-lg w-100 ma-8 me-0">
-        <div class="d-flex align-center justify-center w-100 h-100">
-          <VImg
-            max-width="505"
-            :src="authThemeImg"
-            class="auth-illustration mt-16 mb-2"
-          />
+        <div class="d-flex align-center justify-center flex-column w-100 h-100">
+          <VIcon icon="iconoir:n-square" size="128" color="primary"></VIcon>
+          <h1 class="font-weight-bold text-6xl mt-3">
+            مرحباً بك في {{ themeConfig.app.title }}
+          </h1>
+
         </div>
 
         <VImg

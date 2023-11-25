@@ -108,7 +108,6 @@ const dialogModelValueUpdate = val => {
           <VRow>
             <VCol
               cols="12"
-              md="6"
             >
               <VSelect
                 v-model="itemData.order_state_id"

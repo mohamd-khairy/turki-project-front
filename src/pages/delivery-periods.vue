@@ -133,16 +133,7 @@ const formatDateTime = data => {
 
         <VSpacer/>
 
-        <div class="w-25 d-flex align-center flex-wrap gap-2">
-          <!-- 👉 Search  -->
-          <div class="w-100 product-list-search">
-            <VTextField
-              v-model="searchQuery"
-              placeholder="بحث"
-              density="compact"
-            />
-          </div>
-        </div>
+
       </VCardText>
 
       <VDivider/>
