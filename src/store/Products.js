@@ -7,12 +7,15 @@ export const useProductsStore = defineStore('ProductsStore', {
     fetchProducts(params) {
       return axios.get('products', { params })
     },
+    fetchProduct(id) {
+      return axios.get(`products/${id}`)
+    },
 
     // 👉 Fetch single banner
     storeProduct(data) {
       const formData = new FormData()
       let cty_ids = " "
-      if(data.city_ids.length > 0) {
+      if (data.city_ids.length > 0) {
         Object.values(data.city_ids).map(ctid => {
           if (typeof ctid == "object") {
             cty_ids = cty_ids.length == 0 ? `${ctid.id}` : cty_ids + ',' + ctid.id
@@ -25,7 +28,7 @@ export const useProductsStore = defineStore('ProductsStore', {
       }
 
       let prep_ids = " "
-      if(data.preparation_ids.length > 0) {
+      if (data.preparation_ids.length > 0) {
         Object.values(data.preparation_ids).map(prpid => {
           if (typeof prpid == "object") {
             prep_ids = prep_ids.length == 0 ? `${prpid.id}` : prep_ids + ',' + prpid.id
@@ -38,7 +41,7 @@ export const useProductsStore = defineStore('ProductsStore', {
       }
 
       let size_ids = " "
-      if(data.size_ids.length > 0) {
+      if (data.size_ids.length > 0) {
         Object.values(data.size_ids).map(prpid => {
           if (typeof prpid == "object") {
             size_ids = size_ids.length == 0 ? `${prpid.id}` : size_ids + ',' + prpid.id
@@ -46,12 +49,12 @@ export const useProductsStore = defineStore('ProductsStore', {
             size_ids = size_ids.length == 0 ? `${prpid}` : size_ids + ',' + prpid
           }
         })
-      }  else {
+      } else {
         size_ids = ""
       }
 
       let cut_ids = " "
-      if(data.cut_ids.length > 0) {
+      if (data.cut_ids.length > 0) {
         Object.values(data.cut_ids).map(prpid => {
           // cut_ids = cut_ids + ',' + prpid
           if (typeof prpid == "object") {
@@ -65,7 +68,7 @@ export const useProductsStore = defineStore('ProductsStore', {
       }
 
       let payment_ids = " "
-      if(data.payment_type_ids.length > 0) {
+      if (data.payment_type_ids.length > 0) {
         Object.values(data.payment_type_ids).map(prpid => {
           // payment_ids = payment_ids + ',' + prpid
           if (typeof prpid == "object") {
@@ -102,7 +105,7 @@ export const useProductsStore = defineStore('ProductsStore', {
       formData.append("cut_ids", cut_ids.split(" ,")[1] ?? "")
       formData.append("payment_type_ids", payment_ids.split(" ,")[1] ?? "")
       formData.append("city_ids", cty_ids.split(" ,")[1] ?? "")
-      for(let i = 0; i < data.images.length; i++) {
+      for (let i = 0; i < data.images.length; i++) {
         // console.log(`Image[${i}] => `, data.images[i])
         formData.append(`images[${i}]`, data.images[i])
       }
@@ -184,7 +187,7 @@ export const useProductsStore = defineStore('ProductsStore', {
       formData.append("cut_ids", cut_ids.split(" ,")[1] ?? "")
       formData.append("payment_type_ids", payment_ids.split(" ,")[1] ?? "")
       formData.append("city_ids", cty_ids.split(" ,")[1] ?? "")
-      for(let i = 0; i < data.images.length; i++) {
+      for (let i = 0; i < data.images.length; i++) {
         formData.append(`images[${i}]`, data.images[i])
       }
       return axios.post(`products/update-products/${data.id}`, formData)

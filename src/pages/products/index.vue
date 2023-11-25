@@ -19,6 +19,7 @@ const selectedProduct = ref({})
 const isEditOpen = ref(false)
 
 const { t } = useI18n()
+const router = useRouter()
 
 // 👉 Fetch Categories
 const getProducts = () => {
@@ -74,6 +75,10 @@ const paginationData = computed(() => {
   return ` عرض من ${ConvertToArabicNumbers(dataFrom.value)} إلي ${ConvertToArabicNumbers(dataTo.value)} من ${ConvertToArabicNumbers(totalProducts.value)} الإجمالي `
 })
 
+const openProductDetails = product => {
+  router.push(`products/${product.id}`)
+}
+
 const openDelete = product => {
   isDeleteOpen.value = true
   selectedProduct.value = product
@@ -128,16 +133,7 @@ const formatDateTime = data => {
 
         <VSpacer/>
 
-        <div class="w-25 d-flex align-center flex-wrap gap-2">
-          <!-- 👉 Search  -->
-          <div class="w-100 product-list-search">
-            <VTextField
-              v-model="searchQuery"
-              placeholder="بحث"
-              density="compact"
-            />
-          </div>
-        </div>
+
       </VCardText>
 
       <VDivider/>
@@ -169,18 +165,18 @@ const formatDateTime = data => {
           >
             {{ t('forms.status') }}
           </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.delivered') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.picked_up') }}
-          </th>
+<!--          <th-->
+<!--            scope="col"-->
+<!--            class="font-weight-semibold"-->
+<!--          >-->
+<!--            {{ t('forms.delivered') }}-->
+<!--          </th>-->
+<!--          <th-->
+<!--            scope="col"-->
+<!--            class="font-weight-semibold"-->
+<!--          >-->
+<!--            {{ t('forms.picked_up') }}-->
+<!--          </th>-->
           <th
             scope="col"
             class="font-weight-semibold"
@@ -242,18 +238,18 @@ const formatDateTime = data => {
                 {{ product.is_active == true ? t('forms.statuses.active') : t('forms.statuses.inactive') }}
               </span>
           </td>
-          <td>
-            <VIcon
-              :icon="product.is_delivered == true ? 'material-symbols-light:done-all' : 'material-symbols-light:close'"
-              :color="product.is_delivered == true ? '#008000' : '#f00000'" size="24" color="primary"
-            ></VIcon>
-          </td>
-          <td>
-            <VIcon
-              :icon="product.is_picked_up == true ? 'material-symbols-light:done-all' : 'material-symbols-light:close'"
-              :color="product.is_picked_up == true ? '#008000' : '#f00000'" size="24" color="primary"
-            ></VIcon>
-          </td>
+<!--          <td>-->
+<!--            <VIcon-->
+<!--              :icon="product.is_delivered == true ? 'material-symbols-light:done-all' : 'material-symbols-light:close'"-->
+<!--              :color="product.is_delivered == true ? '#008000' : '#f00000'" size="24" color="primary"-->
+<!--            ></VIcon>-->
+<!--          </td>-->
+<!--          <td>-->
+<!--            <VIcon-->
+<!--              :icon="product.is_picked_up == true ? 'material-symbols-light:done-all' : 'material-symbols-light:close'"-->
+<!--              :color="product.is_picked_up == true ? '#008000' : '#f00000'" size="24" color="primary"-->
+<!--            ></VIcon>-->
+<!--          </td>-->
           <td>
             {{ ConvertToArabicNumbers(Intl.NumberFormat().format(product.price)) }} {{ t('riyal') }}
           </td>
@@ -269,12 +265,13 @@ const formatDateTime = data => {
           <td>
             {{ ConvertToArabicNumbers(formatDateTime(product.created_at).date) }}
           </td>
-          <td style="width: 7.5rem;">
+          <td>
             <VBtn
               icon
               variant="plain"
               color="default"
               size="x-small"
+              @click="openProductDetails(product)"
             >
               <VIcon
                 :size="22"

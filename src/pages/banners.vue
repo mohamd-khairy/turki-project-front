@@ -108,17 +108,7 @@ const openEdit = banner => {
 
         <VSpacer/>
 
-        <div class="w-25 d-flex align-center flex-wrap gap-1">
-          <!-- 👉 Search  -->
-          <div class="w-100 banner-list-search">
-            <VTextField
-              v-model="searchQuery"
-              placeholder="بحث"
-              density="compact"
-              full-width
-            />
-          </div>
-        </div>
+
       </VCardText>
 
       <VDivider/>

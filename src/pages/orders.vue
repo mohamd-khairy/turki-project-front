@@ -2,10 +2,17 @@
 import moment from "moment"
 import { useI18n } from "vue-i18n"
 import { useOrdersStore } from "@/store/Orders"
+import { requiredValidator } from "@validators"
+import { useCitiesStore } from "@/store/Cities"
+import { useCountriesStore } from "@/store/Countries"
+import { useEmployeesStore } from "@/store/Employees"
 
 const { t } = useI18n()
 
 const ordersListStore = useOrdersStore()
+const citiesListStore = useCitiesStore()
+const countriesListStore = useCountriesStore()
+const customersListStore = useEmployeesStore()
 const searchQuery = ref('')
 const selectedStatus = ref()
 const rowPerPage = ref(10)
@@ -13,30 +20,76 @@ const currentPage = ref(1)
 const totalPage = ref(1)
 const totalOrders = ref(0)
 const orders = ref([])
+const cities = ref([])
+const customers = ref([])
+const countries = ref([])
+const orderStatuses = ref([])
+const dataFrom = ref(1)
+const dataTo = ref(1)
 const selectedRows = ref([])
-const isAddOpen = ref(false)
-const isDeleteOpen = ref(false)
+const isOpen = ref(false)
 const selectedOrder = ref({})
 const isEditOpen = ref(false)
+const isLoading = ref(false)
+const isFiltered = ref(false)
+
+const filters = reactive({
+  city_ids: [],
+  country_ids: [],
+  order_state_ids: [],
+  date_from: null,
+  date_to: null,
+  delivery_date: null,
+  customer_id: null,
+})
+
+onMounted(() => {
+  getOrders()
+  ordersListStore.fetchOrderStatus().then(response => {
+    orderStatuses.value = response.data.data
+  })
+  citiesListStore.fetchCities().then(response => {
+    cities.value = response.data.data
+  })
+  countriesListStore.fetchCountries().then(response => {
+    countries.value = response.data.data
+  })
+  customersListStore.fetchCustomers().then(response => {
+    customers.value = response.data.data
+  })
+})
 
 const getOrders = () => {
+  isLoading.value = true
   ordersListStore.fetchOrders({
     q: searchQuery.value,
     per_page: rowPerPage.value,
+    page: currentPage.value,
+    city_ids: filters.city_ids,
+    country_ids: filters.country_ids,
+    order_state_ids: filters.order_state_ids,
+    date_from: filters.date_from,
+    date_to: filters.date_to,
+    delivery_date: filters.delivery_date,
+    customer_id: filters.customer_id,
+
   }).then(response => {
     orders.value = response.data.data.data
-    totalPage.value = orders.value / rowPerPage
-    totalOrders.value = orders.value.length
-    currentPage.value = 1
+    totalPage.value = response.data.data.last_page
+    dataFrom.value = response.data.data.from
+    dataTo.value = response.data.data.to
+    totalOrders.value = response.data.data.total
+    isLoading.value = false
   }).catch(error => {
+    isLoading.value = false
     console.log(error)
   })
 }
 
 // 👉 Fetch Categories
-watchEffect(() => {
-  getOrders()
-})
+// watchEffect(() => {
+//   getOrders()
+// })
 
 
 // 👉 Fetch Countrys
@@ -56,6 +109,10 @@ const paginateOrders = computed(() => {
   })
 })
 
+// const filteredItems = () => {
+//   return orders.value.filter(item => item.name.toLowerCase().includes(searchQuery.value.toString()))
+// }
+
 const nextPage = () => {
   if ((currentPage.value * rowPerPage.value) < orders.value.length) currentPage.value
 }
@@ -66,10 +123,10 @@ const prevPage = () => {
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
-  const firstIndex = orders.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
-  const lastIndex = firstIndex + (rowPerPage.value - 1) <= orders.value.length ? firstIndex + (rowPerPage.value - 1) : totalOrders.value
+  // const firstIndex = products.value.length ? (currentPage.value - 1) * rowPerPage.value + 1 : 0
+  // const lastIndex = firstIndex + (rowPerPage.value - 1) <= products.value.length ? firstIndex + (rowPerPage.value - 1) : totalProducts.value
 
-  return ` عرض من ${ConvertToArabicNumbers(firstIndex)} إلي ${ConvertToArabicNumbers(lastIndex)} من ${ConvertToArabicNumbers(totalOrders.value)} الإجمالي `
+  return ` عرض من ${ConvertToArabicNumbers(dataFrom.value)} إلي ${ConvertToArabicNumbers(dataTo.value)} من ${ConvertToArabicNumbers(totalOrders.value)} الإجمالي `
 })
 
 const changeStatus = data => {
@@ -78,9 +135,20 @@ const changeStatus = data => {
   // })
 }
 
-const openDelete = order => {
-  isDeleteOpen.value = true
-  selectedOrder.value = order
+const filterOrders = () => {
+  isFiltered.value = true
+  getOrders()
+}
+
+const clearFilter = () => {
+  filters.city_ids = [],
+  filters.country_ids = [],
+  filters.order_state_ids = [],
+  filters.date_from = null,
+  filters.date_to = null,
+  filters.delivery_date = null,
+  filters.customer_id = null
+  filterOrders()
 }
 
 const openEdit = order => {
@@ -107,7 +175,141 @@ const formatDateTime = data => {
 
 <template>
   <div>
-    <VCard>
+    <VCard class="mb-5 pa-5">
+      <VRow>
+        <VCol cols="12" lg="3" md="4" sm="6">
+          <VRow>
+            <VCol cols="12" class="d-flex align-center gap-3">
+              <div class="icon">
+                <VIcon icon="material-symbols:globe" color="primary"></VIcon>
+              </div>
+              <VSelect
+                v-model="filters.country_ids"
+                :items="countries"
+                :label="t('forms.countries')"
+                item-title="name_ar"
+                item-value="id"
+                multiple
+                :disabled="isLoading"
+              />
+            </VCol>
+            <VCol cols="12" class="d-flex align-center gap-3">
+              <div class="icon">
+                <VIcon icon="solar:city-broken" color="primary"></VIcon>
+              </div>
+              <VSelect
+                v-model="filters.city_ids"
+                :items="cities"
+                :label="t('forms.cities')"
+                item-title="name_ar"
+                item-value="id"
+                multiple
+                :disabled="isLoading"
+              />
+            </VCol>
+          </VRow>
+        </VCol>
+        <VCol cols="12" lg="3" md="4" sm="6">
+          <VRow>
+            <VCol cols="12" class="d-flex align-center gap-3">
+              <div class="icon">
+                <VIcon icon="solar:delivery-broken" color="primary"></VIcon>
+              </div>
+              <VSelect
+                v-model="filters.order_state_ids"
+                :items="orderStatuses"
+                label="حالة الطلب"
+                item-title="state_ar"
+                item-value="id"
+                multiple
+                :disabled="isLoading"
+              />
+            </VCol>
+            <VCol cols="12" class="d-flex align-center gap-3">
+              <div class="icon">
+                <VIcon icon="clarity:users-line" color="primary"></VIcon>
+              </div>
+              <VSelect
+                v-model="filters.customer_id"
+                :items="customers"
+                label="العميل"
+                item-title="name"
+                item-value="id"
+                :disabled="isLoading"
+              />
+            </VCol>
+          </VRow>
+        </VCol>
+        <VCol cols="12" lg="3" md="4" sm="6">
+          <VRow>
+            <VCol cols="12" class="d-flex align-center gap-3">
+              <div class="icon">
+                <VIcon icon="fluent-mdl2:date-time" color="primary"></VIcon>
+              </div>
+              <VTextField
+                v-model="filters.date_from"
+                type="date"
+                :label="t('forms.from')"
+                :disabled="isLoading"
+              />
+            </VCol>
+            <VCol cols="12" class="d-flex align-center gap-3">
+              <div class="icon">
+                <VIcon icon="fluent-mdl2:date-time" color="primary"></VIcon>
+              </div>
+              <VTextField
+                v-model="filters.date_to"
+                type="date"
+                :label="t('forms.to')"
+                :disabled="isLoading"
+              />
+            </VCol>
+          </VRow>
+        </VCol>
+        <VCol cols="12" lg="3" md="4" sm="6">
+          <VRow>
+            <VCol cols="12" class="d-flex align-center gap-3">
+              <div class="icon">
+                <VIcon icon="fluent-mdl2:date-time" color="primary"></VIcon>
+              </div>
+              <VTextField
+                v-model="filters.delivery_date"
+                type="date"
+                :label="t('forms.delivery_date')"
+                :disabled="isLoading"
+              />
+            </VCol>
+            <VCol cols="12" class="d-flex align-center gap-3">
+              <VBtn
+                v-if="!isLoading"
+                prepend-icon="solar:filter-bold-duotone"
+                class="w-50"
+                :disabled="isLoading"
+                @click.stop="filterOrders"
+              >
+                {{ t('Filter') }}
+              </VBtn>
+              <VBtn
+                v-else
+                type="submit"
+                class="position-relative me-3 w-100"
+              >
+                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
+              </VBtn>
+              <VBtn
+                prepend-icon="healthicons:x"
+                class="w-50"
+                :disabled="isLoading || !isFiltered"
+                @click.stop="clearFilter"
+              >
+                {{ t('Clear_Filter') }}
+              </VBtn>
+            </VCol>
+          </VRow>
+        </VCol>
+      </VRow>
+    </VCard>
+    <VCard :loading="isLoading">
       <VCardTitle class="d-flex align-center">
         <VIcon icon="solar:delivery-broken" size="24" color="primary"></VIcon>
         <span class="mx-1">{{ t('Orders') }}</span>
@@ -124,16 +326,7 @@ const formatDateTime = data => {
 
         <VSpacer/>
 
-        <div class="w-25 d-flex align-center flex-wrap gap-2">
-          <!-- 👉 Search  -->
-          <div class="w-100 product-list-search">
-            <VTextField
-              v-model="searchQuery"
-              placeholder="بحث"
-              density="compact"
-            />
-          </div>
-        </div>
+
       </VCardText>
 
       <VDivider/>
@@ -202,12 +395,18 @@ const formatDateTime = data => {
           >
             {{ t('forms.created_at') }}
           </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+            {{ t('forms.actions') }}
+          </th>
         </tr>
         </thead>
 
-        <tbody>
+        <tbody v-if="!isLoading">
         <tr
-          v-for="(order, i) in paginateOrders"
+          v-for="(order, i) in orders"
           :key="order.id"
         >
           <td>
@@ -240,11 +439,25 @@ const formatDateTime = data => {
           <td>
             {{ ConvertToArabicNumbers(formatDateTime(order.created_at).date) }}
           </td>
+          <td>
+            <VBtn
+              icon
+              variant="plain"
+              color="default"
+              size="x-small"
+              @click="isOpen = true"
+            >
+              <VIcon
+                :size="22"
+                icon="tabler-eye"
+              />
+            </VBtn>
+          </td>
         </tr>
         </tbody>
 
         <!-- 👉 table footer  -->
-        <tfoot v-show="!orders.length">
+        <tfoot v-show="!orders.length || isLoading">
         <tr>
           <td
             colspan="8"
@@ -265,13 +478,14 @@ const formatDateTime = data => {
         <VPagination
           v-model="currentPage"
           size="small"
-          :total-visible="rowPerPage"
+          :total-visible="5"
           :length="totalPage"
-          @next="nextPage"
-          @prev="prevPage"
+          @next="selectedRows = []"
+          @prev="selectedRows = []"
         />
       </VCardText>
     </VCard>
-    <EditOrderDialog :item="selectedOrder" v-model:is-edit-open="isEditOpen" @refreshTable="getOrders" />
+    <OrderInvoice :item="selectedOrder" v-model:is-open="isOpen"/>
+    <EditOrderDialog :item="selectedOrder" v-model:is-edit-open="isEditOpen" @refreshTable="getOrders"/>
   </div>
 </template>
