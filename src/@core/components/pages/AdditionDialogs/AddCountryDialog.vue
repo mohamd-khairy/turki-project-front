@@ -24,6 +24,18 @@ const countriesListStore = useCountriesStore()
 const settingsListStore = useSettingsStore()
 const isLoading = ref(false)
 
+const location = reactive({
+  lat: null,
+  lng: null,
+})
+
+onMounted(() => {
+  navigator.geolocation.getCurrentPosition(position => {
+    location.lat = position.coords.latitude
+    location.lng = position.coords.longitude
+  })
+})
+
 // Variables
 const country = reactive({
   name_ar: null,
@@ -32,20 +44,20 @@ const country = reactive({
   currency_en: null,
   phone_code: null,
   code: null,
-  latitude: 0,
-  longitude: 0,
+  latitude: null,
+  longitude: null,
 })
 
 // Functions
 const resetForm = () => {
   country.name_ar = null,
-  country.name_en = null,
-  country.currency_ar = null,
-  country.currency_en = null,
-  country.phone_code = null,
-  country.code = null,
-  country.latitude = 0,
-  country.longitude = 0
+    country.name_en = null,
+    country.currency_ar = null,
+    country.currency_en = null,
+    country.phone_code = null,
+    country.code = null,
+    country.latitude = null,
+    country.longitude = null
   emit('update:isAddOpen', false)
 }
 
@@ -78,6 +90,14 @@ const onFormSubmit = () => {
 
 const dialogModelValueUpdate = val => {
   emit('update:isAddOpen', val)
+}
+
+const getSelectedLocation = loc => {
+  location.lat = loc.lat
+  location.lng = loc.lng
+  country.latitude = loc.lat
+  country.longitude = loc.lng
+
 }
 </script>
 
@@ -178,7 +198,9 @@ const dialogModelValueUpdate = val => {
               lg="12"
               sm="6"
             >
-              <GoogleMaps></GoogleMaps>
+              <!--              <GoogleMaps :location="location"></GoogleMaps>-->
+              <MapAutoComplete @select-location="getSelectedLocation"></MapAutoComplete>
+              <AddCountryMap :location="location"></AddCountryMap>
             </VCol>
             <VCol
               cols="12"

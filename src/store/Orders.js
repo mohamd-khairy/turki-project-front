@@ -12,8 +12,8 @@ export const useOrdersStore = defineStore('OrdersStore', {
     },
 
     // 👉 Fetch single banner
-    fetchOrder(id) {
-      return axios.get(`/orders/${id}`)
+    fetchOrder(refrence_id) {
+      return axios.get(`/orders/get-one-order/${refrence_id}`)
     },
     editOrder(data) {
       return axios.post(`/orders/edit-order`, data)

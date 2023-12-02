@@ -1,46 +1,41 @@
 <script setup>
-import { GoogleMap, Marker } from "vue3-google-map"
-
 const props = defineProps(["location"])
 
-// const center = reactive({ lat: 30.0516943, lng: 31.2053852 })
-const center = reactive({ lat: 30.0516943, lng: -74.0215151 })
-const currentPlace = ref(null)
-const markers = ref(null)
-const places = ref(null)
-
-const geoLocate = () => {
-  if (props.location) {
-    let loc = JSON.stringify(props.location).replaceAll("{", "").replaceAll("}", "").replaceAll("\"", "").replaceAll("\"\\", "").replaceAll("\\", "").split(",")
-    center.lat = Number(loc[0].split(":")[1])
-    center.lng = Number(loc[1].split(":")[1])
-    let marker = {
-      lat: center.lat,
-      lng: center.lng,
-    }
-    emit("updateLocation", marker)
-    markers.value = { position: marker }
-  } else {
-    navigator.geolocation.getCurrentPosition(position => {
-      center.lat = position.coords.latitude
-      center.lng = position.coords.longitude
-    })
-  }
+const getSelectedLocation = loc => {
+  console.log("LOCATION => ", loc)
 }
 
-onMounted(() => {
-  geoLocate()
-})
 </script>
 
 <template>
-  <GoogleMap
-    api-key="AIzaSyCM2TngqydZtVlZ5hkKjY7x56ut59TTI88"
-    style="width: 100%; height: 500px"
-    :center="center"
-    :zoom="15"
-  >
-    <Marker :options="{ position: center }" />
-  </GoogleMap>
+  <div class="position-relative">
+    <MapAutoComplete @select-location="getSelectedLocation"></MapAutoComplete>
+    <AddCountryMap :location="props.location"></AddCountryMap>
+  </div>
 </template>
 
+<style lang="scss" scoped>
+.autocomplete-results {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  z-index: 99;
+  color: #000;
+  padding: 5px;
+  box-shadow: 0 1px 5px 3px rgba(0, 0, 0, 0.12);
+
+  div {
+    margin: 2px 0;
+    padding: 8px;
+    //background: #ddd;
+    //cursor: pointer;
+    transition: 0.5s ease-in-out background;
+
+    &:hover {
+      background: #efefef;
+    }
+  }
+}
+</style>

@@ -251,17 +251,24 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div v-else>
-      <VSkeletonLoader
-        class="mx-auto border"
-        max-width="300"
-        type="image, article"
-      />
+    <div class="loader_wrap" v-else>
+      <img src="@/assets/images/logo.png" alt="najdiya" width="100" />
+      <p class="text-2xl">جاري جلب البيانات ...</p>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+.loader_wrap {
+  text-align: center;
+  img {
+    width: 300px;
+    margin: 0 auto;
+  }
+  p {
+    margin-top: 0;
+  }
+}
 img {
   width: 100%;
   display: block;

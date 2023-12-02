@@ -127,5 +127,32 @@ const ConvertToArabicNumbers = num => {
         </div>
       </VCard>
     </VCol>
+    <VCol
+      cols="12"
+      md="3"
+      sm="6"
+    >
+      <VCard class="d-flex pa-5" :loading="!props.statistics.value">
+        <VAvatar
+          color="primary"
+          variant="tonal"
+          size="42"
+          class="me-3"
+        >
+          <VIcon
+            size="24"
+            icon="fluent-mdl2:shop"
+          />
+        </VAvatar>
+
+        <div class="d-flex flex-column">
+          <span class="text-h6">
+            {{ t('wallet_sum') }}
+          </span>
+          <span class="text-h6 font-weight-medium mt-2"
+          >{{ props.statistics.value ? ConvertToArabicNumbers(Intl.NumberFormat().format(props.statistics.value.wallet_sum)) : ConvertToArabicNumbers(0) }}</span>
+        </div>
+      </VCard>
+    </VCol>
   </VRow>
 </template>

@@ -101,18 +101,19 @@ const handleNavScroll = evt => {
       <slot name="nav-header">
         <RouterLink
           to="/"
-          class="app-logo d-flex align-center gap-x-3 app-title-wrapper"
+          class="app-logo d-flex align-center app-title-wrapper"
         >
           <!--          <VNodeRenderer :nodes="config.app.logo" />-->
-          <VIcon icon="iconoir:n-square" size="36"></VIcon>
-          <Transition name="vertical-nav-app-title">
-            <h1
-              v-show="!hideTitleAndIcon"
-              class="app-title font-weight-bold leading-normal text-xl"
-            >
-              {{ config.app.title }}
-            </h1>
-          </Transition>
+<!--          <VIcon icon="iconoir:n-square" size="36"></VIcon>-->
+          <img src="@/assets/images/logo.png" alt="najdiya" width="150">
+<!--          <Transition name="vertical-nav-app-title">-->
+<!--            <h1-->
+<!--              v-show="!hideTitleAndIcon"-->
+<!--              class="app-title font-weight-bold leading-normal text-xl"-->
+<!--            >-->
+<!--              {{ config.app.title }}-->
+<!--            </h1>-->
+<!--          </Transition>-->
         </RouterLink>
         <!-- 👉 Vertical nav actions -->
         <!-- Show toggle collapsible in >md and close button in <md -->
@@ -173,6 +174,18 @@ const handleNavScroll = evt => {
 @use "@configured-variables" as variables;
 @use "@layouts/styles/mixins";
 
+.v-theme--dark .app-logo {
+  img {
+    filter: brightness(0) invert(1);
+  }
+}
+
+.app-logo {
+  img {
+    max-width: 300px;
+    filter: unset;
+  }
+}
 // 👉 Vertical Nav
 .layout-vertical-nav {
   position: fixed;

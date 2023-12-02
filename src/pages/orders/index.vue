@@ -8,6 +8,7 @@ import { useCountriesStore } from "@/store/Countries"
 import { useEmployeesStore } from "@/store/Employees"
 
 const { t } = useI18n()
+const router = useRouter()
 
 const ordersListStore = useOrdersStore()
 const citiesListStore = useCitiesStore()
@@ -149,6 +150,14 @@ const clearFilter = () => {
   filters.delivery_date = null,
   filters.customer_id = null
   filterOrders()
+}
+
+const openDetails = order => {
+  router.push(`orders/${order.ref_no}`)
+}
+
+const openInvoice = order => {
+  router.push(`orders/${order.ref_no}/invoice`)
 }
 
 const openEdit = order => {
@@ -445,7 +454,19 @@ const formatDateTime = data => {
               variant="plain"
               color="default"
               size="x-small"
-              @click="isOpen = true"
+              @click="openInvoice(order)"
+            >
+              <VIcon
+                :size="22"
+                icon="iconamoon:invoice-thin"
+              />
+            </VBtn>
+            <VBtn
+              icon
+              variant="plain"
+              color="default"
+              size="x-small"
+              @click="openDetails(order)"
             >
               <VIcon
                 :size="22"

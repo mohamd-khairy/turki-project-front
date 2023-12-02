@@ -126,7 +126,6 @@ const formatDateTime = data => {
         <VBtn
           prepend-icon="tabler-plus"
           @click="isAddOpen = true"
-          v-can="'create-city'"
         >
           {{ t('Add_Item') }}
         </VBtn>

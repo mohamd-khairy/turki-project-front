@@ -14,6 +14,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  cities: {
+    type: Array,
+    required: true,
+  },
 })
 
 const emit = defineEmits([
@@ -26,12 +30,8 @@ const isLoading = ref(false)
 const { t } = useI18n()
 
 const itemData = reactive({
-  name_ar: "",
-  name_en: "",
-  time_hhmm: null,
-  from: null,
-  to: null,
-  is_active: 0,
+  delivery_date: null,
+  city_id: null,
 })
 
 const form = ref()
@@ -42,16 +42,13 @@ const resetForm = () => {
 
 onUpdated(() => {
   itemData.id = props.item.id
-  itemData.name_en = props.item.name_en
-  itemData.name_ar = props.item.name_ar
-  itemData.from = props.item.from
-  itemData.to = props.item.to
-  itemData.time_hhmm = props.item.time_hhmm
+  itemData.delivery_date = props.item.delivery_date
+  itemData.city_id = props.item.city_id
 })
 
 const onFormSubmit = () => {
   isLoading.value = true
-  settingsListStore.editDeliveryTime(itemData).then(response => {
+  settingsListStore.editNotDeliveryDate(itemData).then(response => {
     emit('refreshTable')
     emit('update:isEditOpen', false)
     settingsListStore.alertColor = "success"
@@ -108,56 +105,32 @@ const dialogModelValueUpdate = val => {
               cols="12"
             >
               <VTextField
-                v-model="itemData.name_ar"
-                :label="t('forms.name_ar')"
+                v-model="itemData.delivery_date"
+                type="date"
+                :label="t('forms.date')"
                 :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
               cols="12"
             >
-              <VTextField
-                v-model="itemData.name_en"
-                :label="t('forms.name_en')"
+              <VSelect
+                v-model="itemData.city_id"
+                :items="cities"
+                :label="t('cities')"
+                item-title="name_ar"
+                item-value="id"
                 :rules="[requiredValidator]"
               />
             </VCol>
-            <VCol
-              cols="12"
-            >
-              <VTextField
-                v-model="itemData.from"
-                :label="t('forms.delivery_time_from')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-            >
-              <VTextField
-                v-model="itemData.to"
-                :label="t('forms.delivery_time_to')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-            >
-              <VTextField
-                v-model="itemData.time_hhmm"
-                type="time"
-                :label="t('forms.delivery_time')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-            >
-              <VSwitch
-                v-model="itemData.is_active"
-                :label="t('forms.is_active')"
-              />
-            </VCol>
+<!--            <VCol-->
+<!--              cols="12"-->
+<!--            >-->
+<!--              <VSwitch-->
+<!--                v-model="itemData.is_active"-->
+<!--                :label="t('forms.is_active')"-->
+<!--              />-->
+<!--            </VCol>-->
 
             <VCol
               cols="12"

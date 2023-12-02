@@ -4,6 +4,8 @@ import {
   requiredValidator,
 } from '@validators'
 import { useSettingsStore } from "@/store/Settings"
+import { useOrdersStore } from "@/store/Orders"
+import { useEmployeesStore } from "@/store/Employees"
 
 const props = defineProps({
   isEditOpen: {
@@ -21,18 +23,21 @@ const emit = defineEmits([
   'refreshTable',
 ])
 
+const ordersListStore = useOrdersStore()
 const settingsListStore = useSettingsStore()
+const employeesListStore = useEmployeesStore()
 const isLoading = ref(false)
+
 const { t } = useI18n()
 
 const itemData = reactive({
-  name_ar: "",
-  name_en: "",
-  time_hhmm: null,
-  from: null,
-  to: null,
-  is_active: 0,
+  id: null,
+  order_state_id: null,
+  user_id: null,
 })
+
+const statues = reactive([])
+const users = reactive([])
 
 const form = ref()
 
@@ -40,22 +45,27 @@ const resetForm = () => {
   emit('update:isEditOpen', false)
 }
 
+onMounted(() => {
+  ordersListStore.fetchOrderStatus().then(response => {
+    statues.value = response.data.data
+  })
+  employeesListStore.fetchEmployees({ pageSize: -1, role_id: 7 }).then(response => {
+    users.value = response.data.data
+  })
+})
+
 onUpdated(() => {
-  itemData.id = props.item.id
-  itemData.name_en = props.item.name_en
-  itemData.name_ar = props.item.name_ar
-  itemData.from = props.item.from
-  itemData.to = props.item.to
-  itemData.time_hhmm = props.item.time_hhmm
+  itemData.id = props.item.order ? props.item.order.id : 0
+  itemData.order_state_id = props.item.order ? props.item.order.order_state_id : 0
 })
 
 const onFormSubmit = () => {
   isLoading.value = true
-  settingsListStore.editDeliveryTime(itemData).then(response => {
+  ordersListStore.editOrder(itemData).then(response => {
     emit('refreshTable')
     emit('update:isEditOpen', false)
     settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم تعديل العنصر بنجاح"
+    settingsListStore.alertMessage = "تم تعديل حالة الطلب بنجاح"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
@@ -93,9 +103,9 @@ const dialogModelValueUpdate = val => {
     >
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="fluent-mdl2:date-time" size="24" color="primary"></VIcon>
+          <VIcon icon="solar:delivery-broken" size="24" color="primary"></VIcon>
           <span class="mx-1 my-1">
-            {{ t('Edit_Item') }}
+            {{ t('تعديل حالة الطلب') }}
           </span>
         </VCardTitle>
       </VCardItem>
@@ -107,55 +117,25 @@ const dialogModelValueUpdate = val => {
             <VCol
               cols="12"
             >
-              <VTextField
-                v-model="itemData.name_ar"
-                :label="t('forms.name_ar')"
+              <VSelect
+                v-model="itemData.order_state_id"
+                :items="statues.value"
+                :label="t('forms.order_state')"
+                item-title="customer_state_ar"
+                item-value="code"
                 :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
               cols="12"
             >
-              <VTextField
-                v-model="itemData.name_en"
-                :label="t('forms.name_en')"
+              <VSelect
+                v-model="itemData.user_id"
+                :items="users.value"
+                :label="t('forms.user')"
+                item-title="username"
+                item-value="id"
                 :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-            >
-              <VTextField
-                v-model="itemData.from"
-                :label="t('forms.delivery_time_from')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-            >
-              <VTextField
-                v-model="itemData.to"
-                :label="t('forms.delivery_time_to')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-            >
-              <VTextField
-                v-model="itemData.time_hhmm"
-                type="time"
-                :label="t('forms.delivery_time')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-            >
-              <VSwitch
-                v-model="itemData.is_active"
-                :label="t('forms.is_active')"
               />
             </VCol>
 
