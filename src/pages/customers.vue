@@ -18,10 +18,32 @@ const isAddOpen = ref(false)
 const isDeleteOpen = ref(false)
 const selectedEmployee = ref({})
 const isEditOpen = ref(false)
+const isLoading = ref(false)
+const isFiltered = ref(false)
+
+const filters = reactive({
+  wallet: "all",
+})
+
+const filterOptions = reactive([
+  {
+    name: 'الكل',
+    value: "all",
+  },
+  {
+    name: 'يملك محفظة',
+    value: 1,
+  },
+  {
+    name: 'لا يملك محفظة',
+    value: 0,
+  },
+])
 
 const getCustomers = () => {
   customersListStore.fetchCustomers({
     q: searchQuery.value,
+    wallet: filters.wallet,
   }).then(response => {
     customers.value = response.data.data
     totalPage.value = customers.value / rowPerPage
@@ -32,13 +54,10 @@ const getCustomers = () => {
   })
 }
 
-// 👉 Fetch Categories
-watchEffect(() => {
-  getCustomers()
-})
+// watchEffect(() => {
+//   getCustomers()
+// })
 
-
-// 👉 Fetch Countrys
 watchEffect(() => {
   if (rowPerPage.value) {
     currentPage.value = 1
@@ -71,10 +90,15 @@ const paginationData = computed(() => {
   return ` عرض من ${ConvertToArabicNumbers(firstIndex)} إلي ${ConvertToArabicNumbers(lastIndex)} من ${ConvertToArabicNumbers(totalCities.value)} الإجمالي `
 })
 
-const changeStatus = data => {
-  // customersListStore.changeCountryStatus(data).then(response => {
-  //   getCities()
-  // })
+const filterCustomers = () => {
+  getCustomers()
+  isFiltered.value = true
+}
+
+const clearFilter = () => {
+  filters.wallet = "all"
+  getCustomers()
+  isFiltered.value = false
 }
 
 const openDelete = employee => {
@@ -102,10 +126,67 @@ const formatDateTime = data => {
 
   return { date, time }
 }
+
+onMounted(() => {
+  getCustomers()
+})
 </script>
 
 <template>
   <div>
+    <VCard class="mb-5 pa-5">
+      <VRow justify="space-between">
+        <VCol cols="12" lg="3" md="4" sm="6">
+          <VRow>
+            <VCol cols="12" class="d-flex align-center gap-3">
+              <div class="icon">
+                <VIcon icon="ph:wallet-light" color="primary"></VIcon>
+              </div>
+              <VSelect
+                v-model="filters.wallet"
+                :items="filterOptions"
+                :label="t('forms.wallets')"
+                item-title="name"
+                item-value="value"
+                :disabled="isLoading"
+              />
+            </VCol>
+          </VRow>
+        </VCol>
+        <VCol cols="12" lg="4" md="6" sm="6">
+          <VRow align="center" justify="end">
+            <VCol cols="12" lg="5" md="5" sm="6">
+              <VBtn
+                class="w-100"
+                v-if="!isLoading"
+                prepend-icon="solar:filter-bold-duotone"
+                :disabled="isLoading"
+                @click.stop="filterCustomers"
+              >
+                {{ t('Filter') }}
+              </VBtn>
+              <VBtn
+                v-else
+                type="submit"
+                class="position-relative me-3 w-100"
+              >
+                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
+              </VBtn>
+            </VCol>
+            <VCol cols="12" lg="5" md="5" sm="6">
+              <VBtn
+                class="w-100"
+                prepend-icon="healthicons:x"
+                :disabled="isLoading || !isFiltered"
+                @click.stop="clearFilter"
+              >
+                {{ t('Clear_Filter') }}
+              </VBtn>
+            </VCol>
+          </VRow>
+        </VCol>
+      </VRow>
+    </VCard>
     <VCard>
       <VCardTitle class="d-flex align-center">
         <VIcon icon="ph:users-four" size="24" color="primary"></VIcon>
@@ -287,6 +368,8 @@ const formatDateTime = data => {
       </VCardText>
     </VCard>
     <EditCustomerDialog v-model:is-edit-open="isEditOpen" @refreshTable="getCustomers" :customer="selectedEmployee"/>
-    <DeleteCustomerDialog v-model:is-delete-open="isDeleteOpen" @refreshTable="getCustomers" :customer="selectedEmployee"/>
+    <DeleteCustomerDialog v-model:is-delete-open="isDeleteOpen" @refreshTable="getCustomers"
+                          :customer="selectedEmployee"
+    />
   </div>
 </template>

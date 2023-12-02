@@ -86,8 +86,9 @@ export default [
       { title: 'Product_Size', to: 'product-size' },
       { title: 'Product_Shalwata', to: 'product-shalwata' },
       { title: 'Delivery_Periods', to: 'delivery-periods' },
+      { title: 'Not_Delivery_Periods', to: 'not-delivery-periods' },
     ],
-    permission: "read-permission",
+    permission: "read-dashboard",
   },
   // {
   //   title: 'Activities',

@@ -77,8 +77,9 @@ const loginUser = () => {
       class="d-none d-lg-flex"
     >
       <div class="position-relative auth-bg rounded-lg w-100 ma-8 me-0">
-        <div class="d-flex align-center justify-center flex-column w-100 h-100">
-          <VIcon icon="iconoir:n-square" size="128" color="primary"></VIcon>
+        <div class="app-logo d-flex align-center justify-center flex-column w-100 h-100">
+<!--          <VIcon icon="iconoir:n-square" size="128" color="primary"></VIcon>-->
+          <img src="@/assets/images/logo.png" alt="najdiya">
           <h1 class="font-weight-bold text-6xl mt-3">
             مرحباً بك في {{ themeConfig.app.title }}
           </h1>
@@ -100,13 +101,14 @@ const loginUser = () => {
       <VCard
         flat
         :max-width="600"
-        class="mt-12 mt-sm-0 pa-4 w-100"
+        class="app-logo mt-12 mt-sm-0 pa-4 w-100"
       >
         <VCardText>
-          <VNodeRenderer
-            :nodes="themeConfig.app.logo"
-            class="mb-6"
-          />
+<!--          <VNodeRenderer-->
+<!--            :nodes="themeConfig.app.logo"-->
+<!--            class="mb-6"-->
+<!--          />-->
+          <img src="@/assets/images/logo.png" alt="najdiya"  width="100">
 
           <h5 class="text-h5 font-weight-semibold mb-1">
             مرحباً بك في {{ themeConfig.app.title }}! 👋🏻

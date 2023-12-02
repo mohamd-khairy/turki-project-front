@@ -1,5 +1,7 @@
 <script setup>
 import { useCountriesStore } from "@/store/Countries"
+import { useI18n } from "vue-i18n"
+import { useSettingsStore } from "@/store/Settings"
 
 const props = defineProps({
   isEditOpen: {
@@ -17,8 +19,10 @@ const emit = defineEmits([
   'refreshTable',
 ])
 
-import { useI18n } from "vue-i18n"
-import { useSettingsStore } from "@/store/Settings"
+const location = reactive({
+  lat: null,
+  lng: null,
+})
 
 const { t } = useI18n()
 const countriesList = useCountriesStore()
@@ -47,8 +51,9 @@ onUpdated(() => {
   countryData.phone_code = props.country.phone_code,
   countryData.code = props.country.code,
   countryData.latitude = props.country.latitude,
-  countryData.longitude = props.country.longitude
-
+  countryData.longitude = props.country.longitude,
+  location.lat = props.country.latitude,
+  location.lng = props.country.longitude
 })
 
 // Functions
@@ -85,6 +90,13 @@ const onFormSubmit = () => {
 
 const dialogModelValueUpdate = val => {
   emit('update:isEditOpen', val)
+}
+
+const getSelectedLocation = loc => {
+  location.lat = loc.lat
+  location.lng = loc.lng
+  countryData.latitude = loc.lat
+  countryData.longitude = loc.lng
 }
 </script>
 
@@ -174,6 +186,14 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.code')"
               />
             </VCol>
+<!--            <VCol-->
+<!--              cols="12"-->
+<!--              lg="12"-->
+<!--              sm="6"-->
+<!--            >-->
+<!--              <MapAutoComplete @select-location="getSelectedLocation"></MapAutoComplete>-->
+<!--              <AddCountryMap :location="location"></AddCountryMap>-->
+<!--            </VCol>-->
             <VCol
               cols="12"
               class="text-center"

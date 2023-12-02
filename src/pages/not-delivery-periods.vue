@@ -2,10 +2,18 @@
 import moment from "moment"
 import { useI18n } from "vue-i18n"
 import { useSettingsStore } from "@/store/Settings"
+import EditDeliveryTimeDialog from "@core/components/pages/EditDialogs/EditDeliveryTimeDialog.vue"
+import DeleteDeliveryTime from "@core/components/pages/DeleteDialogs/DeleteDeliveryTime.vue"
+import { useCitiesStore } from "@/store/Cities"
+import EditNotDeliveryDate from "@core/components/pages/EditDialogs/EditNotDeliveryDate.vue"
+import DeleteNotDeliveryDate from "@core/components/pages/DeleteDialogs/DeleteNotDeliveryDate.vue"
 
 const { t } = useI18n()
 
 const settingsListStore = useSettingsStore()
+const citiesListStore = useCitiesStore()
+const cities = ref([])
+const city = ref({})
 const searchQuery = ref('')
 const selectedStatus = ref()
 const rowPerPage = ref(5)
@@ -20,7 +28,7 @@ const selectedItem = ref({})
 const isEditOpen = ref(false)
 
 const getItems = () => {
-  settingsListStore.fetchProductCut({
+  settingsListStore.fetchNotDelivery_Periods({
     q: searchQuery.value,
   }).then(response => {
     items.value = response.data.data
@@ -71,12 +79,6 @@ const paginationData = computed(() => {
   return ` عرض من ${ConvertToArabicNumbers(firstIndex)} إلي ${ConvertToArabicNumbers(lastIndex)} من ${ConvertToArabicNumbers(totalItems.value)} الإجمالي `
 })
 
-const changeStatus = data => {
-  // itemsListStore.changeCountryStatus(data).then(response => {
-  //   getItems()
-  // })
-}
-
 const openDelete = city => {
   isDeleteOpen.value = true
   selectedItem.value = city
@@ -102,14 +104,40 @@ const formatDateTime = data => {
 
   return { date, time }
 }
+
+const convertToArabicDayName = dayName => {
+  const daysMapping = {
+    Sunday: "الأحد",
+    Monday: "الاثنين",
+    Tuesday: "الثلاثاء",
+    Wednesday: "الأربعاء",
+    Thursday: "الخميس",
+    Friday: "الجمعة",
+    Saturday: "السبت",
+  };
+
+  return daysMapping[dayName] || "Invalid Day";
+}
+
+const getCityName = (cities, id) => {
+  // const cityFiltered = cities.filter(city => city.id === id)
+  return cities.filter(city => city.id === id)
+}
+
+onMounted(() => {
+  citiesListStore.fetchCities({ pageSize: -1 }).then(response => {
+    cities.value = response?.data.data
+  })
+
+})
 </script>
 
 <template>
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="ph:knife-thin" size="24" color="primary"></VIcon>
-        <span class="mx-1">{{ t('Product_Cut') }}</span>
+        <VIcon icon="fluent-mdl2:date-time" size="24" color="primary"></VIcon>
+        <span class="mx-1">{{ t('Not_Delivery_Periods') }}</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
         <!-- 👉 Rows per page -->
@@ -148,13 +176,19 @@ const formatDateTime = data => {
               scope="col"
               class="font-weight-semibold"
             >
-              {{ t('forms.name') }}
+              {{ t('forms.day') }}
             </th>
             <th
               scope="col"
               class="font-weight-semibold"
             >
-              {{ t('forms.price') }}
+              {{ t('forms.date') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.city') }}
             </th>
             <th
               scope="col"
@@ -174,10 +208,13 @@ const formatDateTime = data => {
               #{{ ConvertToArabicNumbers(++i) }}
             </td>
             <td>
-              {{ item.name_ar }}
+              {{ convertToArabicDayName(moment(item.delivery_date).format('dddd')) }}
             </td>
             <td>
-              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(item.price)) }}
+              {{ ConvertToArabicNumbers(moment(item.delivery_date).format('DD-MM-YYYY')) }}
+            </td>
+            <td>
+              {{ getCityName(cities, item.city_id)[0].name_ar }}
             </td>
             <td>
               <VBtn
@@ -237,13 +274,14 @@ const formatDateTime = data => {
         />
       </VCardText>
     </VCard>
-    <AddProductCutDialog v-model:isAddOpen="isAddOpen" @refreshTable="getItems"/>
-    <EditProductCutDialog
+    <AddNotDeliveryDateDialog v-model:isAddOpen="isAddOpen" :cities="cities" @refreshTable="getItems"/>
+    <EditNotDeliveryDate
       v-model:isEditOpen="isEditOpen"
       :item="selectedItem"
+      :cities="cities"
       @refreshTable="getItems"
     />
-    <DeleteProductCutDialog
+    <DeleteNotDeliveryDate
       v-model:isDeleteOpen="isDeleteOpen"
       :item="selectedItem"
       @refreshTable="getItems"

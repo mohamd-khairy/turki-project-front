@@ -44,3 +44,19 @@
     transform: rotate(360deg);
   }
 }
+
+//Print
+@media print {
+  .app-customizer-toggler,
+  .print_sec,
+  .navbar-content-container,
+  .layout-vertical-nav {
+    display: none !important;
+  }
+  .layout-content-wrapper {
+    padding-inline-start: 0 !important;
+  }
+  .layout-page-content {
+    padding-top: 100px !important;
+  }
+}
