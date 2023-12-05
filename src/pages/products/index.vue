@@ -115,8 +115,7 @@ const clearFilter = () => {
   filters.category_id = null,
   filters.sub_category_id = null,
   filters.city_id = null
-  getProducts()
-  isFiltered.value = false
+  // getProducts()
 }
 
 const ConvertToArabicNumbers = num => {
@@ -134,8 +133,12 @@ const formatDateTime = data => {
   return { date, time }
 }
 
-onMounted(() => {
+watchEffect(() => {
   getProducts()
+})
+
+
+onMounted(() => {
   categoriesListStore.fetchCategories({}).then(response => {
     categories.value = response?.data.data
   })
@@ -151,80 +154,64 @@ onMounted(() => {
 <template>
   <div>
     <VCard class="mb-5 pa-5">
-      <VRow justify="space-between">
-        <VCol cols="12" lg="8" md="6" sm="12">
-          <VRow>
-            <VCol cols="12" lg="4" md="4" sm="6" class="d-flex align-center gap-3">
-              <div class="icon">
-                <VIcon icon="ph:wallet-light" color="primary"></VIcon>
-              </div>
-              <VSelect
-                v-model="filters.category_id"
-                :items="categories"
-                :label="t('forms.categories')"
-                item-title="type_ar"
-                item-value="id"
-              />
-            </VCol>
-            <VCol cols="12" lg="4" md="3" sm="6" class="d-flex align-center gap-3">
-              <div class="icon">
-                <VIcon icon="ph:wallet-light" color="primary"></VIcon>
-              </div>
-              <VSelect
-                v-model="filters.sub_category_id"
-                :items="sub_categories"
-                :label="t('forms.sub_categories')"
-                item-title="type_ar"
-                item-value="id"
-              />
-            </VCol>
-            <VCol cols="12" lg="4" md="3" sm="6" class="d-flex align-center gap-3">
-              <div class="icon">
-                <VIcon icon="ph:wallet-light" color="primary"></VIcon>
-              </div>
-              <VSelect
-                v-model="filters.city_id"
-                :items="cities"
-                :label="t('forms.cities')"
-                item-title="name_ar"
-                item-value="id"
-              />
-            </VCol>
-          </VRow>
-        </VCol>
-        <VCol cols="12" lg="4" md="6" sm="6">
-          <VRow align="center" justify="end">
-            <VCol cols="12" lg="5" md="5" sm="6">
-              <VBtn
-                class="w-100"
-                v-if="!isLoading"
-                prepend-icon="solar:filter-bold-duotone"
-                :disabled="isLoading"
-                @click.stop="filterProducts"
-              >
-                {{ t('Filter') }}
-              </VBtn>
-              <VBtn
-                v-else
-                type="submit"
-                class="position-relative me-3 w-100"
-              >
-                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
-              </VBtn>
-            </VCol>
-            <VCol cols="12" lg="5" md="5" sm="6">
-              <VBtn
-                class="w-100"
-                prepend-icon="healthicons:x"
-                :disabled="isLoading || !isFiltered"
-                @click.stop="clearFilter"
-              >
-                {{ t('Clear_Filter') }}
-              </VBtn>
-            </VCol>
-          </VRow>
-        </VCol>
-      </VRow>
+      <VForm @submit.stop>
+        <VRow justify="space-between">
+          <VCol cols="12" lg="8" md="6" sm="12">
+            <VRow>
+              <VCol cols="12" lg="4" md="4" sm="6" class="d-flex align-center gap-3">
+                <div class="icon">
+                  <VIcon icon="ph:wallet-light" color="primary"></VIcon>
+                </div>
+                <VSelect
+                  v-model="filters.category_id"
+                  :items="categories"
+                  :label="t('forms.categories')"
+                  item-title="type_ar"
+                  item-value="id"
+                />
+              </VCol>
+              <VCol cols="12" lg="4" md="3" sm="6" class="d-flex align-center gap-3">
+                <div class="icon">
+                  <VIcon icon="ph:wallet-light" color="primary"></VIcon>
+                </div>
+                <VSelect
+                  v-model="filters.sub_category_id"
+                  :items="sub_categories"
+                  :label="t('forms.sub_categories')"
+                  item-title="type_ar"
+                  item-value="id"
+                />
+              </VCol>
+              <VCol cols="12" lg="4" md="3" sm="6" class="d-flex align-center gap-3">
+                <div class="icon">
+                  <VIcon icon="ph:wallet-light" color="primary"></VIcon>
+                </div>
+                <VSelect
+                  v-model="filters.city_id"
+                  :items="cities"
+                  :label="t('forms.cities')"
+                  item-title="name_ar"
+                  item-value="id"
+                />
+              </VCol>
+            </VRow>
+          </VCol>
+          <VCol cols="12" lg="4" md="6" sm="6">
+            <VRow align="center" justify="end">
+              <VCol cols="12" lg="5" md="5" sm="6">
+                <VBtn
+                  class="w-100"
+                  prepend-icon="healthicons:x"
+                  :disabled="isLoading"
+                  @click.stop="clearFilter"
+                >
+                  {{ t('Clear_Filter') }}
+                </VBtn>
+              </VCol>
+            </VRow>
+          </VCol>
+        </VRow>
+      </VForm>
     </VCard>
     <VCard>
       <VCardTitle class="d-flex align-center">
@@ -284,18 +271,18 @@ onMounted(() => {
           >
             {{ t('forms.status') }}
           </th>
-<!--          <th-->
-<!--            scope="col"-->
-<!--            class="font-weight-semibold"-->
-<!--          >-->
-<!--            {{ t('forms.delivered') }}-->
-<!--          </th>-->
-<!--          <th-->
-<!--            scope="col"-->
-<!--            class="font-weight-semibold"-->
-<!--          >-->
-<!--            {{ t('forms.picked_up') }}-->
-<!--          </th>-->
+          <!--          <th-->
+          <!--            scope="col"-->
+          <!--            class="font-weight-semibold"-->
+          <!--          >-->
+          <!--            {{ t('forms.delivered') }}-->
+          <!--          </th>-->
+          <!--          <th-->
+          <!--            scope="col"-->
+          <!--            class="font-weight-semibold"-->
+          <!--          >-->
+          <!--            {{ t('forms.picked_up') }}-->
+          <!--          </th>-->
           <th
             scope="col"
             class="font-weight-semibold"
@@ -357,18 +344,18 @@ onMounted(() => {
                 {{ product.is_active == true ? t('forms.statuses.active') : t('forms.statuses.inactive') }}
               </span>
           </td>
-<!--          <td>-->
-<!--            <VIcon-->
-<!--              :icon="product.is_delivered == true ? 'material-symbols-light:done-all' : 'material-symbols-light:close'"-->
-<!--              :color="product.is_delivered == true ? '#008000' : '#f00000'" size="24" color="primary"-->
-<!--            ></VIcon>-->
-<!--          </td>-->
-<!--          <td>-->
-<!--            <VIcon-->
-<!--              :icon="product.is_picked_up == true ? 'material-symbols-light:done-all' : 'material-symbols-light:close'"-->
-<!--              :color="product.is_picked_up == true ? '#008000' : '#f00000'" size="24" color="primary"-->
-<!--            ></VIcon>-->
-<!--          </td>-->
+          <!--          <td>-->
+          <!--            <VIcon-->
+          <!--              :icon="product.is_delivered == true ? 'material-symbols-light:done-all' : 'material-symbols-light:close'"-->
+          <!--              :color="product.is_delivered == true ? '#008000' : '#f00000'" size="24" color="primary"-->
+          <!--            ></VIcon>-->
+          <!--          </td>-->
+          <!--          <td>-->
+          <!--            <VIcon-->
+          <!--              :icon="product.is_picked_up == true ? 'material-symbols-light:done-all' : 'material-symbols-light:close'"-->
+          <!--              :color="product.is_picked_up == true ? '#008000' : '#f00000'" size="24" color="primary"-->
+          <!--            ></VIcon>-->
+          <!--          </td>-->
           <td>
             {{ ConvertToArabicNumbers(Intl.NumberFormat().format(product.price)) }} {{ t('riyal') }}
           </td>
