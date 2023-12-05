@@ -10,6 +10,9 @@ export const useSettingsStore = defineStore('SettingsStore', {
     }
   },
   actions: {
+    fetchProductTags(params) {
+      return axios.get('tags', { params })
+    },
     fetchDelivery_Periods(params) {
       return axios.get('delivery-period', { params })
     },
@@ -32,6 +35,9 @@ export const useSettingsStore = defineStore('SettingsStore', {
       return axios.get('product-sizes', { params })
     },
 
+    storeProductTags(data) {
+      return axios.post(`tags`, data)
+    },
     storeDeliveryTime(data) {
       return axios.post(`delivery-period/add-period`, data)
     },
@@ -54,6 +60,9 @@ export const useSettingsStore = defineStore('SettingsStore', {
       return axios.post(`product-sizes/add-size`, data)
     },
 
+    editProductTags(data) {
+      return axios.put(`tags/${data.id}`, data)
+    },
     editNotDeliveryDate(data) {
       return axios.put(`not-delivery-date/${data.id}`, data)
     },
@@ -76,6 +85,9 @@ export const useSettingsStore = defineStore('SettingsStore', {
       return axios.post(`product-sizes/update-size/${data.id}`, data)
     },
 
+    deleteProductTags(data) {
+      return axios.delete(`tags/${data.id}`, data)
+    },
     deleteDeliveryTime(data) {
       return axios.post(`delivery-period/delete/${data.id}`)
     },

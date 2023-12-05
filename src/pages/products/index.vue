@@ -1,8 +1,12 @@
 <script setup>
 import { useProductsStore } from "@/store/Products"
 import moment from "moment/moment"
+import { useCategoriesStore } from "@/store/Categories"
+import { useCitiesStore } from "@/store/Cities"
 
 const productListStore = useProductsStore()
+const categoriesListStore = useCategoriesStore()
+const citiesListStore = useCitiesStore()
 const searchQuery = ref('')
 const selectedStatus = ref()
 const rowPerPage = ref(5)
@@ -17,31 +21,44 @@ const isAddOpen = ref(false)
 const isDeleteOpen = ref(false)
 const selectedProduct = ref({})
 const isEditOpen = ref(false)
+const isLoading = ref(false)
+const isFiltered = ref(false)
+const categories = ref([])
+const sub_categories = ref([])
+const cities = ref([])
+
+const filters = reactive({
+  category_id: null,
+  sub_category_id: null,
+  city_id: null,
+})
 
 const { t } = useI18n()
 const router = useRouter()
 
 // 👉 Fetch Categories
 const getProducts = () => {
-
+  isLoading.value = true
   productListStore.fetchProducts({
     q: searchQuery.value,
     per_page: rowPerPage.value,
     page: currentPage.value,
+    category_id: filters.category_id,
+    sub_category_id: filters.sub_category_id,
+    city_id: filters.city_id,
+
   }).then(response => {
     products.value = response.data.data.data
     totalPage.value = response.data.data.last_page
     dataFrom.value = response.data.data.from
     dataTo.value = response.data.data.to
     totalProducts.value = response.data.data.total
+    isLoading.value = false
   }).catch(error => {
+    isLoading.value = false
     console.log(error)
   })
 }
-
-watchEffect(() => {
-  getProducts()
-})
 
 watchEffect(() => {
   if (rowPerPage.value) {
@@ -89,6 +106,19 @@ const openEdit = product => {
   selectedProduct.value = product
 }
 
+const filterProducts = () => {
+  isFiltered.value = true
+  getProducts()
+}
+
+const clearFilter = () => {
+  filters.category_id = null,
+  filters.sub_category_id = null,
+  filters.city_id = null
+  getProducts()
+  isFiltered.value = false
+}
+
 const ConvertToArabicNumbers = num => {
   const arabicNumbers = "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669"
 
@@ -103,10 +133,99 @@ const formatDateTime = data => {
 
   return { date, time }
 }
+
+onMounted(() => {
+  getProducts()
+  categoriesListStore.fetchCategories({}).then(response => {
+    categories.value = response?.data.data
+  })
+  categoriesListStore.fetchSubCategories({}).then(response => {
+    sub_categories.value = response?.data.data
+  })
+  citiesListStore.fetchCities({}).then(response => {
+    cities.value = response?.data.data
+  })
+})
 </script>
 
 <template>
   <div>
+    <VCard class="mb-5 pa-5">
+      <VRow justify="space-between">
+        <VCol cols="12" lg="8" md="6" sm="12">
+          <VRow>
+            <VCol cols="12" lg="4" md="4" sm="6" class="d-flex align-center gap-3">
+              <div class="icon">
+                <VIcon icon="ph:wallet-light" color="primary"></VIcon>
+              </div>
+              <VSelect
+                v-model="filters.category_id"
+                :items="categories"
+                :label="t('forms.categories')"
+                item-title="type_ar"
+                item-value="id"
+              />
+            </VCol>
+            <VCol cols="12" lg="4" md="3" sm="6" class="d-flex align-center gap-3">
+              <div class="icon">
+                <VIcon icon="ph:wallet-light" color="primary"></VIcon>
+              </div>
+              <VSelect
+                v-model="filters.sub_category_id"
+                :items="sub_categories"
+                :label="t('forms.sub_categories')"
+                item-title="type_ar"
+                item-value="id"
+              />
+            </VCol>
+            <VCol cols="12" lg="4" md="3" sm="6" class="d-flex align-center gap-3">
+              <div class="icon">
+                <VIcon icon="ph:wallet-light" color="primary"></VIcon>
+              </div>
+              <VSelect
+                v-model="filters.city_id"
+                :items="cities"
+                :label="t('forms.cities')"
+                item-title="name_ar"
+                item-value="id"
+              />
+            </VCol>
+          </VRow>
+        </VCol>
+        <VCol cols="12" lg="4" md="6" sm="6">
+          <VRow align="center" justify="end">
+            <VCol cols="12" lg="5" md="5" sm="6">
+              <VBtn
+                class="w-100"
+                v-if="!isLoading"
+                prepend-icon="solar:filter-bold-duotone"
+                :disabled="isLoading"
+                @click.stop="filterProducts"
+              >
+                {{ t('Filter') }}
+              </VBtn>
+              <VBtn
+                v-else
+                type="submit"
+                class="position-relative me-3 w-100"
+              >
+                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
+              </VBtn>
+            </VCol>
+            <VCol cols="12" lg="5" md="5" sm="6">
+              <VBtn
+                class="w-100"
+                prepend-icon="healthicons:x"
+                :disabled="isLoading || !isFiltered"
+                @click.stop="clearFilter"
+              >
+                {{ t('Clear_Filter') }}
+              </VBtn>
+            </VCol>
+          </VRow>
+        </VCol>
+      </VRow>
+    </VCard>
     <VCard>
       <VCardTitle class="d-flex align-center">
         <VIcon icon="streamline:shopping-bag-hand-bag-1-shopping-bag-purse-goods-item-products" size="24"

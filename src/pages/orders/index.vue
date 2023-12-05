@@ -6,6 +6,9 @@ import { requiredValidator } from "@validators"
 import { useCitiesStore } from "@/store/Cities"
 import { useCountriesStore } from "@/store/Countries"
 import { useEmployeesStore } from "@/store/Employees"
+import { useProductsStore } from "@/store/Products"
+import { useSettingsStore } from "@/store/Settings"
+import { useCouponsStore } from "@/store/Coupons"
 
 const { t } = useI18n()
 const router = useRouter()
@@ -13,7 +16,10 @@ const router = useRouter()
 const ordersListStore = useOrdersStore()
 const citiesListStore = useCitiesStore()
 const countriesListStore = useCountriesStore()
+const productsListStore = useProductsStore()
+const settingsListStore = useSettingsStore()
 const customersListStore = useEmployeesStore()
+const couponsListStore = useCouponsStore()
 const searchQuery = ref('')
 const selectedStatus = ref()
 const rowPerPage = ref(10)
@@ -24,10 +30,14 @@ const orders = ref([])
 const cities = ref([])
 const customers = ref([])
 const countries = ref([])
+const products = ref([])
+const coupons = ref([])
+const deliveryPeriods = ref([])
 const orderStatuses = ref([])
 const dataFrom = ref(1)
 const dataTo = ref(1)
 const selectedRows = ref([])
+const isAddOpen = ref(false)
 const isOpen = ref(false)
 const selectedOrder = ref({})
 const isEditOpen = ref(false)
@@ -55,8 +65,17 @@ onMounted(() => {
   countriesListStore.fetchCountries().then(response => {
     countries.value = response.data.data
   })
-  customersListStore.fetchCustomers().then(response => {
+  customersListStore.fetchCustomers({ wallet: 'all' }).then(response => {
     customers.value = response.data.data
+  })
+  settingsListStore.fetchDelivery_Periods().then(response => {
+    deliveryPeriods.value = response.data.data
+  })
+  productsListStore.fetchProducts({ per_page: -1 }).then(response => {
+    products.value = response.data.data
+  })
+  couponsListStore.fetchCoupons({ per_page: -1 }).then(response => {
+    coupons.value = response.data.data
   })
 })
 
@@ -143,12 +162,12 @@ const filterOrders = () => {
 
 const clearFilter = () => {
   filters.city_ids = [],
-  filters.country_ids = [],
-  filters.order_state_ids = [],
-  filters.date_from = null,
-  filters.date_to = null,
-  filters.delivery_date = null,
-  filters.customer_id = null
+    filters.country_ids = [],
+    filters.order_state_ids = [],
+    filters.date_from = null,
+    filters.date_to = null,
+    filters.delivery_date = null,
+    filters.customer_id = null
   filterOrders()
 }
 
@@ -332,6 +351,12 @@ const formatDateTime = data => {
             :items="[5, 10, 20, 30, 50]"
           />
         </div>
+        <VBtn
+          prepend-icon="tabler-plus"
+          @click="isAddOpen = true"
+        >
+          إضافة طلب
+        </VBtn>
 
         <VSpacer/>
 
@@ -507,6 +532,13 @@ const formatDateTime = data => {
       </VCardText>
     </VCard>
     <OrderInvoice :item="selectedOrder" v-model:is-open="isOpen"/>
+    <AddOrdersDialog v-model:is-add-open="isAddOpen" @refreshTable="getOrders" :products="products"
+                     :countries="countries"
+                     :cities="cities"
+                     :customers="customers"
+                     :deliveryPeriods="deliveryPeriods"
+                     :coupons="coupons"
+    />
     <EditOrderDialog :item="selectedOrder" v-model:is-edit-open="isEditOpen" @refreshTable="getOrders"/>
   </div>
 </template>

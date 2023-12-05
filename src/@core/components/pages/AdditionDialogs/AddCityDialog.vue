@@ -27,13 +27,27 @@ const settingsListStore = useSettingsStore()
 const countries = reactive([])
 const isLoading = ref(false)
 
+const location = reactive({
+  lat: null,
+  lng: null,
+})
+
 onMounted(() => {
+  navigator.geolocation.getCurrentPosition(position => {
+    location.lat = position.coords.latitude
+    location.lng = position.coords.longitude
+  })
   countriesListStore.fetchCountries().then(response => {
     countries.value = response.data.data
   })
 })
 
-// Variables
+const getPathsData = data => {
+  paths.push(data)
+}
+
+const paths = reactive([])
+
 const city = reactive({
   name_ar: null,
   name_en: null,
@@ -53,7 +67,23 @@ const resetForm = () => {
 
 const onFormSubmit = () => {
   isLoading.value = true
-  citiesListStore.storeCity(city).then(response => {
+  let cityDt = {
+    name_ar: city.name_ar,
+    name_en: city.name_en,
+    country_id: city.country_id,
+    is_available_for_delivery: city.is_available_for_delivery,
+    polygon: "",
+  }
+  paths.map((path, index) => {
+    console.log(paths.length, index , paths[index])
+    cityDt.polygon += `[${path.lat},${path.lng}]`
+    if(index < paths.length - 1) {
+      cityDt.polygon += ','
+    }
+  })
+  console.log(`[${cityDt.polygon}]`)
+  cityDt.polygon = `[${cityDt.polygon}]`
+  citiesListStore.storeCity(cityDt).then(response => {
     emit('update:isAddOpen', false)
     emit('refreshTable')
     settingsListStore.alertColor = "success"
@@ -79,6 +109,14 @@ const onFormSubmit = () => {
 const dialogModelValueUpdate = val => {
   emit('update:isAddOpen', val)
 }
+
+const getSelectedLocation = loc => {
+  location.lat = loc.lat
+  location.lng = loc.lng
+  city.latitude = loc.lat
+  city.longitude = loc.lng
+}
+
 </script>
 
 <template>
@@ -148,9 +186,11 @@ const dialogModelValueUpdate = val => {
               lg="12"
               sm="6"
             >
-              <VSwitch :label="t('available_for_delivery')" v-model="city.is_available_for_delivery"
-                       :rules="[requiredValidator]"
-              ></VSwitch>
+              <VSwitch :label="t('available_for_delivery')" v-model="city.is_available_for_delivery"></VSwitch>
+            </VCol>
+            <VCol cols="12">
+              <MapAutoComplete></MapAutoComplete>
+              <AddCityMap :location="location" @getPaths="getPathsData"></AddCityMap>
             </VCol>
             <VCol
               cols="12"

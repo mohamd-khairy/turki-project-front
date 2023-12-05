@@ -81,6 +81,7 @@ export default [
     title: 'Settings',
     icon: { icon: 'uil:setting' },
     children: [
+      { title: 'Product_Tags', to: 'product-tags' },
       { title: 'Product_Cut', to: 'product-cut' },
       { title: 'Product_Preparation', to: 'product-preparation' },
       { title: 'Product_Size', to: 'product-size' },

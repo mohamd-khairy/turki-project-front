@@ -57,40 +57,38 @@ onMounted(() => {
         </div>
     <div id="invoice" class="card-wrapper" v-else>
       <VRow justify="space-between" class="mb-2">
-        <VCol cols="12" class="print_sec">
-          <VBtn @click="printDiv">طباعة الفاتورة</VBtn>
-        </VCol>
         <VCol cols="12">
-          <img src="/src/assets/images/logo_c.png" alt="نجدية" width="200">
+          <div class="d-flex justify-space-between">
+            <img src="/src/assets/images/logo_c.png" alt="نجدية" width="200" class="najdiya_logo">
+            <VBtn @click="printDiv" class="print_sec">طباعة الفاتورة</VBtn>
+          </div>
         </VCol>
-        <VCol cols="12" مlg="4" md="5" sm="6">
-          <h3 class="mb-2">
-            <VIcon icon="arcticons:destiny-item-manager" size="x-small" color="primary" class="ml-2"></VIcon>
-            <span>شركة المرعي للتجارة</span>
-          </h3>
+        <VCol cols="12" class="d-flex justify-space-around flex-wrap">
           <h3 class="mb-2">
             <VIcon icon="iconoir:n-square" size="x-small" color="primary" class="ml-2"></VIcon>
             <span>
-              نجدية للذبائح
+              شركة لحوم نجدية للتجارة
             </span>
           </h3>
           <h3 class="mb-2">
             <VIcon icon="arcticons:destiny-item-manager" size="x-small" color="primary" class="ml-2"></VIcon>
             <span>سجل تجاري: </span>
             <span class="text-primary">
-              1010476540
+              {{ ConvertToArabicNumbers(1010938507) }}
             </span>
           </h3>
           <h3 class="mb-2">
             <VIcon icon="arcticons:destiny-item-manager" size="x-small" color="primary" class="ml-2"></VIcon>
             <span>رقم السجل الضريبي: </span>
-            <span class="text-primary">215262465245654</span>
+            <span class="text-primary">
+              {{ ConvertToArabicNumbers(311859965700003) }}
+            </span>
           </h3>
         </VCol>
       </VRow>
       <hr/>
       <VRow justify="space-between" class="mt-3 mb-3">
-        <VCol cols="12" lg="4" md="5" sm="6">
+        <VCol cols="12" class="d-flex justify-space-around flex-wrap">
           <h3 class="mb-2">
             <VIcon icon="arcticons:destiny-item-manager" size="x-small" color="primary" class="ml-2"></VIcon>
             <span>اسم العميل: </span>
@@ -122,7 +120,7 @@ onMounted(() => {
             <span class="text-primary">{{ order.order.payment_type.name_ar }}</span>
           </h3>
         </VCol>
-        <VCol cols="12" lg="3" md="4" sm="4">
+        <VCol cols="12" class="d-flex justify-space-around flex-wrap">
           <h3 class="mb-2">
             <VIcon icon="iconamoon:invoice-thin" size="x-small" color="primary" class="ml-2"></VIcon>
             <span>رقم الفاتورة: </span>
@@ -168,7 +166,7 @@ onMounted(() => {
                 الإجمالي شامل الضريبة
               </td>
               <td colspan="6">
-                1725 ريال سعودي
+                {{ order.order.order_subtotal }} ريال سعودي
               </td>
             </tr>
             <tr>
@@ -176,7 +174,7 @@ onMounted(() => {
                 الخصم
               </td>
               <td colspan="6">
-                0 ريال سعودي
+                {{ order.order.discount_applied }} ريال سعودي
               </td>
             </tr>
             <tr>
