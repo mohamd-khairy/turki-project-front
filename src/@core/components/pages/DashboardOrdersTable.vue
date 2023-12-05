@@ -19,6 +19,9 @@ const ConvertToArabicNumbers = num => {
 
 <template>
   <VCard height="400">
+    <VCardTitle class="text-end">
+      <router-link to="/orders">عرض جميع الطلبات</router-link>
+    </VCardTitle>
     <VTable class="text-no-wrap order-list-table">
       <thead>
         <tr>

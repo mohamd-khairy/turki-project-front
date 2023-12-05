@@ -19,8 +19,10 @@ const isAddOpen = ref(false)
 const isDeleteOpen = ref(false)
 const selectedCity = ref({})
 const isEditOpen = ref(false)
+const isLoading = ref(false)
 
 const getCities = () => {
+  isLoading.value = true
   citiesListStore.fetchCities({
     q: searchQuery.value,
   }).then(response => {
@@ -28,7 +30,9 @@ const getCities = () => {
     totalPage.value = cities.value / rowPerPage
     totalCities.value = cities.value.length
     currentPage.value = 1
+    isLoading.value = false
   }).catch(error => {
+    isLoading.value = false
     console.log(error)
   })
 }
@@ -107,7 +111,7 @@ const formatDateTime = data => {
 
 <template>
   <div>
-    <VCard>
+    <VCard :loading="isLoading">
       <VCardTitle class="d-flex align-center">
         <VIcon icon="solar:city-broken" size="24" color="primary"></VIcon>
         <span class="mx-1">{{ t('Cities') }}</span>
@@ -187,7 +191,7 @@ const formatDateTime = data => {
           <td>
             {{ city.country ? city.country : "السعودية" }}
           </td>
-          <td @click="changeStatus(city)" >
+          <td @click="changeStatus(city)">
             <VIcon icon="ph:dot-bold" :color="city.is_active == true ? '#008000' : '#f00000'" size="32"></VIcon>
             <span>
               {{ city.is_active == true ? t('forms.statuses.active') : t('forms.statuses.inactive') }}

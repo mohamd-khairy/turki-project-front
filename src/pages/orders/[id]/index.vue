@@ -1,17 +1,51 @@
 <script setup>
 import moment from "moment"
 import { useOrdersStore } from "@/store/Orders"
+import { useSettingsStore } from "@/store/Settings"
 
 const ordersListStore = useOrdersStore()
+const settingsListStore = useSettingsStore()
 const route = useRoute()
 
 const order = ref({})
 const isLoading = ref(true)
+const isDeleteing = ref(false)
 const isEditOpen = ref(false)
+const isEditProductOpen = ref(false)
+const selectedProductItem = ref({})
 
 const { t } = useI18n()
 
 const i18n = useI18n()
+
+const openProductEdit = item => {
+  selectedProductItem.value = item
+  isEditProductOpen.value = true
+}
+
+const deleteProduct = item => {
+  isDeleteing.value = true
+  ordersListStore.deleteOrderProduct({ order_product_id: item.id }).then(() => {
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
+    isDeleteing.value = false
+    getOrderDetails()
+  }).catch(error => {
+    isDeleteing.value = false
+    settingsListStore.alertColor = "error"
+    settingsListStore.alertMessage = "حدث خطأ ما !"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
+  })
+}
 
 const ConvertToArabicNumbers = num => {
   const arabicNumbers = "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669"
@@ -28,7 +62,10 @@ const formatDateTime = data => {
   return { date, time }
 }
 
-const getOrderDetails = id => {
+const getOrderDetails = () => {
+  const id = route.params.id
+
+  isLoading.value = true
   ordersListStore.fetchOrder(id).then(response => {
     console.log(response?.data.data)
     order.value = response?.data.data
@@ -39,9 +76,7 @@ const getOrderDetails = id => {
 }
 
 onMounted(() => {
-  const id = route.params.id
-
-  getOrderDetails(id)
+  getOrderDetails()
 })
 </script>
 
@@ -68,12 +103,12 @@ onMounted(() => {
     <div class="card-wrapper" v-else>
       <div class="card">
         <div class="order-content">
-          <h2 class="order-title pb-2">
+          <h3 class="order-title pb-2">
             <span>طلب - </span>
             <span>
               #{{ order ? order.order.ref_no : "الرقم المرجعي" }}
             </span>
-          </h2>
+          </h3>
           <p class="mb-5">{{ order ? order.order.comment : "لا يوجد" }}</p>
 
           <div class="order-detail mt-5">
@@ -257,7 +292,7 @@ onMounted(() => {
                 <VIcon icon="arcticons:destiny-item-manager" color="primary" class="ml-2"></VIcon>
                 <span> المنتجات :</span>
                 <VChip class="font-weight-bold mx-1" v-for="product in order.products" :key="product.id">
-                  {{ product.product ? product.product : "لا يوجد اسم" }}
+                  {{ product.product ? product.product.name_ar : "لا يوجد اسم" }}
                 </VChip>
               </h3>
             </div>
@@ -269,7 +304,7 @@ onMounted(() => {
           </h2>
           <div class="products-list">
             <div class="product table-responsive">
-              <table class="table">
+              <VTable class="table">
                 <thead>
                 <tr class="border-b-sm">
                   <th>
@@ -281,12 +316,15 @@ onMounted(() => {
                   <th>
                     السعر
                   </th>
+                  <th>
+                    الاجراءات
+                  </th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="product in order.products" :key="product.id" style="border-bottom: 1px solid">
+                <tr v-for="product in order.products" :key="product.id" style=" border-bottom: 1px solid">
                   <td class="px-2">
-                    <span>{{ product.product ? product.product : "لا يوجد اسم" }}</span>
+                    <span>{{ product.product ? product.product.name_ar : "لا يوجد اسم" }}</span>
                   </td>
                   <td class="px-2">
                       <span class="d-block  text-base">
@@ -294,19 +332,51 @@ onMounted(() => {
                       </span>
                   </td>
                   <td class="px-2">
-                      <span class="text-success">
-                        {{ ConvertToArabicNumbers(Intl.NumberFormat().format(106.50)) }} ريال
+                      <span class="text-success font-weight-bold">
+                        {{ ConvertToArabicNumbers(Intl.NumberFormat().format(product.total_price)) }} ريال
                       </span>
+                  </td>
+                  <td>
+                    <VBtn icon
+                          variant="plain"
+                          color="default"
+                          size="x-small"
+                          @click="openProductEdit(product)"
+                    >
+                      <VIcon
+                        :size="22"
+                        icon="ph:pencil-line"
+                      />
+                    </VBtn>
+                    <VBtn
+                      icon
+                      variant="plain"
+                      color="default"
+                      size="x-small"
+                      @click="deleteProduct(product)"
+                    >
+                      <VIcon
+                        v-if="!isDeleteing"
+                        :size="22"
+                        icon="mingcute:delete-line"
+                      />
+                      <VIcon v-else icon="mingcute:loading-line" class="loading" size="32"></VIcon>
+
+                    </VBtn>
                   </td>
                 </tr>
                 </tbody>
-              </table>
+              </VTable>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <EditOrderDeatilsDialog v-model:isEditOpen="isEditOpen" :item="order" @refrshTable="getOrderDetails"></EditOrderDeatilsDialog>
+    <EditOrderDeatilsDialog v-model:isEditOpen="isEditOpen" :item="order" @refrshTable="getOrderDetails"
+    ></EditOrderDeatilsDialog>
+    <EditOrderItemDialog v-model:isEditProductOpen="isEditProductOpen" :item="selectedProductItem"
+                         @refrshTable="getOrderDetails"
+    ></EditOrderItemDialog>
   </div>
 </template>
 

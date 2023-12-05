@@ -6,6 +6,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  places: {
+    type: Array,
+    required: true,
+  },
 })
 
 const emit = defineEmits(['getPaths'])
@@ -14,14 +18,10 @@ const emit = defineEmits(['getPaths'])
 const center = reactive({ lat: 30.0564503, lng: -74.1840919 })
 const markers = reactive([])
 
-const getPathes = computed(() => {
-  return places
-})
-
 const places = reactive([])
 
 const flightPath = ref({
-  path: places,
+  path: props.places,
   geodesic: true,
   strokeColor: "#FF0000",
   strokeOpacity: 1.0,

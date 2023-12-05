@@ -141,7 +141,7 @@ const ConvertToArabicNumbers = num => {
         >
           <VIcon
             size="24"
-            icon="fluent-mdl2:shop"
+            icon="et:wallet"
           />
         </VAvatar>
 
