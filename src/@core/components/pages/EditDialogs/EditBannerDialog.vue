@@ -73,8 +73,8 @@ const bannerData = reactive({
   image: {},
   redirect_mobile_url: null,
   product_id: null,
-  category_id: null,
-  city_ids: null,
+  category_ids: [],
+  city_ids: [],
 })
 
 const products = reactive([])
@@ -268,11 +268,12 @@ const dialogModelValueUpdate = val => {
               md="6"
             >
               <VSelect
-                v-model="bannerData.category_id"
+                v-model="bannerData.category_ids"
                 :items="categories.value"
                 :label="t('forms.categories')"
                 item-title="type_ar"
                 item-value="id"
+                multiple
                 :rules="[requiredValidator]"
               />
             </VCol>
