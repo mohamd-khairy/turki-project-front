@@ -31,9 +31,9 @@ const openProductEdit = item => {
   isEditProductOpen.value = true
 }
 
-const openProductAdd = item => {
+const AddNewProductOpen = item => {
   selectedProductItem.value = item
-  isAddProductCouponOpen.value = true
+  isAddProductOpen.value = true
 }
 
 const deleteProduct = item => {
@@ -318,7 +318,7 @@ onMounted(() => {
             </h2>
             <VBtn
               color="primary"
-              @click="isAddProductOpen = true"
+              @click="AddNewProductOpen(order.order)"
             >
               <VIcon
                 :size="22"
@@ -397,7 +397,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <AddNewProduct v-model:isAddOpen="isAddProductOpen"></AddNewProduct>
+    <AddNewProduct v-model:isAddOpen="isAddProductOpen" :order="selectedProductItem" @refreshTable="getOrderDetails"></AddNewProduct>
     <AddProductCoupon v-model:isAddOpen="isAddProductCouponOpen" @addProductCoupon="addProductCoupon"
     ></AddProductCoupon>
     <EditOrderDeatilsDialog v-model:isEditOpen="isEditOpen" :item="order" @refrshTable="getOrderDetails"

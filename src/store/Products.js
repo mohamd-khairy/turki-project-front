@@ -11,6 +11,10 @@ export const useProductsStore = defineStore('ProductsStore', {
       return axios.get(`products/${id}`)
     },
 
+    addNewProduct(data){
+      return axios.post(`orders/add-order-product`, data)
+    },
+
     // 👉 Fetch single banner
     storeProduct(data) {
       const formData = new FormData()

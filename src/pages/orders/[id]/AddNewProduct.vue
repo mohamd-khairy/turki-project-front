@@ -13,6 +13,10 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  order: {
+    type: Object,
+    required: true,
+  },
 })
 
 const emit = defineEmits([
@@ -21,6 +25,7 @@ const emit = defineEmits([
 ])
 
 const productsListStore = useProductsStore()
+const settingsListStore = useSettingsStore()
 
 const { t } = useI18n()
 
@@ -32,9 +37,12 @@ const itemData = reactive({
   quantity: null,
 })
 
+onUpdated(() => {
+  itemData.order_id = props.order ? props.order.id : 0
+})
 
 onMounted(() => {
-  productsListStore.fetchProducts({ pageSize: -1 }).then(response => {
+  productsListStore.fetchProducts({ per_page: -1 }).then(response => {
     products.value = response.data.data
   })
 })
@@ -44,6 +52,9 @@ const isLoading = ref(false)
 
 
 const resetForm = () => {
+  itemData.order_id = null
+  itemData.product_id = null
+  itemData.quantity = null
   emit('update:isAddOpen', false)
 }
 
@@ -52,11 +63,11 @@ const onFormSubmit = async () => {
 
   const res = await refForm.value.validate()
   if (res.valid) {
-    productsListStore.storeProduct(itemData).then(response => {
+    productsListStore.addNewProduct(itemData).then(response => {
       emit('refreshTable')
       emit('update:isAddOpen', false)
       settingsListStore.alertColor = "success"
-      settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
+      settingsListStore.alertMessage = "تم إضافة المنتج بنجاح"
       settingsListStore.isAlertShow = true
       setTimeout(() => {
         settingsListStore.isAlertShow = false
@@ -79,8 +90,7 @@ const onFormSubmit = async () => {
         settingsListStore.alertMessage = ""
       }, 2000)
     })
-  }
-  else {
+  } else {
     isLoading.value = false
     settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
@@ -129,10 +139,43 @@ const dialogModelValueUpdate = val => {
                 v-model="itemData.product_id"
                 :items="products"
                 :label="t('forms.products')"
-                item-title="name"
+                item-title="name_ar"
                 item-value="id"
                 :rules="[requiredValidator]"
               />
+            </VCol>
+            <VCol>
+              <VTextField v-model="itemData.quantity"
+                          :label="t('forms.quantity')"
+                          :rules="[requiredValidator]"
+              ></VTextField>
+            </VCol>
+            <VCol
+              cols="12"
+              class="text-center"
+            >
+              <VBtn
+                v-if="!isLoading"
+                type="submit"
+                class="me-3"
+              >
+                {{ t('buttons.save') }}
+              </VBtn>
+              <VBtn
+                v-else
+                type="submit"
+                class="position-relative me-3"
+              >
+                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
+              </VBtn>
+
+              <VBtn
+                variant="tonal"
+                color="secondary"
+                @click="resetForm"
+              >
+                {{ t('buttons.cancel') }}
+              </VBtn>
             </VCol>
           </VRow>
         </VForm>
