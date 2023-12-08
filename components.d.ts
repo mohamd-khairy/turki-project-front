@@ -14,6 +14,7 @@ declare module '@vue/runtime-core' {
     AddCountryDialog: typeof import('./src/@core/components/pages/AdditionDialogs/AddCountryDialog.vue')['default']
     AddCountryMap: typeof import('./src/@core/components/GLobal/AddCountryMap.vue')['default']
     AddCouponDialog: typeof import('./src/@core/components/pages/AdditionDialogs/AddCouponDialog.vue')['default']
+    AddCustomerAddressDialog: typeof import('./src/@core/components/pages/AdditionDialogs/AddCustomerAddressDialog.vue')['default']
     AddCustomerDialog: typeof import('./src/@core/components/pages/AdditionDialogs/AddCustomerDialog.vue')['default']
     AddDeliveryTimeDialog: typeof import('./src/@core/components/pages/AdditionDialogs/AddDeliveryTimeDialog.vue')['default']
     AddEmployeeDialog: typeof import('./src/@core/components/pages/AdditionDialogs/AddEmployeeDialog.vue')['default']

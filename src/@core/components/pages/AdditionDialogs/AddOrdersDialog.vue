@@ -70,6 +70,7 @@ const itemData = reactive({
 const form = ref()
 const isLoading = ref(false)
 const isAddCustomerOpen = ref(false)
+const isAddCustomerAddressOpen = ref(false)
 const addresses = ref([])
 
 const resetForm = () => {
@@ -91,6 +92,7 @@ watch(() => itemData.country_id, (newVal, oldVal) => {
 })
 
 const getCustomers = () => {
+  itemData.customer_id = null
   customersListStore.fetchCustomers({ wallet: 'all' }).then(response => {
     customers.value = response.data.data
   })
@@ -160,7 +162,6 @@ const dialogModelValueUpdate = val => {
 }
 
 const AddQuantity = data => {
-  console.log("DT => ", data.value, selectedProduct.value.id)
   itemData.products.push({
     product_id: selectedProduct.value.id,
     quantity: data.value,
@@ -277,14 +278,28 @@ onMounted(() => {
                 cols="12"
                 v-if="itemData.customer_id !== null"
               >
-                <VSelect
-                  v-model="itemData.address_id"
-                  :items="addresses"
-                  :label="t('forms.customer_addresses')"
-                  item-title="address"
-                  item-value="id"
-                  :rules="[requiredValidator]"
-                />
+                <VRow align="center">
+                  <VCol cols="12" lg="10" sm="12">
+                    <VSelect
+                      v-model="itemData.address_id"
+                      :items="addresses"
+                      :label="t('forms.customer_addresses')"
+                      item-title="address"
+                      item-value="id"
+                      :rules="[requiredValidator]"
+                    />
+                  </VCol>
+                  <VCol cols="12" lg="2" sm="12">
+                    <VBtn
+                      type="button"
+                      size="small"
+                      class="position-relative me-3"
+                      @click="isAddCustomerAddressOpen = true"
+                    >
+                      <VIcon icon="material-symbols-light:add" size="24"></VIcon>
+                    </VBtn>
+                  </VCol>
+                </VRow>
               </VCol>
               <VCol
                 cols="12"
@@ -362,5 +377,6 @@ onMounted(() => {
 
     <AddProductQunatity v-model:is-add-open="isQuantityOpen" @addProductQuantity="AddQuantity"></AddProductQunatity>
     <AddCustomerDialog v-model:is-add-open="isAddCustomerOpen" @refreshTable="getCustomers"></AddCustomerDialog>
+    <AddCustomerAddressDialog v-model:is-add-open="isAddCustomerAddressOpen" @refreshTable="getCustomers"></AddCustomerAddressDialog>
   </div>
 </template>

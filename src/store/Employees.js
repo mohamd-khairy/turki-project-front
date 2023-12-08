@@ -35,6 +35,10 @@ export const useEmployeesStore = defineStore('EmployeesStore', {
       return axios.post(`users` , formData)
     },
 
+    storeAddress(data) {
+      return axios.post(`customers-address/store` , data)
+    },
+
     storeCustomer(data) {
       const formData = new FormData()
 

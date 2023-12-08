@@ -85,10 +85,17 @@ const itemData = reactive({
   ],
 })
 
-watch(() => itemData.category_id, () => {
-  categoryListStore.fetchSubCategoryByCategory(itemData.category_id).then(response => {
-    sub_categories.value = response.data.data
-  })
+watch(() => itemData.category_id, (nv,ov) => {
+  if(typeof itemData.category_id == 'object') {
+    categoryListStore.fetchSubCategoryByCategory(itemData.category_id.id).then(response => {
+      sub_categories.value = response.data.data
+    })
+  }
+  else {
+    categoryListStore.fetchSubCategoryByCategory(itemData.category_id).then(response => {
+      sub_categories.value = response.data.data
+    })
+  }
 })
 
 onMounted(() => {
@@ -120,7 +127,7 @@ onUpdated(() => {
   itemData.calories = props.item.calories
   itemData.description_ar = props.item.description_ar
   itemData.description_en = props.item.description_en
-  itemData.sale_price = props.item['sale price']
+  itemData.sale_price = props.item['sale_price']
   itemData.price = props.item.price
   itemData.is_active = props.item.is_active ?? 0
   itemData.is_available = props.item.is_available ?? 0
@@ -128,7 +135,7 @@ onUpdated(() => {
   itemData.is_Ras = props.item.is_Ras ?? 0
   itemData.is_lyh = props.item.is_lyh ?? 0
   itemData.is_karashah = props.item.is_karashah ?? 0
-  itemData.category_id = props.item.category ?? 0
+  itemData.category_id = props.item.category ? props.item.category : null
   itemData.sub_category_id = props.item.sub_category ?? 0
   itemData.is_shalwata = props.item.is_shalwata ?? 0
   itemData.is_delivered = props.item.is_delivered ?? 0
@@ -136,7 +143,7 @@ onUpdated(() => {
   itemData.preparation_ids = props.item.product_preparations ?? []
   itemData.size_ids = props.item.product_sizes ?? []
   itemData.cut_ids = props.item.product_cuts ?? []
-  itemData.payment_type_ids = props.item.payment_types ?? []
+  itemData.payment_type_ids = props.item.product_payment_types ?? []
   itemData.city_ids = props.item.cities ?? []
   itemData.images = props.item.product_images ?? []
 })
