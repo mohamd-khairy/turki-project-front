@@ -167,6 +167,8 @@ export const useProductsStore = defineStore('ProductsStore', {
         }
       })
 
+      console.log("PD => ", data)
+
       formData.append("name_ar", data.name_ar)
       formData.append("name_en", data.name_en)
       formData.append("weight", data.weight)
@@ -181,8 +183,8 @@ export const useProductsStore = defineStore('ProductsStore', {
       formData.append("is_Ras", data.is_Ras === true ? 1 : 0)
       formData.append("is_lyh", data.is_lyh === true ? 1 : 0)
       formData.append("is_karashah", data.is_karashah === true ? 1 : 0)
-      formData.append("category_id", data.category_id.id)
-      formData.append("sub_category_id", data.sub_category_id.id)
+      formData.append("category_id", typeof data.category_id == 'object' ? data.category_id.id : data.category_id)
+      formData.append("sub_category_id", typeof data.sub_category_id == 'object' ? data.sub_category_id.id : data.sub_category_id)
       formData.append("is_shalwata", data.is_shalwata === true ? 1 : 0)
       formData.append("is_delivered", data.is_delivered === true ? 1 : 0)
       formData.append("is_picked_up", data.is_picked_up === true ? 1 : 0)
@@ -191,9 +193,12 @@ export const useProductsStore = defineStore('ProductsStore', {
       formData.append("cut_ids", cut_ids.split(" ,")[1] ?? "")
       formData.append("payment_type_ids", payment_ids.split(" ,")[1] ?? "")
       formData.append("city_ids", cty_ids.split(" ,")[1] ?? "")
-      for (let i = 0; i < data.images.length; i++) {
-        formData.append(`images[${i}]`, data.images[i])
-      }
+
+      data.images.map((img, ind) => {
+        formData.append(`images[${ind}]`, img)
+        console.log("IMG", img)
+      })
+
       return axios.post(`products/update-products/${data.id}`, formData)
     },
 
