@@ -61,31 +61,53 @@ const resetForm = () => {
   emit('update:isAddOpen', false)
 }
 
-const onFormSubmit = () => {
-  isLoading.value = true
-  countriesListStore.storeCountry(country).then(response => {
-    emit('update:isAddOpen', false)
-    emit('refreshTable')
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
-      isLoading.value = false
+const refForm = ref(null)
 
-    }, 2000)
-    resetForm()
-  }).catch(error => {
+const onFormSubmit = async () => {
+  isLoading.value = true
+
+  const res = await refForm.value.validate()
+  if (res.valid) {
+    countriesListStore.storeCountry(country).then(response => {
+      emit('update:isAddOpen', false)
+      emit('refreshTable')
+      settingsListStore.alertColor = "success"
+      settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+        isLoading.value = false
+
+      }, 2000)
+      resetForm()
+    }).catch(error => {
+      if (error.response.data.errors) {
+        const errs = Object.keys(error.response.data.errors)
+        errs.forEach(err => {
+          settingsListStore.alertMessage = t(`errors.${err}`)
+        })
+      } else {
+        settingsListStore.alertMessage = "حدث خطأ ما !"
+      }
+      isLoading.value = false
+      settingsListStore.alertColor = "error"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    })
+  } else {
     isLoading.value = false
+    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  })
+  }
 }
 
 const dialogModelValueUpdate = val => {
@@ -125,7 +147,7 @@ const getSelectedLocation = loc => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit">
+        <VForm ref="refForm" @submit.prevent="onFormSubmit">
           <VRow>
             <VCol
               cols="12"
@@ -198,7 +220,6 @@ const getSelectedLocation = loc => {
               lg="12"
               sm="6"
             >
-              <!--              <GoogleMaps :location="location"></GoogleMaps>-->
               <MapAutoComplete @select-location="getSelectedLocation"></MapAutoComplete>
               <AddCountryMap :location="location"></AddCountryMap>
             </VCol>

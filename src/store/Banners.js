@@ -17,6 +17,8 @@ export const useBannersStore = defineStore('BannersStore', {
     storeBanner(banner) {
       const formData = new FormData()
 
+      console.log(banner)
+
       let cty_ids = ""
       Object.values(banner.city_ids).map(ctid => {
         if (typeof ctid == "object") {
@@ -25,6 +27,7 @@ export const useBannersStore = defineStore('BannersStore', {
           cty_ids = cty_ids.length == 0 ? `${ctid}` : cty_ids + ',' + ctid
         }
       })
+
 
       formData.append("title", banner.title)
       formData.append("title_color", banner.title_color)
@@ -37,9 +40,11 @@ export const useBannersStore = defineStore('BannersStore', {
       formData.append("type", banner.type)
       formData.append("redirect_mobile_url", banner.redirect_mobile_url)
       formData.append("product_id", banner.product_id)
-      formData.append("category_id", banner.category_id)
+      formData.append("category_ids", banner.category_ids)
       formData.append("city_ids", cty_ids)
-      formData.append("image", banner.image[0])
+      if(banner.image !== {}) {
+        formData.append("image", banner.image[0])
+      }
 
       return axios.post(`/banners/add-banner`, formData)
     },

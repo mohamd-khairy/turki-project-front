@@ -6,6 +6,7 @@ import {
 import { useSettingsStore } from "@/store/Settings"
 import { useOrdersStore } from "@/store/Orders"
 import { useEmployeesStore } from "@/store/Employees"
+import { useCouponsStore } from "@/store/Coupons"
 
 const props = defineProps({
   isEditOpen: {
@@ -34,10 +35,13 @@ const itemData = reactive({
   id: null,
   order_state_id: null,
   user_id: null,
+  discount_code: null
 })
 
 const statues = reactive([])
 const users = reactive([])
+const coupons = ref([])
+const couponsListStore = useCouponsStore()
 
 const form = ref()
 
@@ -52,36 +56,63 @@ onMounted(() => {
   employeesListStore.fetchEmployees({ pageSize: -1, role_id: 7 }).then(response => {
     users.value = response.data.data
   })
+  couponsListStore.fetchCoupons().then(response => {
+    coupons.value = response.data.data
+  })
 })
 
 onUpdated(() => {
   itemData.id = props.item.order ? props.item.order.id : 0
   itemData.order_state_id = props.item.order ? props.item.order.order_state_id : 0
+  itemData.discount_code = props.item.order ? props.item.order.applied_discount_code : null
 })
 
-const onFormSubmit = () => {
+const refForm = ref(null)
+
+const onFormSubmit = async () => {
   isLoading.value = true
-  ordersListStore.editOrder(itemData).then(response => {
-    emit('refreshTable')
-    emit('update:isEditOpen', false)
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم تعديل حالة الطلب بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
+
+  const res = await refForm.value.validate()
+  if (res.valid) {
+    ordersListStore.editOrder(itemData).then(response => {
+      emit('refreshTable')
+      emit('update:isEditOpen', false)
+      settingsListStore.alertColor = "success"
+      settingsListStore.alertMessage = "تم تعديل حالة الطلب بنجاح"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+        isLoading.value = false
+      }, 1000)
+    }).catch(error => {
+      if (error.response.data.errors) {
+        const errs = Object.keys(error.response.data.errors)
+        errs.forEach(err => {
+          settingsListStore.alertMessage = t(`errors.${err}`)
+        })
+      } else {
+        settingsListStore.alertMessage = "حدث خطأ ما !"
+      }
       isLoading.value = false
-    }, 1000)
-  }).catch(error => {
+      settingsListStore.alertColor = "error"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    })
+  }
+  else {
     isLoading.value = false
+    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  })
+  }
 }
 
 const dialogModelValueUpdate = val => {
@@ -135,6 +166,16 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.user')"
                 item-title="username"
                 item-value="id"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol>
+              <VSelect
+                v-model="itemData.discount_code"
+                :label="t('forms.coupon')"
+                :items="coupons"
+                item-title="name"
+                item-value="code"
                 :rules="[requiredValidator]"
               />
             </VCol>

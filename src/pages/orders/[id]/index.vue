@@ -2,6 +2,8 @@
 import moment from "moment"
 import { useOrdersStore } from "@/store/Orders"
 import { useSettingsStore } from "@/store/Settings"
+import AddProductCoupon from "@/pages/orders/[id]/AddProductCoupon.vue"
+import AddNewProduct from "@/pages/orders/[id]/AddNewProduct.vue"
 
 const ordersListStore = useOrdersStore()
 const settingsListStore = useSettingsStore()
@@ -12,15 +14,26 @@ const isLoading = ref(true)
 const isDeleteing = ref(false)
 const isEditOpen = ref(false)
 const isEditProductOpen = ref(false)
+const isAddProductOpen = ref(false)
+const isAddProductCouponOpen = ref(false)
 const selectedProductItem = ref({})
 
 const { t } = useI18n()
 
 const i18n = useI18n()
 
+const addProductCoupon = () => {
+  console.log("ADDED")
+}
+
 const openProductEdit = item => {
   selectedProductItem.value = item
   isEditProductOpen.value = true
+}
+
+const openProductAdd = item => {
+  selectedProductItem.value = item
+  isAddProductCouponOpen.value = true
 }
 
 const deleteProduct = item => {
@@ -299,9 +312,21 @@ onMounted(() => {
           </div>
         </div>
         <div class="order-products">
-          <h2 class="order-title pb-2">
-            <span>المنتجات </span>
-          </h2>
+          <div class="d-flex justify-space-between align-center flex-wrap">
+            <h2 class="order-title pb-2">
+              <span>المنتجات </span>
+            </h2>
+            <VBtn
+              color="primary"
+              @click="isAddProductOpen = true"
+            >
+              <VIcon
+                :size="22"
+                icon="lets-icons:add-light"
+              />
+              <span>إضافة منتج جديد</span>
+            </VBtn>
+          </div>
           <div class="products-list">
             <div class="product table-responsive">
               <VTable class="table">
@@ -372,6 +397,9 @@ onMounted(() => {
         </div>
       </div>
     </div>
+    <AddNewProduct v-model:isAddOpen="isAddProductOpen"></AddNewProduct>
+    <AddProductCoupon v-model:isAddOpen="isAddProductCouponOpen" @addProductCoupon="addProductCoupon"
+    ></AddProductCoupon>
     <EditOrderDeatilsDialog v-model:isEditOpen="isEditOpen" :item="order" @refrshTable="getOrderDetails"
     ></EditOrderDeatilsDialog>
     <EditOrderItemDialog v-model:isEditProductOpen="isEditProductOpen" :item="selectedProductItem"

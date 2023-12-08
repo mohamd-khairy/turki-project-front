@@ -66,7 +66,6 @@ onMounted(() => {
 })
 
 onUpdated(() => {
-  console.log("Coupon => ", props.coupon)
   couponData.id = props.coupon.id
   couponData.name = props.coupon.name
   couponData.code = props.coupon.code
@@ -128,29 +127,52 @@ const resetForm = () => {
   emit('update:isEditOpen', false)
 }
 
-const onFormSubmit = () => {
+const refForm = ref(null)
+
+const onFormSubmit = async () => {
   isLoading.value = true
-  couponsListStore.editCoupon(couponData).then(response => {
-    emit('update:isEditOpen', false)
-    emit('refreshTable')
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم حذف العنصر بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
+
+  const res = await refForm.value.validate()
+  if (res.valid) {
+    couponsListStore.editCoupon(couponData).then(response => {
+      emit('update:isEditOpen', false)
+      emit('refreshTable')
+      settingsListStore.alertColor = "success"
+      settingsListStore.alertMessage = "تم حذف العنصر بنجاح"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+        isLoading.value = false
+      }, 1000)
+    }).catch(error => {
+      if (error.response.data.errors) {
+        const errs = Object.keys(error.response.data.errors)
+        errs.forEach(err => {
+          settingsListStore.alertMessage = t(`errors.${err}`)
+        })
+      } else {
+        settingsListStore.alertMessage = "حدث خطأ ما !"
+      }
       isLoading.value = false
-    }, 1000)
-  }).catch(error => {
+      settingsListStore.alertColor = "error"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    })
+  }
+  else {
     isLoading.value = false
+    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  })
+  }
 }
 
 const dialogModelValueUpdate = val => {
@@ -183,7 +205,7 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent.stop="onFormSubmit">
+        <VForm ref="refForm" @submit.prevent.stop="onFormSubmit">
           <VRow>
             <VCol
               cols="12"
@@ -256,7 +278,6 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="couponData.description_ar"
                 :label="t('forms.description_ar')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -266,7 +287,6 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="couponData.description_en"
                 :label="t('forms.description_en')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol

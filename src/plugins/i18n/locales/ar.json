@@ -172,6 +172,7 @@
   "Clear_Filter": "إزالة التصفية",
     "Add_Quantity": "إضافة كمية",
   "forms": {
+    "country_code": "كود الدولة",
     "quantity": "الكمية",
     "color": "اللون",
     "user": "المندوب",
@@ -280,6 +281,7 @@
     "delivered": "تم للتوصيل",
     "picked_up": "تم أخذ الطلب",
     "price":  "السعر",
+    "coupon":  "كوبون الخصم",
     "sale_price": "سعر البيع",
     "category":  "الفئة",
     "use_times_per_user":  "عدد إستخدام الكوبون للمستخدم",
@@ -302,6 +304,18 @@
     "redirect_mobile_url":  "رابط التحويل",
     "products": "المنتجات",
     "categories":  "الفئات"
+  },
+  "errors": {
+    "category_ids": "حقل الفئة مطلوب",
+    "product_ids": "حقل المنتجات مطلوب",
+    "products": "حقل المنتجات وكمياتها مطلوب",
+    "country_ids": "حقل البلاد مطلوب",
+    "category_parent_ids": "حقل الفئات مطلوب",
+    "category_child_ids": "حقل الفئات الفرعية مطلوب",
+    "city_ids": "حقل المدينة مطلوب",
+    "password": "حقل كلمة المرور علي الأقل 8 أرقام أو حروف",
+    "image": "حقل الصورة مطلوب",
+    "expire_at": "حقل تاريخ الإنتهاء مطلوب",
   },
   "buttons": {
     "save": "حفظ",

@@ -137,13 +137,17 @@ watchEffect(() => {
   getProducts()
 })
 
+watch(() => filters.category_id, () => {
+  if(filters.category_id !== null) {
+    categoriesListStore.fetchSubCategoryByCategory(filters.category_id).then(response => {
+      sub_categories.value = response?.data.data
+    })
+  }
+})
 
 onMounted(() => {
   categoriesListStore.fetchCategories({}).then(response => {
     categories.value = response?.data.data
-  })
-  categoriesListStore.fetchSubCategories({}).then(response => {
-    sub_categories.value = response?.data.data
   })
   citiesListStore.fetchCities({}).then(response => {
     cities.value = response?.data.data
@@ -160,7 +164,7 @@ onMounted(() => {
             <VRow>
               <VCol cols="12" lg="4" md="4" sm="6" class="d-flex align-center gap-3">
                 <div class="icon">
-                  <VIcon icon="ph:wallet-light" color="primary"></VIcon>
+                  <VIcon icon="carbon:categories" color="primary"></VIcon>
                 </div>
                 <VSelect
                   v-model="filters.category_id"
@@ -172,7 +176,7 @@ onMounted(() => {
               </VCol>
               <VCol cols="12" lg="4" md="3" sm="6" class="d-flex align-center gap-3">
                 <div class="icon">
-                  <VIcon icon="ph:wallet-light" color="primary"></VIcon>
+                  <VIcon icon="carbon:category-new-each" color="primary"></VIcon>
                 </div>
                 <VSelect
                   v-model="filters.sub_category_id"
@@ -184,7 +188,7 @@ onMounted(() => {
               </VCol>
               <VCol cols="12" lg="4" md="3" sm="6" class="d-flex align-center gap-3">
                 <div class="icon">
-                  <VIcon icon="ph:wallet-light" color="primary"></VIcon>
+                  <VIcon icon="solar:city-broken" color="primary"></VIcon>
                 </div>
                 <VSelect
                   v-model="filters.city_id"

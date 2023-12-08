@@ -14,10 +14,6 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-  banner: {
-    type: Object,
-    required: true,
-  },
 })
 
 const emit = defineEmits([
@@ -25,6 +21,7 @@ const emit = defineEmits([
   'refreshTable',
 ])
 
+const refForm = ref(null)
 const bannersList = useBannersStore()
 const productsList = useProductsStore()
 const categoriesList = useCategoriesStore()
@@ -59,8 +56,8 @@ const bannerData = reactive({
   image: {},
   redirect_mobile_url: null,
   product_id: null,
-  category_ids: null,
-  city_ids: null,
+  category_ids: [],
+  city_ids: [],
 })
 
 const products = reactive([])
@@ -95,46 +92,67 @@ const statuses = reactive([
 ])
 
 const resetForm = () => {
-  bannerData.title =  null,
-  bannerData.title_color =  null,
-  bannerData.sub_title =  null,
-  bannerData.sub_title_color =  null,
-  bannerData.button_text =  null,
-  bannerData.button_text_color =  null,
-  bannerData.redirect_url =  null,
-  bannerData.is_active =  null,
-  bannerData.type =  null,
-  bannerData.image =  {},
-  bannerData.redirect_mobile_url =  null,
-  bannerData.product_id =  null,
-  bannerData.category_ids =  null,
-  bannerData.city_ids =  null
+  bannerData.title = null,
+    bannerData.title_color = null,
+    bannerData.sub_title = null,
+    bannerData.sub_title_color = null,
+    bannerData.button_text = null,
+    bannerData.button_text_color = null,
+    bannerData.redirect_url = null,
+    bannerData.is_active = null,
+    bannerData.type = null,
+    bannerData.image = {},
+    bannerData.redirect_mobile_url = null,
+    bannerData.product_id = null,
+    bannerData.category_ids = null,
+    bannerData.city_ids = null
   emit('update:isAddOpen', false)
 }
 
-const onFormSubmit = () => {
+const onFormSubmit = async () => {
   isLoading.value = true
-  bannersList.storeBanner(bannerData).then(response => {
-    emit('refreshTable')
-    emit('update:isAddOpen', false)
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
-    }, 2000)
-    resetForm()
-  }).catch(error => {
+
+  const res = await refForm.value.validate()
+  if (res.valid) {
+    bannersList.storeBanner(bannerData).then(response => {
+      emit('refreshTable')
+      emit('update:isAddOpen', false)
+      settingsListStore.alertColor = "success"
+      settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
+      settingsListStore.isAlertShow = true
+      isLoading.value = false
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+      resetForm()
+    }).catch(error => {
+      if (error.response.data.errors) {
+        const errs = Object.keys(error.response.data.errors)
+        errs.forEach(err => {
+          settingsListStore.alertMessage = t(`errors.${err}`)
+        })
+      } else {
+        settingsListStore.alertMessage = "حدث خطأ ما !"
+      }
+      isLoading.value = false
+      settingsListStore.alertColor = "error"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    })
+  } else {
     isLoading.value = false
+    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  })
+  }
 }
 
 const dialogModelValueUpdate = val => {
@@ -165,7 +183,7 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit">
+        <VForm ref="refForm" @submit.prevent="onFormSubmit">
           <VRow>
             <VCol
               cols="12"
@@ -174,7 +192,6 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="bannerData.title"
                 :label="t('forms.title')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -212,7 +229,6 @@ const dialogModelValueUpdate = val => {
                 :items="statuses"
                 item-title="name"
                 item-value="id"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -225,7 +241,6 @@ const dialogModelValueUpdate = val => {
                 accept="image/*"
                 prepend-icon=""
                 prepend-inner-icon="mdi-image"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol

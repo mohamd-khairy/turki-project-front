@@ -3,65 +3,65 @@ import { useI18n } from "vue-i18n"
 import {
   requiredValidator,
 } from '@validators'
+import { useCitiesStore } from "@/store/Cities"
+import { useCategoriesStore } from "@/store/Categories"
+import { useProductsStore } from "@/store/Products"
 import { useSettingsStore } from "@/store/Settings"
 
 const props = defineProps({
-  isEditOpen: {
+  isAddOpen: {
     type: Boolean,
-    required: true,
-  },
-  item: {
-    type: Object,
     required: true,
   },
 })
 
 const emit = defineEmits([
-  'update:isEditOpen',
+  'update:isAddOpen',
   'refreshTable',
 ])
 
-const settingsListStore = useSettingsStore()
-const isLoading = ref(false)
+const productsListStore = useProductsStore()
+
 const { t } = useI18n()
 
+const refForm = ref(null)
+
 const itemData = reactive({
-  name_en: null,
-  name_ar: null,
-  price: null,
+  order_id: null,
+  product_id: null,
+  quantity: null,
 })
 
-const form = ref()
+
+onMounted(() => {
+  productsListStore.fetchProducts({ pageSize: -1 }).then(response => {
+    products.value = response.data.data
+  })
+})
+
+const products = ref([])
+const isLoading = ref(false)
+
 
 const resetForm = () => {
-  emit('update:isEditOpen', false)
+  emit('update:isAddOpen', false)
 }
-
-onUpdated(() => {
-  itemData.id = props.item.id
-  itemData.name_en = props.item.name_en
-  itemData.name_ar = props.item.name_ar
-  itemData.price = props.item.price
-})
-
-const refForm = ref(null)
 
 const onFormSubmit = async () => {
   isLoading.value = true
 
   const res = await refForm.value.validate()
   if (res.valid) {
-    settingsListStore.editProductShalwata(itemData).then(response => {
+    productsListStore.storeProduct(itemData).then(response => {
       emit('refreshTable')
-      emit('update:isEditOpen', false)
+      emit('update:isAddOpen', false)
       settingsListStore.alertColor = "success"
-      settingsListStore.alertMessage = "تم تعديل العنصر بنجاح"
+      settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
       settingsListStore.isAlertShow = true
       setTimeout(() => {
         settingsListStore.isAlertShow = false
         settingsListStore.alertMessage = ""
-        isLoading.value = false
-      }, 1000)
+      }, 2000)
     }).catch(error => {
       if (error.response.data.errors) {
         const errs = Object.keys(error.response.data.errors)
@@ -79,7 +79,8 @@ const onFormSubmit = async () => {
         settingsListStore.alertMessage = ""
       }, 2000)
     })
-  } else {
+  }
+  else {
     isLoading.value = false
     settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
@@ -92,14 +93,14 @@ const onFormSubmit = async () => {
 }
 
 const dialogModelValueUpdate = val => {
-  emit('update:isEditOpen', val)
+  emit('update:isAddOpen', val)
 }
 </script>
 
 <template>
   <VDialog
     :width="$vuetify.display.smAndDown ? 'auto' : 650 "
-    :model-value="props.isEditOpen"
+    :model-value="props.isAddOpen"
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
@@ -110,9 +111,11 @@ const dialogModelValueUpdate = val => {
     >
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="ph:knife-thin" size="24" color="primary"></VIcon>
+          <VIcon icon="streamline:shopping-bag-hand-bag-1-shopping-bag-purse-goods-item-products" size="24"
+                 color="primary"
+          ></VIcon>
           <span class="mx-1 my-1">
-            {{ t('Edit_Item') }}
+            {{ t('Add_Item') }}
           </span>
         </VCardTitle>
       </VCardItem>
@@ -121,64 +124,15 @@ const dialogModelValueUpdate = val => {
         <!-- 👉 Form -->
         <VForm @submit.prevent="onFormSubmit" ref="refForm">
           <VRow>
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VTextField
-                v-model="itemData.name_ar"
-                :label="t('forms.name_ar')"
+            <VCol>
+              <VSelect
+                v-model="itemData.product_id"
+                :items="products"
+                :label="t('forms.products')"
+                item-title="name"
+                item-value="id"
                 :rules="[requiredValidator]"
               />
-            </VCol>
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VTextField
-                v-model="itemData.name_en"
-                :label="t('forms.name_en')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <VTextField
-                v-model="itemData.price"
-                :label="t('forms.price')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-
-
-            <VCol
-              cols="12"
-              class="text-center"
-            >
-              <VBtn
-                v-if="!isLoading"
-                type="submit"
-                class="me-3"
-              >
-                {{ t('buttons.save') }}
-              </VBtn>
-              <VBtn
-                v-else
-                type="submit"
-                class="position-relative me-3"
-              >
-                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
-              </VBtn>
-
-              <VBtn
-                variant="tonal"
-                color="secondary"
-                @click="resetForm"
-              >
-                {{ t('buttons.cancel') }}
-              </VBtn>
             </VCol>
           </VRow>
         </VForm>

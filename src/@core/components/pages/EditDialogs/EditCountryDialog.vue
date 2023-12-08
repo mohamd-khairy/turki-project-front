@@ -2,6 +2,7 @@
 import { useCountriesStore } from "@/store/Countries"
 import { useI18n } from "vue-i18n"
 import { useSettingsStore } from "@/store/Settings"
+import { GoogleMap, Marker } from "vue3-google-map"
 
 const props = defineProps({
   isEditOpen: {
@@ -52,8 +53,8 @@ onUpdated(() => {
   countryData.code = props.country.code,
   countryData.latitude = props.country.latitude,
   countryData.longitude = props.country.longitude,
-  location.lat = props.country.latitude,
-  location.lng = props.country.longitude
+  location.lat = Number(props.country.latitude),
+  location.lng = Number(props.country.longitude)
 })
 
 // Functions
@@ -61,31 +62,52 @@ const resetForm = () => {
   emit('update:isEditOpen', false)
 }
 
-const onFormSubmit = () => {
+const refForm = ref(null)
 
+const onFormSubmit = async () => {
   isLoading.value = true
-  countriesList.editCountry(countryData).then(response => {
-    emit('refreshTable')
-    emit('update:isEditOpen', false)
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم حذف العنصر بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
+
+  const res = await refForm.value.validate()
+  if (res.valid) {
+    countriesList.editCountry(countryData).then(response => {
+      emit('refreshTable')
+      emit('update:isEditOpen', false)
+      settingsListStore.alertColor = "success"
+      settingsListStore.alertMessage = "تم حذف العنصر بنجاح"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+        isLoading.value = false
+      }, 1000)
+    }).catch(error => {
+      if (error.response.data.errors) {
+        const errs = Object.keys(error.response.data.errors)
+        errs.forEach(err => {
+          settingsListStore.alertMessage = t(`errors.${err}`)
+        })
+      } else {
+        settingsListStore.alertMessage = "حدث خطأ ما !"
+      }
       isLoading.value = false
-    }, 1000)
-  }).catch(error => {
+      settingsListStore.alertColor = "error"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    })
+  }
+  else {
     isLoading.value = false
+    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  })
-
+  }
 }
 
 const dialogModelValueUpdate = val => {
@@ -97,6 +119,7 @@ const getSelectedLocation = loc => {
   location.lng = loc.lng
   countryData.latitude = loc.lat
   countryData.longitude = loc.lng
+  console.log()
 }
 </script>
 
@@ -124,7 +147,7 @@ const getSelectedLocation = loc => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit">
+        <VForm ref="refForm" @submit.prevent="onFormSubmit">
           <VRow>
             <VCol
               cols="12"
@@ -186,14 +209,25 @@ const getSelectedLocation = loc => {
                 :label="t('forms.code')"
               />
             </VCol>
-<!--            <VCol-->
-<!--              cols="12"-->
-<!--              lg="12"-->
-<!--              sm="6"-->
-<!--            >-->
-<!--              <MapAutoComplete @select-location="getSelectedLocation"></MapAutoComplete>-->
-<!--              <AddCountryMap :location="location"></AddCountryMap>-->
-<!--            </VCol>-->
+            <VCol
+              cols="12"
+              lg="12"
+              sm="6"
+            >
+              <pre style="display: none">LAT => {{location.lat }} - LNG => {{location.lng}}</pre>
+              <MapAutoComplete @select-location="getSelectedLocation"></MapAutoComplete>
+              <GoogleMap
+                api-key="AIzaSyCM2TngqydZtVlZ5hkKjY7x56ut59TTI88"
+                style="width: 100%; height: 500px"
+                :center="location"
+                :zoom="5"
+              >
+                <Marker
+                  :options="{position: {lat: location.lat, lng: location.lng }}"
+                />
+                <!--      <Polyline :options="flightPath"/>-->
+              </GoogleMap>
+            </VCol>
             <VCol
               cols="12"
               class="text-center"
