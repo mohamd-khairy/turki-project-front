@@ -71,6 +71,9 @@ onMounted(() => {
   couponsListStore.fetchCoupons({ per_page: -1 }).then(response => {
     coupons.value = response.data.data
   })
+  customersListStore.fetchCustomers({ wallet: "all" }).then(response => {
+    customers.value = response.data.data
+  })
 })
 
 watch(() => filters.country_ids, (newVal, oldVal) => {

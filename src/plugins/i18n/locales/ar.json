@@ -281,6 +281,7 @@
     "delivered": "تم للتوصيل",
     "picked_up": "تم أخذ الطلب",
     "price":  "السعر",
+    "coupon":  "كوبون الخصم",
     "sale_price": "سعر البيع",
     "category":  "الفئة",
     "use_times_per_user":  "عدد إستخدام الكوبون للمستخدم",
