@@ -65,7 +65,6 @@ onUpdated(() => {
   cityData.country_id = props.city.country_id,
   cityData.is_available_for_delivery = props.city.is_available_for_delivery,
   cityData.polygon =  props.city.polygon
-  console.log("POLYGON => ", props.city.polygon)
   if(props.city.polygon) {
     props.city.polygon.map((poly, i) => {
       let lat = poly.toString().split(" ")[0]
@@ -84,7 +83,6 @@ onUpdated(() => {
 
       markers.push({ position, ...options })
       places.push(position)
-      console.log(markers)
     })
   }
 })
@@ -233,7 +231,6 @@ const addMarker = event => {
               <VSwitch :label="t('available_for_delivery')" v-model="cityData.is_available_for_delivery"></VSwitch>
             </VCol>
             <VCol cols="12">
-              <pre>LAT => {{center.lat }} - LNG => {{  center.lng }}</pre>
               <MapAutoComplete></MapAutoComplete>
 <!--              <AddCityMap :location="location" @getPaths="getPathsData"></AddCityMap>-->
               <GoogleMap
