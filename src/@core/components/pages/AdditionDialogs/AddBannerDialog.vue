@@ -104,8 +104,8 @@ const resetForm = () => {
   bannerData.image = {},
   bannerData.redirect_mobile_url = null,
   bannerData.product_id = null,
-  bannerData.category_ids = null,
-  bannerData.city_ids = null
+  bannerData.category_ids = [],
+  bannerData.city_ids = []
   emit('update:isAddOpen', false)
 }
 

@@ -160,12 +160,12 @@ const openEdit = banner => {
             >
               {{ t('forms.category_type') }}
             </th>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            >
-              {{ t('forms.category_desc') }}
-            </th>
+            <!--            <th -->
+            <!--              scope="col" -->
+            <!--              class="font-weight-semibold" -->
+            <!--            > -->
+            <!--              {{ t('forms.category_desc') }} -->
+            <!--            </th> -->
             <th
               v-can="'read-banner' || 'update-banner' || 'delete-banner'"
               scope="col"
@@ -240,29 +240,13 @@ const openEdit = banner => {
               />
             </td>
             <td>
-              {{ banner.category.type_ar }}
+              {{ banner.category ? banner.category.type_ar : "لا يوجد" }}
             </td>
-            <td>
-              {{
-                banner.category.description.toString().length > 20 ? banner.category.description.toString().slice(0, 20) + '...' : banner.category.description
-              }}
-            </td>
+
             <td
               v-can="'update-banner' || 'delete-banner'"
               style="width: 7.5rem;"
             >
-              <!--              <VBtn -->
-              <!--                icon -->
-              <!--                variant="plain" -->
-              <!--                color="default" -->
-              <!--                size="x-small" -->
-              <!--                v-can="'read-banner'" -->
-              <!--              > -->
-              <!--                <VIcon -->
-              <!--                  :size="22" -->
-              <!--                  icon="tabler-eye" -->
-              <!--                /> -->
-              <!--              </VBtn> -->
               <VBtn
                 v-can="'update-banner'"
                 icon
@@ -314,10 +298,10 @@ const openEdit = banner => {
         <VPagination
           v-model="currentPage"
           size="small"
-          :total-visible="rowPerPage"
+          :total-visible="5"
           :length="totalPage"
-          @next="nextPage"
-          @prev="prevPage"
+          @next="selectedRows = []"
+          @prev="selectedRows = []"
         />
         <!--        <button @click="prevPage">Previous</button> -->
         <!--        <button @click="nextPage">Next</button> -->
