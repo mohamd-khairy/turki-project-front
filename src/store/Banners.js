@@ -44,7 +44,9 @@ export const useBannersStore = defineStore('BannersStore', {
       if(banner.product_id !== null) {
         formData.append("product_id", banner.product_id)
       }
-      formData.append("category_ids", banner.category_ids)
+      if(banner.category_ids !== []) {
+        formData.append("category_ids", banner.category_ids)
+      }
       formData.append("city_ids", cty_ids)
       if(banner.image !== {}) {
         formData.append("image", banner.image[0])
