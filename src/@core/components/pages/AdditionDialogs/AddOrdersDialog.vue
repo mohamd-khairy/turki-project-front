@@ -49,6 +49,7 @@ const { t } = useI18n()
 
 const isQuantityOpen = ref(false)
 const selectedProduct = ref({})
+const selectedCustomer = ref(null)
 const delivery_date = ref(null)
 
 const cities = ref([])
@@ -82,6 +83,7 @@ const changeDate = ev => {
 }
 
 watch(() => itemData.customer_id, (newVal, oldVal) => {
+  selectedCustomer.value = itemData.customer_id
   addresses.value = getAddresses()
 })
 
@@ -377,6 +379,6 @@ onMounted(() => {
 
     <AddProductQunatity v-model:is-add-open="isQuantityOpen" @addProductQuantity="AddQuantity"></AddProductQunatity>
     <AddCustomerDialog v-model:is-add-open="isAddCustomerOpen" @refreshTable="getCustomers"></AddCustomerDialog>
-    <AddCustomerAddressDialog v-model:is-add-open="isAddCustomerAddressOpen" @refreshTable="getCustomers"></AddCustomerAddressDialog>
+    <AddCustomerAddressDialog v-model:is-add-open="isAddCustomerAddressOpen" :customer="selectedCustomer"></AddCustomerAddressDialog>
   </div>
 </template>

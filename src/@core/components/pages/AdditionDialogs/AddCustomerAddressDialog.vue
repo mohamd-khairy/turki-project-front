@@ -13,26 +13,45 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  customer: {
+    type: Number,
+    required: true,
+  },
 })
 
 const emit = defineEmits([
-  'refreshTable',
   'update:isAddOpen',
 ])
 
 import { useI18n } from "vue-i18n"
 import { useSettingsStore } from "@/store/Settings"
+import { useCountriesStore } from "@/store/Countries"
+import { useCitiesStore } from "@/store/Cities"
 
 const { t } = useI18n()
 const rolesListStore = useRolesStore()
 const employeesListStore = useEmployeesStore()
+const countriesListStore = useCountriesStore()
+const citiesListStore = useCitiesStore()
 const settingsListStore = useSettingsStore()
 const roles = reactive([])
+const countries = ref([])
+const cities = ref([])
 const isLoading = ref(false)
+
+onUpdated(() => {
+  address.customer_id = props.customer
+})
 
 onMounted(() => {
   rolesListStore.fetchRoles().then(response => {
     roles.value = response.data.data
+  })
+  countriesListStore.fetchCountries().then(response => {
+    countries.value = response.data.data
+  })
+  citiesListStore.fetchCities().then(response => {
+    cities.value = response.data.data
   })
 })
 
@@ -51,16 +70,14 @@ const address = reactive({
 
 // Functions
 const resetForm = () => {
-  address.mobile_country_code = null
-  address.mobile = null
-  address.name = null
-  address.email = null
-  address.avatar = {}
-  address.age = null
-  address.gender = null
-  address.nationality = null
-  address.is_active = false
-  address.wallet = null
+  address.country_id = null
+  address.city_id = null
+  address.address = null
+  address.comment = null
+  address.label = null
+  address.is_default = false
+  address.lat = 0
+  address.lng = 0
   emit('update:isAddOpen', false)
 }
 
@@ -73,8 +90,6 @@ const onFormSubmit = async () => {
   if (res.valid) {
     employeesListStore.storeAddress(address).then(response => {
       isLoading.value = false
-      emit('update:isAddOpen', false)
-      emit('refreshTable')
       settingsListStore.alertColor = "success"
       settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
       settingsListStore.isAlertShow = true
@@ -134,7 +149,7 @@ const dialogModelValueUpdate = val => {
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
           <VIcon icon="ph:users-four" size="24" color="primary"></VIcon>
           <span class="mx-1 my-1">
-            {{ t('Add_Customer') }}
+            {{ t('Add_Address') }}
           </span>
         </VCardTitle>
       </VCardItem>
@@ -148,103 +163,55 @@ const dialogModelValueUpdate = val => {
               lg="12"
               sm="6"
             >
-              <VTextField
-                v-model="address.name"
-                :label="t('forms.name')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-              lg="12"
-              sm="6"
-            >
-              <VTextField
-                v-model="address.email"
-                :label="t('forms.email')"
-                :rules="[requiredValidator, emailValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-              lg="12"
-              sm="6"
-            >
-              <VTextField
-                v-model="address.mobile_country_code"
-                :label="t('forms.country_code')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-              lg="12"
-              sm="6"
-            >
-              <VTextField
-                v-model="address.mobile"
-                :label="t('forms.phone')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-              lg="12"
-              sm="6"
-            >
-              <VTextField
-                v-model="address.age"
-                :label="t('forms.age')"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-              lg="12"
-              sm="6"
-            >
               <VSelect
-                v-model="address.nationality"
-                :label="t('forms.nationality')"
-                :items="countriesList"
-                item-title="ar"
-                item-value="alpha3"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-              lg="12"
-              sm="6"
-            >
-              <VSelect
-                v-model="address.gender"
-                :label="t('forms.gender')"
-                :items="genders"
-                item-title="name"
+                v-model="address.country_id"
+                :items="countries"
+                item-title="name_ar"
                 item-value="id"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-            >
-              <VFileInput
-                v-model="address.avatar"
-                :label="t('forms.image')"
-                accept="image/*"
-                prepend-icon=""
-                prepend-inner-icon="mdi-image"
-                :rules="[requiredValidator]"
+                :label="t('forms.country')"
               />
             </VCol>
             <VCol
               cols="12"
               lg="12"
               sm="6"
-              >
+            >
+              <VSelect
+                v-model="address.city_id"
+                :items="cities"
+                item-title="name_ar"
+                item-value="id"
+                :label="t('forms.city')"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              lg="12"
+              sm="6"
+            >
               <VTextField
-                v-model="address.wallet"
-                :label="t('forms.wallet')"
-                :rules="[requiredValidator]"
+                v-model="address.address"
+                :label="t('forms.address')"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              lg="12"
+              sm="6"
+            >
+              <VTextField
+                v-model="address.comment"
+                :label="t('forms.comment')"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              lg="12"
+              sm="6"
+            >
+              <VTextField
+                v-model="address.label"
+                :label="t('forms.label')"
               />
             </VCol>
             <VCol
@@ -253,8 +220,8 @@ const dialogModelValueUpdate = val => {
               sm="6"
             >
               <VSwitch
-                v-model="address.is_active"
-                :label="t('forms.is_active')"
+                v-model="address.is_default"
+                :label="t('forms.is_default')"
               />
             </VCol>
             <VCol
