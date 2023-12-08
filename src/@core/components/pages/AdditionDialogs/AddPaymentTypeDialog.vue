@@ -47,7 +47,7 @@ const onFormSubmit = async () => {
       name_en: itemData.name_en,
       name_ar: itemData.name_ar,
       code: itemData.code,
-      active: itemData.active == true ? 1 : 0,
+      is_active: itemData.active == true ? 1 : 0,
     }
 
     settingsListStore.storePaymentType(item).then(response => {

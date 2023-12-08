@@ -55,7 +55,7 @@ const city = reactive({
   name_en: null,
   country_id: null,
   is_available_for_delivery: 0,
-  polygon: "",
+  polygon: [],
 })
 
 // Functions
@@ -63,7 +63,8 @@ const resetForm = () => {
   city.name_ar = null,
   city.name_en = null,
   city.country_id = null,
-  city.is_available_for_delivery = 0
+  city.is_available_for_delivery = false,
+  city.polygon = []
   emit('update:isAddOpen', false)
 }
 
@@ -78,21 +79,20 @@ const onFormSubmit = async () => {
       name_en: city.name_en,
       country_id: city.country_id,
       is_available_for_delivery: city.is_available_for_delivery,
-      polygon: "",
+      polygon: [],
     }
     paths.map((path, index) => {
       console.log(paths.length, index , paths[index])
-      cityDt.polygon += `[${path.lat},${path.lng}]`
-      if(index < paths.length - 1) {
-        cityDt.polygon += ','
-      }
+      cityDt.polygon.push([path.lat,path.lng])
     })
-    cityDt.polygon = `[${cityDt.polygon}]`
+    // cityDt.polygon = `[${cityDt.polygon}]`
+    console.log(cityDt.polygon)
     citiesListStore.storeCity(cityDt).then(response => {
       emit('update:isAddOpen', false)
       emit('refreshTable')
+      resetForm()
       settingsListStore.alertColor = "success"
-      settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
+      settingsListStore.alertMessage = "تم إضافة المدينة بنجاح"
       settingsListStore.isAlertShow = true
       setTimeout(() => {
         settingsListStore.isAlertShow = false
