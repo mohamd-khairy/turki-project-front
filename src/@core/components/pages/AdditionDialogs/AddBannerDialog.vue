@@ -93,19 +93,19 @@ const statuses = reactive([
 
 const resetForm = () => {
   bannerData.title = null,
-    bannerData.title_color = null,
-    bannerData.sub_title = null,
-    bannerData.sub_title_color = null,
-    bannerData.button_text = null,
-    bannerData.button_text_color = null,
-    bannerData.redirect_url = null,
-    bannerData.is_active = null,
-    bannerData.type = null,
-    bannerData.image = {},
-    bannerData.redirect_mobile_url = null,
-    bannerData.product_id = null,
-    bannerData.category_ids = null,
-    bannerData.city_ids = null
+  bannerData.title_color = null,
+  bannerData.sub_title = null,
+  bannerData.sub_title_color = null,
+  bannerData.button_text = null,
+  bannerData.button_text_color = null,
+  bannerData.redirect_url = null,
+  bannerData.is_active = null,
+  bannerData.type = null,
+  bannerData.image = {},
+  bannerData.redirect_mobile_url = null,
+  bannerData.product_id = null,
+  bannerData.category_ids = null,
+  bannerData.city_ids = null
   emit('update:isAddOpen', false)
 }
 
