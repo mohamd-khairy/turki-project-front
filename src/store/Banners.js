@@ -38,7 +38,9 @@ export const useBannersStore = defineStore('BannersStore', {
       formData.append("redirect_url", banner.redirect_url)
       formData.append("is_active", banner.is_active)
       formData.append("type", banner.type)
-      formData.append("redirect_mobile_url", banner.redirect_mobile_url)
+      if(banner.redirect_mobile_url !== null) {
+        formData.append("redirect_mobile_url", banner.redirect_mobile_url)
+      }
       if(banner.product_id !== null) {
         formData.append("product_id", banner.product_id)
       }
