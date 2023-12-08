@@ -1,12 +1,12 @@
 <script setup>
+import { useCategoriesStore } from "@/store/Categories"
 import { useCitiesStore } from "@/store/Cities"
 import { useCountriesStore } from "@/store/Countries"
-import { useCategoriesStore } from "@/store/Categories"
-import { useProductsStore } from "@/store/Products"
 import { useCouponsStore } from "@/store/Coupons"
 import { useEmployeesStore } from "@/store/Employees"
+import { useProductsStore } from "@/store/Products"
 import {
-  requiredValidator,
+requiredValidator,
 } from '@validators'
 
 import AppDateTimePicker from '@core/components/AppDateTimePicker.vue'
@@ -23,8 +23,8 @@ const emit = defineEmits([
   'update:isAddOpen',
 ])
 
-import { useI18n } from "vue-i18n"
 import { useSettingsStore } from "@/store/Settings"
+import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
 const citiesListStore = useCitiesStore()
@@ -71,8 +71,6 @@ const coupon = reactive({
   code: null,
   product_ids: [],
   discount_amount_percent: 0,
-  description_ar: null,
-  description_en: null,
   min_applied_amount: 0,
   max_discount: 0,
   is_for_all: 0,
@@ -116,6 +114,7 @@ const onFormSubmit = async () => {
     }).catch(error => {
       if (error.response.data.errors) {
         const errs = Object.keys(error.response.data.errors)
+
         errs.forEach(err => {
           settingsListStore.alertMessage = t(`errors.${err}`)
         })
@@ -156,7 +155,7 @@ const dialogModelValueUpdate = val => {
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
 
     <VCard
       class="pa-sm-9 pa-5"
@@ -164,7 +163,11 @@ const dialogModelValueUpdate = val => {
       <!-- 👉 Title -->
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="bxs:coupon" size="24" color="primary"></VIcon>
+          <VIcon
+            icon="bxs:coupon"
+            size="24"
+            color="primary"
+          />
           <span class="mx-1 my-1">
             {{ t('Add_Coupon') }}
           </span>
@@ -173,7 +176,10 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm ref="refForm" @submit.prevent.stop="onFormSubmit">
+        <VForm
+          ref="refForm"
+          @submit.prevent.stop="onFormSubmit"
+        >
           <VRow>
             <VCol
               cols="12"
@@ -200,10 +206,19 @@ const dialogModelValueUpdate = val => {
               lg="12"
             >
               <VRow>
-                <VCol cols="12" sm="3">
-                  <VSwitch :label="t('forms.is_percent')" v-model="coupon.is_percent"></VSwitch>
+                <VCol
+                  cols="12"
+                  sm="3"
+                >
+                  <VSwitch
+                    v-model="coupon.is_percent"
+                    :label="t('forms.is_percent')"
+                  />
                 </VCol>
-                <VCol cols="12" sm="9">
+                <VCol
+                  cols="12"
+                  sm="9"
+                >
                   <VTextField
                     v-model="coupon.discount_amount_percent"
                     :label="coupon.is_percent ? t('forms.discount_amount_percent') + ' %' : t('forms.discount_amount_percent')"
@@ -239,31 +254,15 @@ const dialogModelValueUpdate = val => {
                 min="0"
               />
             </VCol>
+     
             <VCol
               cols="12"
               lg="12"
             >
-              <VTextField
-                v-model="coupon.description_ar"
-                :label="t('forms.description_ar')"
-                :rules="[requiredValidator]"
+              <VSwitch
+                v-model="coupon.for_clients_only"
+                :label="t('forms.for_clients_only')"
               />
-            </VCol>
-            <VCol
-              cols="12"
-              lg="12"
-            >
-              <VTextField
-                v-model="coupon.description_en"
-                :label="t('forms.description_en')"
-                :rules="[requiredValidator]"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-              lg="12"
-            >
-              <VSwitch :label="t('forms.for_clients_only')" v-model="coupon.for_clients_only"></VSwitch>
               <div v-if="coupon.for_clients_only">
                 <VSelect
                   v-model="coupon.client_ids"
@@ -281,7 +280,10 @@ const dialogModelValueUpdate = val => {
               cols="12"
               lg="12"
             >
-              <VSwitch :label="t('forms.is_by_product')" v-model="coupon.is_by_product"></VSwitch>
+              <VSwitch
+                v-model="coupon.is_by_product"
+                :label="t('forms.is_by_product')"
+              />
               <div v-if="coupon.is_by_product">
                 <VSelect
                   v-model="coupon.product_ids"
@@ -298,7 +300,10 @@ const dialogModelValueUpdate = val => {
               cols="12"
               lg="12"
             >
-              <VSwitch :label="t('forms.is_by_country')" v-model="coupon.is_by_country"></VSwitch>
+              <VSwitch
+                v-model="coupon.is_by_country"
+                :label="t('forms.is_by_country')"
+              />
               <div v-if="coupon.is_by_country">
                 <VSelect
                   v-model="coupon.country_ids"
@@ -312,7 +317,10 @@ const dialogModelValueUpdate = val => {
               </div>
             </VCol>
             <VCol cols="12">
-              <VSwitch :label="t('forms.is_by_city')" v-model="coupon.is_by_city"></VSwitch>
+              <VSwitch
+                v-model="coupon.is_by_city"
+                :label="t('forms.is_by_city')"
+              />
               <div v-if="coupon.is_by_city">
                 <VSelect
                   v-model="coupon.city_ids"
@@ -329,7 +337,10 @@ const dialogModelValueUpdate = val => {
               cols="12"
               lg="12"
             >
-              <VSwitch :label="t('forms.is_by_category')" v-model="coupon.is_by_category"></VSwitch>
+              <VSwitch
+                v-model="coupon.is_by_category"
+                :label="t('forms.is_by_category')"
+              />
               <div v-if="coupon.is_by_category">
                 <VSelect
                   v-model="coupon.category_parent_ids"
@@ -346,7 +357,10 @@ const dialogModelValueUpdate = val => {
               cols="12"
               lg="12"
             >
-              <VSwitch :label="t('forms.is_by_subcategory')" v-model="coupon.is_by_subcategory"></VSwitch>
+              <VSwitch
+                v-model="coupon.is_by_subcategory"
+                :label="t('forms.is_by_subcategory')"
+              />
               <div v-if="coupon.is_by_subcategory">
                 <VSelect
                   v-model="coupon.category_child_ids"
@@ -384,13 +398,19 @@ const dialogModelValueUpdate = val => {
               cols="12"
               lg="6"
             >
-              <VSwitch :label="t('forms.is_active')" v-model="coupon.is_active"></VSwitch>
+              <VSwitch
+                v-model="coupon.is_active"
+                :label="t('forms.is_active')"
+              />
             </VCol>
             <VCol
               cols="12"
               lg="6"
             >
-              <VSwitch :label="t('forms.is_for_all')" v-model="coupon.is_for_all"></VSwitch>
+              <VSwitch
+                v-model="coupon.is_for_all"
+                :label="t('forms.is_for_all')"
+              />
             </VCol>
             <VCol
               cols="12"
@@ -408,7 +428,11 @@ const dialogModelValueUpdate = val => {
                 type="submit"
                 class="position-relative me-3"
               >
-                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
+                <VIcon
+                  icon="mingcute:loading-line"
+                  class="loading"
+                  size="32"
+                />
               </VBtn>
 
               <VBtn

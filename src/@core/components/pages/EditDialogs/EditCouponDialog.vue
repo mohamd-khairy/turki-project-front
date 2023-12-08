@@ -1,10 +1,10 @@
 <script setup>
+import { useCategoriesStore } from "@/store/Categories"
 import { useCitiesStore } from "@/store/Cities"
 import { useCountriesStore } from "@/store/Countries"
-import { useCategoriesStore } from "@/store/Categories"
-import { useProductsStore } from "@/store/Products"
 import { useCouponsStore } from "@/store/Coupons"
 import { useEmployeesStore } from "@/store/Employees"
+import { useProductsStore } from "@/store/Products"
 import AppDateTimePicker from '@core/components/AppDateTimePicker.vue'
 
 const props = defineProps({
@@ -23,9 +23,9 @@ const emit = defineEmits([
   'update:isEditOpen',
 ])
 
-import { useI18n } from "vue-i18n"
 import { useSettingsStore } from "@/store/Settings"
 import { requiredValidator } from "@validators"
+import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
 const citiesListStore = useCitiesStore()
@@ -71,8 +71,6 @@ onUpdated(() => {
   couponData.code = props.coupon.code
   couponData.product_ids = props.coupon.product_ids == "" ? [] : props.coupon.product_ids
   couponData.discount_amount_percent = props.coupon.discount_amount_percent
-  couponData.description_ar = props.coupon.description_ar
-  couponData.description_en = props.coupon.description_en
   couponData.min_applied_amount = props.coupon.min_applied_amount
   couponData.max_discount = props.coupon.max_discount
   couponData.is_for_all = props.coupon.is_for_all == 0 ? false : true
@@ -100,8 +98,6 @@ const couponData = reactive({
   code: null,
   product_ids: [],
   discount_amount_percent: 0,
-  description_ar: null,
-  description_en: null,
   min_applied_amount: 0,
   max_discount: 0,
   is_for_all: 0,
@@ -148,6 +144,7 @@ const onFormSubmit = async () => {
     }).catch(error => {
       if (error.response.data.errors) {
         const errs = Object.keys(error.response.data.errors)
+
         errs.forEach(err => {
           settingsListStore.alertMessage = t(`errors.${err}`)
         })
@@ -188,7 +185,7 @@ const dialogModelValueUpdate = val => {
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
 
     <VCard
       class="pa-sm-9 pa-5"
@@ -196,7 +193,11 @@ const dialogModelValueUpdate = val => {
       <!-- 👉 Title -->
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="bxs:coupon" size="24" color="primary"></VIcon>
+          <VIcon
+            icon="bxs:coupon"
+            size="24"
+            color="primary"
+          />
           <span class="mx-1 my-1">
             {{ t('Edit_Coupon') }}
           </span>
@@ -205,7 +206,10 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm ref="refForm" @submit.prevent.stop="onFormSubmit">
+        <VForm
+          ref="refForm"
+          @submit.prevent.stop="onFormSubmit"
+        >
           <VRow>
             <VCol
               cols="12"
@@ -232,10 +236,19 @@ const dialogModelValueUpdate = val => {
               lg="12"
             >
               <VRow>
-                <VCol cols="12" sm="3">
-                  <VSwitch :label="t('forms.is_percent')" v-model="couponData.is_percent"></VSwitch>
+                <VCol
+                  cols="12"
+                  sm="3"
+                >
+                  <VSwitch
+                    v-model="couponData.is_percent"
+                    :label="t('forms.is_percent')"
+                  />
                 </VCol>
-                <VCol cols="12" sm="9">
+                <VCol
+                  cols="12"
+                  sm="9"
+                >
                   <VTextField
                     v-model="couponData.discount_amount_percent"
                     :label="couponData.is_percent ? t('forms.discount_amount_percent') + ' %' : t('forms.discount_amount_percent')"
@@ -275,25 +288,10 @@ const dialogModelValueUpdate = val => {
               cols="12"
               lg="12"
             >
-              <VTextField
-                v-model="couponData.description_ar"
-                :label="t('forms.description_ar')"
+              <VSwitch
+                v-model="couponData.for_clients_only"
+                :label="t('forms.for_clients_only')"
               />
-            </VCol>
-            <VCol
-              cols="12"
-              lg="12"
-            >
-              <VTextField
-                v-model="couponData.description_en"
-                :label="t('forms.description_en')"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-              lg="12"
-            >
-              <VSwitch :label="t('forms.for_clients_only')" v-model="couponData.for_clients_only"></VSwitch>
               <div v-if="couponData.for_clients_only">
                 <VSelect
                   v-model="couponData.client_ids"
@@ -311,7 +309,10 @@ const dialogModelValueUpdate = val => {
               cols="12"
               lg="12"
             >
-              <VSwitch :label="t('forms.is_by_product')" v-model="couponData.is_by_product"></VSwitch>
+              <VSwitch
+                v-model="couponData.is_by_product"
+                :label="t('forms.is_by_product')"
+              />
               <div v-if="couponData.is_by_product">
                 <VSelect
                   v-model="couponData.product_ids"
@@ -328,7 +329,10 @@ const dialogModelValueUpdate = val => {
               cols="12"
               lg="12"
             >
-              <VSwitch :label="t('forms.is_by_country')" v-model="couponData.is_by_country"></VSwitch>
+              <VSwitch
+                v-model="couponData.is_by_country"
+                :label="t('forms.is_by_country')"
+              />
               <div v-if="couponData.is_by_country">
                 <VSelect
                   v-model="couponData.country_ids"
@@ -342,7 +346,10 @@ const dialogModelValueUpdate = val => {
               </div>
             </VCol>
             <VCol cols="12">
-              <VSwitch :label="t('forms.is_by_city')" v-model="couponData.is_by_city"></VSwitch>
+              <VSwitch
+                v-model="couponData.is_by_city"
+                :label="t('forms.is_by_city')"
+              />
               <div v-if="couponData.is_by_city">
                 <VSelect
                   v-model="couponData.city_ids"
@@ -359,7 +366,10 @@ const dialogModelValueUpdate = val => {
               cols="12"
               lg="12"
             >
-              <VSwitch :label="t('forms.is_by_category')" v-model="couponData.is_by_category"></VSwitch>
+              <VSwitch
+                v-model="couponData.is_by_category"
+                :label="t('forms.is_by_category')"
+              />
               <div v-if="couponData.is_by_category">
                 <VSelect
                   v-model="couponData.category_parent_ids"
@@ -376,7 +386,10 @@ const dialogModelValueUpdate = val => {
               cols="12"
               lg="12"
             >
-              <VSwitch :label="t('forms.is_by_subcategory')" v-model="couponData.is_by_subcategory"></VSwitch>
+              <VSwitch
+                v-model="couponData.is_by_subcategory"
+                :label="t('forms.is_by_subcategory')"
+              />
               <div v-if="couponData.is_by_subcategory">
                 <VSelect
                   v-model="couponData.category_child_ids"
@@ -414,13 +427,19 @@ const dialogModelValueUpdate = val => {
               cols="12"
               lg="6"
             >
-              <VSwitch :label="t('forms.is_active')" v-model="couponData.is_active"></VSwitch>
+              <VSwitch
+                v-model="couponData.is_active"
+                :label="t('forms.is_active')"
+              />
             </VCol>
             <VCol
               cols="12"
               lg="6"
             >
-              <VSwitch :label="t('forms.is_for_all')" v-model="couponData.is_for_all"></VSwitch>
+              <VSwitch
+                v-model="couponData.is_for_all"
+                :label="t('forms.is_for_all')"
+              />
             </VCol>
             <VCol
               cols="12"
@@ -438,7 +457,11 @@ const dialogModelValueUpdate = val => {
                 type="submit"
                 class="position-relative me-3"
               >
-                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
+                <VIcon
+                  icon="mingcute:loading-line"
+                  class="loading"
+                  size="32"
+                />
               </VBtn>
 
               <VBtn
