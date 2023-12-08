@@ -366,17 +366,6 @@ onMounted(() => {
                           variant="plain"
                           color="default"
                           size="x-small"
-                          @click="openProductAdd(product)"
-                    >
-                      <VIcon
-                        :size="22"
-                        icon="bxs:coupon"
-                      />
-                    </VBtn>
-                    <VBtn icon
-                          variant="plain"
-                          color="default"
-                          size="x-small"
                           @click="openProductEdit(product)"
                     >
                       <VIcon

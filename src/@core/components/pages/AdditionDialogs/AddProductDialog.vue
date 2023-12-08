@@ -308,7 +308,6 @@ const dialogModelValueUpdate = val => {
               md="6"
             >
               <VSelect
-                v-if="itemData.category_id"
                 v-model="itemData.sub_category_id"
                 :items="sub_categories.value"
                 :label="t('forms.sub_categories')"
