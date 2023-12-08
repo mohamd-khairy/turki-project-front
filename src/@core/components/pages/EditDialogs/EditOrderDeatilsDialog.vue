@@ -38,6 +38,11 @@ const itemData = reactive({
   discount_code: null
 })
 
+watch(() => itemData.discount_code, (newVal) => {
+  console.log(newVal)
+  itemData.discount_code = newVal
+})
+
 const statues = reactive([])
 const users = reactive([])
 const coupons = ref([])
@@ -71,6 +76,7 @@ const refForm = ref(null)
 
 const onFormSubmit = async () => {
   isLoading.value = true
+  delete itemData.discount_code
 
   const res = await refForm.value.validate()
   if (res.valid) {
@@ -143,7 +149,7 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit" ref="bannerData">
+        <VForm @submit.prevent="onFormSubmit" ref="refForm">
           <VRow>
             <VCol
               cols="12"
@@ -176,7 +182,6 @@ const dialogModelValueUpdate = val => {
                 :items="coupons"
                 item-title="name"
                 item-value="code"
-                :rules="[requiredValidator]"
               />
             </VCol>
 

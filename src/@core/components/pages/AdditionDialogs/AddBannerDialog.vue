@@ -30,7 +30,7 @@ const settingsListStore = useSettingsStore()
 const isLoading = ref(false)
 
 onUpdated(() => {
-  productsList.fetchProducts().then(response => {
+  productsList.fetchProducts({ per_page: -1 }).then(response => {
     products.value = response.data.data
   })
   categoriesList.fetchCategories().then(response => {
