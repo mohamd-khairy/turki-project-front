@@ -38,8 +38,12 @@ export const useBannersStore = defineStore('BannersStore', {
       formData.append("redirect_url", banner.redirect_url)
       formData.append("is_active", banner.is_active)
       formData.append("type", banner.type)
-      formData.append("redirect_mobile_url", banner.redirect_mobile_url)
-      formData.append("product_id", banner.product_id)
+      if(banner.redirect_mobile_url !== null) {
+        formData.append("redirect_mobile_url", banner.redirect_mobile_url)
+      }
+      if(banner.product_id !== null) {
+        formData.append("product_id", banner.product_id)
+      }
       formData.append("category_ids", banner.category_ids)
       formData.append("city_ids", cty_ids)
       if(banner.image !== {}) {
