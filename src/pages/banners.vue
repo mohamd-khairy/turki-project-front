@@ -85,7 +85,11 @@ const openEdit = banner => {
   <div>
     <VCard>
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="game-icons:vertical-banner" size="24" color="primary"></VIcon>
+        <VIcon
+          icon="game-icons:vertical-banner"
+          size="24"
+          color="primary"
+        />
         <span class="mx-1"> {{ t('Banners') }} </span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
@@ -99,23 +103,21 @@ const openEdit = banner => {
         </div>
         <!-- 👉 Create banner :to="{ name: 'apps-banner-add' }" -->
         <VBtn
+          v-can="'create-banner'"
           prepend-icon="tabler-plus"
           @click="isAddOpen = true"
-          v-can="'create-banner'"
         >
           {{ t('Add_Banner') }}
         </VBtn>
 
-        <VSpacer/>
-
-
+        <VSpacer />
       </VCardText>
 
-      <VDivider/>
+      <VDivider />
 
-      <!--      {{ paginateBanners }}-->
+      <!--      {{ paginateBanners }} -->
 
-      <VDivider/>
+      <VDivider />
 
       <!-- SECTION Table -->
       <VTable class="text-no-wrap banner-list-table">
@@ -165,9 +167,9 @@ const openEdit = banner => {
               {{ t('forms.category_desc') }}
             </th>
             <th
+              v-can="'read-banner' || 'update-banner' || 'delete-banner'"
               scope="col"
               class="font-weight-semibold"
-              v-can="'read-banner' || 'update-banner' || 'delete-banner'"
             >
               <span class="ms-2">{{ t('forms.actions') }}</span>
             </th>
@@ -186,25 +188,38 @@ const openEdit = banner => {
               {{ banner.title }}
             </td>
             <td>
-              <VIcon icon="ph:dot-bold" :color="banner.is_active == true ? '#008000' : '#f00000'" size="32"></VIcon>
+              <VIcon
+                icon="ph:dot-bold"
+                :color="banner.is_active == true ? '#008000' : '#f00000'"
+                size="32"
+              />
               <span>
                 {{ banner.is_active == true ? t('forms.statuses.active') : t('forms.statuses.inactive') }}
               </span>
             </td>
             <td>
-              <span class="mx-1" v-if=" banner.type == 0">
+              <span
+                v-if=" banner.type == 0"
+                class="mx-1"
+              >
                 <VIcon icon="material-symbols-light:link" />
                 <span>
                   عادي
                 </span>
               </span>
-              <span class="mx-1" v-if=" banner.type == 1">
+              <span
+                v-if=" banner.type == 1"
+                class="mx-1"
+              >
                 <VIcon icon="gg:external" />
                 <span>
                   خارجي
                 </span>
               </span>
-              <span class="mx-1" v-if=" banner.type == 2">
+              <span
+                v-if=" banner.type == 2"
+                class="mx-1"
+              >
                 <VIcon icon="gg:internal" />
                 <span>
                   داخلي
@@ -212,8 +227,17 @@ const openEdit = banner => {
               </span>
             </td>
             <td>
-              <img :src="backend + '/storage/' + banner.image" alt="بنر" width="50" v-if="banner.image">
-              <VIcon icon="iconoir:n-square" size="32" v-else></VIcon>
+              <img
+                v-if="banner.image"
+                :src="banner.url ?? backend + '/storage/' + banner.image"
+                alt="بنر"
+                width="50"
+              >
+              <VIcon
+                v-else
+                icon="iconoir:n-square"
+                size="32"
+              />
             </td>
             <td>
               {{ banner.category.type_ar }}
@@ -223,26 +247,29 @@ const openEdit = banner => {
                 banner.category.description.toString().length > 20 ? banner.category.description.toString().slice(0, 20) + '...' : banner.category.description
               }}
             </td>
-            <td style="width: 7.5rem;" v-can="'update-banner' || 'delete-banner'">
-<!--              <VBtn-->
-<!--                icon-->
-<!--                variant="plain"-->
-<!--                color="default"-->
-<!--                size="x-small"-->
-<!--                v-can="'read-banner'"-->
-<!--              >-->
-<!--                <VIcon-->
-<!--                  :size="22"-->
-<!--                  icon="tabler-eye"-->
-<!--                />-->
-<!--              </VBtn>-->
+            <td
+              v-can="'update-banner' || 'delete-banner'"
+              style="width: 7.5rem;"
+            >
+              <!--              <VBtn -->
+              <!--                icon -->
+              <!--                variant="plain" -->
+              <!--                color="default" -->
+              <!--                size="x-small" -->
+              <!--                v-can="'read-banner'" -->
+              <!--              > -->
+              <!--                <VIcon -->
+              <!--                  :size="22" -->
+              <!--                  icon="tabler-eye" -->
+              <!--                /> -->
+              <!--              </VBtn> -->
               <VBtn
+                v-can="'update-banner'"
                 icon
                 variant="plain"
                 color="default"
                 size="x-small"
                 @click="openEdit(banner)"
-                v-can="'update-banner'"
               >
                 <VIcon
                   :size="22"
@@ -250,12 +277,12 @@ const openEdit = banner => {
                 />
               </VBtn>
               <VBtn
+                v-can="'delete-banner'"
                 icon
                 variant="plain"
                 color="default"
                 size="x-small"
                 @click="openDelete(banner)"
-                v-can="'delete-banner'"
               >
                 <VIcon
                   :size="22"
@@ -292,14 +319,25 @@ const openEdit = banner => {
           @next="nextPage"
           @prev="prevPage"
         />
-        <!--        <button @click="prevPage">Previous</button>-->
-        <!--        <button @click="nextPage">Next</button>-->
+        <!--        <button @click="prevPage">Previous</button> -->
+        <!--        <button @click="nextPage">Next</button> -->
       </VCardText>
     </VCard>
 
     <!--  Dialogs  -->
-    <AddBannerDialog v-model:isAddOpen="isAddOpen" @refreshTable="getBanners"/>
-    <EditBannerDialog v-model:isEditOpen="isEditOpen" :banner="selectedBanner" @refreshTable="getBanners"/>
-    <DeleteBannerDialog v-model:isDeleteOpen="isDeleteOpen" :banner="selectedBanner" @refreshTable="getBanners"/>
+    <AddBannerDialog
+      v-model:isAddOpen="isAddOpen"
+      @refreshTable="getBanners"
+    />
+    <EditBannerDialog
+      v-model:isEditOpen="isEditOpen"
+      :banner="selectedBanner"
+      @refreshTable="getBanners"
+    />
+    <DeleteBannerDialog
+      v-model:isDeleteOpen="isDeleteOpen"
+      :banner="selectedBanner"
+      @refreshTable="getBanners"
+    />
   </div>
 </template>
