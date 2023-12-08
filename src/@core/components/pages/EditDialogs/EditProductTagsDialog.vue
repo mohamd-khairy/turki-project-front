@@ -36,7 +36,8 @@ const itemData = reactive({
   product_ids: [],
 })
 
-const form = ref()
+const product_ids = ref([])
+const refForm = ref(null)
 
 const resetForm = () => {
   emit('update:isEditOpen', false)
@@ -50,29 +51,62 @@ onUpdated(() => {
   itemData.product_ids = props.item.products
 })
 
-const onFormSubmit = () => {
+
+const onFormSubmit = async () => {
   isLoading.value = true
-  settingsListStore.editProductTags(itemData).then(response => {
-    emit('refreshTable')
-    emit('update:isEditOpen', false)
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم تعديل العنصر بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
+
+  const res = await refForm.value.validate()
+  if (res.valid) {
+    Object.values(props.item.products).map(pd => {
+      product_ids.value.push(pd.id)
+    })
+
+    const item = {
+      id: itemData.id,
+      name_ar: itemData.name_ar,
+      name_en: itemData.name_en,
+      color: itemData.color,
+      product_ids: [...product_ids.value],
+    }
+
+    settingsListStore.editProductTags(item).then(response => {
+      emit('refreshTable')
+      emit('update:isEditOpen', false)
+      settingsListStore.alertColor = "success"
+      settingsListStore.alertMessage = "تم تعديل العنصر بنجاح"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+        isLoading.value = false
+      }, 1000)
+    }).catch(error => {
+      if (error.response.data.errors) {
+        const errs = Object.keys(error.response.data.errors)
+        errs.forEach(err => {
+          settingsListStore.alertMessage = t(`errors.${err}`)
+        })
+      } else {
+        settingsListStore.alertMessage = "حدث خطأ ما !"
+      }
       isLoading.value = false
-    }, 1000)
-  }).catch(error => {
+      settingsListStore.alertColor = "error"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    })
+  } else {
     isLoading.value = false
+    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  })
+  }
 }
 
 const dialogModelValueUpdate = val => {
@@ -94,7 +128,7 @@ const dialogModelValueUpdate = val => {
     >
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="fluent-mdl2:date-time" size="24" color="primary"></VIcon>
+          <VIcon icon="solar:tag-broken" size="24" color="primary"></VIcon>
           <span class="mx-1 my-1">
             {{ t('Edit_Item') }}
           </span>
@@ -103,7 +137,7 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit" ref="bannerData">
+        <VForm @submit.prevent="onFormSubmit" ref="refForm">
           <VRow>
             <VCol
               cols="12"

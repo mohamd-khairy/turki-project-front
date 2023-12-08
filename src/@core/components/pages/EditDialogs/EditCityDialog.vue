@@ -19,6 +19,7 @@ const emit = defineEmits([
 ])
 
 import { useI18n } from "vue-i18n"
+import { GoogleMap, Marker, Polygon } from "vue3-google-map"
 
 const { t } = useI18n()
 const citiesListStore = useCitiesStore()
@@ -39,7 +40,22 @@ const cityData = reactive({
   name_en: null,
   country_id: null,
   is_available_for_delivery: null,
-  polygon: "[[25.074497,46.838505],[25.024733,46.327641],[24.685798,46.338627],[24.5159836,4706669],[24.750666,47.014286],[25.069522,46.838505]]",
+  polygon: "",
+})
+
+const getPathes = computed(() => {
+  return places
+})
+
+const center = reactive({ lat: null, lng: null })
+const places = reactive([])
+
+const flightPath = ref({
+  path: places,
+  geodesic: true,
+  strokeColor: "#FF0000",
+  strokeOpacity: 1.0,
+  strokeWeight: 2,
 })
 
 onUpdated(() => {
@@ -49,6 +65,28 @@ onUpdated(() => {
   cityData.country_id = props.city.country_id,
   cityData.is_available_for_delivery = props.city.is_available_for_delivery,
   cityData.polygon =  props.city.polygon
+  console.log("POLYGON => ", props.city.polygon)
+  if(props.city.polygon) {
+    props.city.polygon.map((poly, i) => {
+      let lat = poly.toString().split(" ")[0]
+      let lng = poly.toString().split(" ")[1]
+      if(i === 0) {
+        center.lat = lat
+        center.lng = lng
+      }
+      let position = {
+        lat: Number(lat),
+        lng: Number(lng),
+      }
+      let options = {
+        label: 'Marker',
+      }
+
+      markers.push({ position, ...options })
+      places.push(position)
+      console.log(markers)
+    })
+  }
 })
 
 // Functions
@@ -56,33 +94,75 @@ const resetForm = () => {
   emit('update:isEditOpen', false)
 }
 
-const onFormSubmit = () => {
+const refForm = ref(null)
+const markers = reactive([])
+
+const onFormSubmit = async () => {
   isLoading.value = true
-  citiesListStore.editCity(cityData).then(response => {
-    emit('update:isEditOpen', false)
-    emit('refreshTable')
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم حذف العنصر بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
+
+  const res = await refForm.value.validate()
+  if (res.valid) {
+    citiesListStore.editCity(cityData).then(response => {
+      emit('update:isEditOpen', false)
+      emit('refreshTable')
+      settingsListStore.alertColor = "success"
+      settingsListStore.alertMessage = "تم حذف العنصر بنجاح"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+        isLoading.value = false
+      }, 1000)
+    }).catch(error => {
+      if (error.response.data.errors) {
+        const errs = Object.keys(error.response.data.errors)
+        errs.forEach(err => {
+          settingsListStore.alertMessage = t(`errors.${err}`)
+        })
+      } else {
+        settingsListStore.alertMessage = "حدث خطأ ما !"
+      }
       isLoading.value = false
-    }, 1000)
-  }).catch(error => {
+      settingsListStore.alertColor = "error"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    })
+  }
+  else {
     isLoading.value = false
+    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  })
+  }
 }
 
 const dialogModelValueUpdate = val => {
   emit('update:isEditOpen', val)
+}
+
+const addMarker = event => {
+  if (event.latLng) {
+    const position = {
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng(),
+    }
+
+    const options = {
+      // draggable: true,
+      label: 'Marker',
+    }
+
+    markers.push({ position, ...options })
+    places.push(position)
+
+  }
 }
 </script>
 
@@ -110,7 +190,7 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit">
+        <VForm ref="refForm" @submit.prevent="onFormSubmit">
           <VRow>
             <VCol
               cols="12"
@@ -151,6 +231,25 @@ const dialogModelValueUpdate = val => {
               sm="6"
             >
               <VSwitch :label="t('available_for_delivery')" v-model="cityData.is_available_for_delivery"></VSwitch>
+            </VCol>
+            <VCol cols="12">
+              <pre>LAT => {{center.lat }} - LNG => {{  center.lng }}</pre>
+              <MapAutoComplete></MapAutoComplete>
+<!--              <AddCityMap :location="location" @getPaths="getPathsData"></AddCityMap>-->
+              <GoogleMap
+                api-key="AIzaSyCM2TngqydZtVlZ5hkKjY7x56ut59TTI88"
+                style="width: 100%; height: 500px"
+                :center="{ lat: Number(center.lat), lng: Number(center.lng) }"
+                :zoom="12"
+                @click="addMarker"
+              >
+                <Marker
+                  v-for="(marker, index) in markers"
+                  :key="index"
+                  :options="marker"
+                />
+                <Polygon :options="flightPath"/>
+              </GoogleMap>
             </VCol>
             <VCol
               cols="12"

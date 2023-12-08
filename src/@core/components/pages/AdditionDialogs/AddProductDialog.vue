@@ -35,6 +35,8 @@ const sizes = reactive([])
 const cuts = reactive([])
 const payment_type_ids = reactive([])
 
+const refForm = ref(null)
+
 const itemData = reactive({
   name_ar: "",
   name_en: "",
@@ -107,9 +109,6 @@ onMounted(() => {
   categoryListStore.fetchCategories({ pageSize: -1 }).then(response => {
     categories.value = response.data.data
   })
-  categoryListStore.fetchSubCategories({ pageSize: -1 }).then(response => {
-    sub_categories.value = response.data.data
-  })
   getProductSizes()
   getProductCuts()
   getProductPerparation()
@@ -126,28 +125,57 @@ const resetForm = () => {
   emit('update:isAddOpen', false)
 }
 
-const onFormSubmit = () => {
+watch(() => itemData.category_id, () => {
+  if (itemData.category_id !== null) {
+    categoryListStore.fetchSubCategoryByCategory(itemData.category_id).then(response => {
+      sub_categories.value = response?.data.data
+    })
+  }
+})
+
+const onFormSubmit = async () => {
   isLoading.value = true
-  productsListStore.storeProduct(itemData).then(response => {
-    emit('refreshTable')
-    emit('update:isAddOpen', false)
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
-    }, 2000)
-  }).catch(error => {
+
+  const res = await refForm.value.validate()
+  if (res.valid) {
+    productsListStore.storeProduct(itemData).then(response => {
+      emit('refreshTable')
+      emit('update:isAddOpen', false)
+      settingsListStore.alertColor = "success"
+      settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    }).catch(error => {
+      if (error.response.data.errors) {
+        const errs = Object.keys(error.response.data.errors)
+        errs.forEach(err => {
+          settingsListStore.alertMessage = t(`errors.${err}`)
+        })
+      } else {
+        settingsListStore.alertMessage = "حدث خطأ ما !"
+      }
+      isLoading.value = false
+      settingsListStore.alertColor = "error"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    })
+  }
+  else {
     isLoading.value = false
+    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  })
+  }
 }
 
 const dialogModelValueUpdate = val => {
@@ -180,7 +208,7 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit" ref="bannerData">
+        <VForm @submit.prevent="onFormSubmit" ref="refForm">
           <VRow>
             <VCol
               cols="12"
@@ -280,6 +308,7 @@ const dialogModelValueUpdate = val => {
               md="6"
             >
               <VSelect
+                v-if="itemData.category_id"
                 v-model="itemData.sub_category_id"
                 :items="sub_categories.value"
                 :label="t('forms.sub_categories')"
@@ -338,7 +367,7 @@ const dialogModelValueUpdate = val => {
                     class="position-relative me-3"
                     @click="isAddSizeOpen = true"
                   >
-                    <VIcon icon="material-symbols-light:add"  size="20"></VIcon>
+                    <VIcon icon="material-symbols-light:add" size="20"></VIcon>
                   </VBtn>
                 </VCol>
               </VRow>
@@ -366,7 +395,7 @@ const dialogModelValueUpdate = val => {
                     class="position-relative me-3"
                     @click="isAddPreparationOpen = true"
                   >
-                    <VIcon icon="material-symbols-light:add"  size="20"></VIcon>
+                    <VIcon icon="material-symbols-light:add" size="20"></VIcon>
                   </VBtn>
                 </VCol>
               </VRow>
@@ -513,7 +542,8 @@ const dialogModelValueUpdate = val => {
       </VCardText>
     </VCard>
     <AddProductSizeDialog v-model:is-add-open="isAddSizeOpen" @refreshTable="getProductSizes"></AddProductSizeDialog>
-    <AddProductPreparationDialog v-model:is-add-open="isAddPreparationOpen" @refreshTable="getProductPerparation"></AddProductPreparationDialog>
+    <AddProductPreparationDialog v-model:is-add-open="isAddPreparationOpen" @refreshTable="getProductPerparation"
+    ></AddProductPreparationDialog>
     <AddProductCutDialog v-model:is-add-open="isAddCutsOpen" @refreshTable="getProductCuts"></AddProductCutDialog>
   </VDialog>
 </template>

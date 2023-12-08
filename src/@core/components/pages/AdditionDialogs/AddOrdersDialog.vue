@@ -8,6 +8,8 @@ import {
 import { useSettingsStore } from "@/store/Settings"
 import { useOrdersStore } from "@/store/Orders"
 import moment from "moment"
+import { useCitiesStore } from "@/store/Cities"
+import { useEmployeesStore } from "@/store/Employees"
 
 const props = defineProps({
   isAddOpen: {
@@ -22,19 +24,11 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  cities: {
-    type: Array,
-    required: true,
-  },
   deliveryPeriods: {
     type: Array,
     required: true,
   },
   coupons: {
-    type: Array,
-    required: true,
-  },
-  customers: {
     type: Array,
     required: true,
   },
@@ -47,12 +41,19 @@ const emit = defineEmits([
 
 const settingsListStore = useSettingsStore()
 const ordersListStore = useOrdersStore()
+const citiesListStore = useCitiesStore()
+const customersListStore = useEmployeesStore()
+
 
 const { t } = useI18n()
 
 const isQuantityOpen = ref(false)
 const selectedProduct = ref({})
 const delivery_date = ref(null)
+
+const cities = ref([])
+const selectedProducts = ref([])
+const customers = ref([])
 
 const itemData = reactive({
   customer_id: null,
@@ -68,6 +69,7 @@ const itemData = reactive({
 
 const form = ref()
 const isLoading = ref(false)
+const isAddCustomerOpen = ref(false)
 const addresses = ref([])
 
 const resetForm = () => {
@@ -82,35 +84,70 @@ watch(() => itemData.customer_id, (newVal, oldVal) => {
   addresses.value = getAddresses()
 })
 
+watch(() => itemData.country_id, (newVal, oldVal) => {
+  citiesListStore.fetchCitiesByCountry(itemData.country_id).then(response => {
+    cities.value = response.data.data
+  })
+})
+
+const getCustomers = () => {
+  customersListStore.fetchCustomers({ wallet: 'all' }).then(response => {
+    customers.value = response.data.data
+  })
+}
+
 const getAddresses = () => {
-  let selected_customer = props.customers.filter(obj => obj.id === itemData.customer_id)
+  let selected_customer = customers.value.filter(obj => obj.id === itemData.customer_id)
   let addresses = selected_customer[0].addresses
 
   return addresses
 }
 
-const onFormSubmit = () => {
+const refForm = ref(null)
+
+const onFormSubmit = async () => {
   isLoading.value = true
-  ordersListStore.storeOrder(itemData).then(response => {
-    emit('refreshTable')
-    emit('update:isAddOpen', false)
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
-    }, 2000)
-  }).catch(error => {
+
+  const res = await refForm.value.validate()
+  if (res.valid) {
+    ordersListStore.storeOrder(itemData).then(response => {
+      emit('refreshTable')
+      emit('update:isAddOpen', false)
+      settingsListStore.alertColor = "success"
+      settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    }).catch(error => {
+      if (error.response.data.errors) {
+        const errs = Object.keys(error.response.data.errors)
+        errs.forEach(err => {
+          settingsListStore.alertMessage = t(`errors.${err}`)
+        })
+      } else {
+        settingsListStore.alertMessage = "حدث خطأ ما !"
+      }
+      isLoading.value = false
+      settingsListStore.alertColor = "error"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    })
+  }
+  else {
     isLoading.value = false
+    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  })
+  }
 }
 
 const getProductData = ev => {
@@ -123,11 +160,16 @@ const dialogModelValueUpdate = val => {
 }
 
 const AddQuantity = data => {
+  console.log("DT => ", data.value, selectedProduct.value.id)
   itemData.products.push({
-    product_id: selectedProduct.value.value,
+    product_id: selectedProduct.value.id,
     quantity: data.value,
   })
 }
+
+onMounted(() => {
+  getCustomers()
+})
 </script>
 
 <template>
@@ -156,19 +198,33 @@ const AddQuantity = data => {
 
         <VCardText>
           <!-- 👉 Form -->
-          <VForm @submit.prevent="onFormSubmit" ref="bannerData">
+          <VForm @submit.prevent="onFormSubmit" ref="refForm">
             <VRow>
               <VCol
                 cols="12"
               >
-                <VSelect
-                  v-model="itemData.customer_id"
-                  :items="props.customers"
-                  :label="t('Customers')"
-                  item-title="name"
-                  item-value="id"
-                  :rules="[requiredValidator]"
-                />
+                <VRow align="center">
+                  <VCol cols="12" lg="10" sm="12">
+                    <VSelect
+                      v-model="itemData.customer_id"
+                      :items="customers"
+                      :label="t('Customers')"
+                      item-title="name"
+                      item-value="id"
+                      :rules="[requiredValidator]"
+                    />
+                  </VCol>
+                  <VCol cols="12" lg="2" sm="12">
+                    <VBtn
+                      type="button"
+                      size="small"
+                      class="position-relative me-3"
+                      @click="isAddCustomerOpen = true"
+                    >
+                      <VIcon icon="material-symbols-light:add" size="24"></VIcon>
+                    </VBtn>
+                  </VCol>
+                </VRow>
               </VCol>
               <VCol
                 cols="12"
@@ -187,7 +243,7 @@ const AddQuantity = data => {
               >
                 <VSelect
                   v-model="itemData.city_id"
-                  :items="props.cities"
+                  :items="cities"
                   :label="t('Cities')"
                   item-title="name_ar"
                   item-value="id"
@@ -246,19 +302,22 @@ const AddQuantity = data => {
                 cols="12"
               >
                 <VSelect
+                  v-model="selectedProducts"
                   :items="products"
                   :label="t('Products')"
                   item-title="name_ar"
                   item-value="id"
+                  return-object
                   multiple
+                  :rules="[requiredValidator]"
                 >
-                  <template v-slot:selection="{ item }">
-                    <v-chip @click.prevent.stop="getProductData(item)">
-                      <span>{{ item.title }}</span>
-                    </v-chip>
-                  </template>
                 </VSelect>
                 <span class="text-sm mt-1 font-weight-bold">* إضغط علي المنتج لإضافة الكمية</span>
+                <div class="mt-2">
+                  <v-chip class="mx-2" label v-for="pd in selectedProducts" :key="pd.id" @click.prevent.stop="getProductData(pd)">
+                    <span>{{ pd.name_ar }}</span>
+                  </v-chip>
+                </div>
               </VCol>
               <VCol
                 cols="12"
@@ -302,5 +361,6 @@ const AddQuantity = data => {
     </VDialog>
 
     <AddProductQunatity v-model:is-add-open="isQuantityOpen" @addProductQuantity="AddQuantity"></AddProductQunatity>
+    <AddCustomerDialog v-model:is-add-open="isAddCustomerOpen" @refreshTable="getCustomers"></AddCustomerDialog>
   </div>
 </template>

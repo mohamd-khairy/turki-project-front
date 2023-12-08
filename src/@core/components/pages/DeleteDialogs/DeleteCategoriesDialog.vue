@@ -82,7 +82,7 @@ const dialogModelValueUpdate = val => {
       </VCardItem>
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit">
+        <VForm ref="refForm" @submit.prevent="onFormSubmit">
           <VRow>
             <VCol
               cols="12"

@@ -52,28 +52,50 @@ const resetForm = () => {
   emit('update:isAddOpen', false)
 }
 
-const onFormSubmit = () => {
+const refForm = ref(null)
+
+const onFormSubmit = async () => {
   isLoading.value = true
-  categoriesListStore.storeSubCategory(category).then(response => {
-    emit('update:isAddOpen', false)
-    emit('refreshTable')
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
-    }, 2000)
-  }).catch(error => {
+
+  const res = await refForm.value.validate()
+  if (res.valid) {
+    categoriesListStore.storeSubCategory(category).then(response => {
+      emit('update:isAddOpen', false)
+      emit('refreshTable')
+      settingsListStore.alertColor = "success"
+      settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    }).catch(error => {
+      if (error.response.data.errors) {
+        const errs = Object.keys(error.response.data.errors)
+        errs.forEach(err => {
+          settingsListStore.alertMessage = t(`errors.${err}`)
+        })
+      } else {
+        settingsListStore.alertMessage = "حدث خطأ ما !"
+      }
+      isLoading.value = false
+      settingsListStore.alertColor = "error"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    })
+  } else {
     isLoading.value = false
+    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  })
+  }
 }
 
 const dialogModelValueUpdate = val => {
@@ -105,7 +127,7 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit">
+        <VForm ref="refForm" @submit.prevent="onFormSubmit">
           <VRow>
             <VCol
               cols="12"
@@ -155,17 +177,17 @@ const dialogModelValueUpdate = val => {
                 :rules="[requiredValidator]"
               />
             </VCol>
-<!--            <VCol-->
-<!--              cols="12"-->
-<!--            >-->
-<!--              <VFileInput-->
-<!--                v-model="category.image"-->
-<!--                :label="t('forms.image')"-->
-<!--                accept="image/*"-->
-<!--                prepend-icon=""-->
-<!--                prepend-inner-icon="mdi-image"-->
-<!--              />-->
-<!--            </VCol>-->
+            <!--            <VCol-->
+            <!--              cols="12"-->
+            <!--            >-->
+            <!--              <VFileInput-->
+            <!--                v-model="category.image"-->
+            <!--                :label="t('forms.image')"-->
+            <!--                accept="image/*"-->
+            <!--                prepend-icon=""-->
+            <!--                prepend-inner-icon="mdi-image"-->
+            <!--              />-->
+            <!--            </VCol>-->
             <VCol
               cols="12"
               lg="12"

@@ -85,15 +85,18 @@ const itemData = reactive({
   ],
 })
 
+watch(() => itemData.category_id, () => {
+  categoryListStore.fetchSubCategoryByCategory(itemData.category_id).then(response => {
+    sub_categories.value = response.data.data
+  })
+})
+
 onMounted(() => {
   citiesListStore.fetchCities({ pageSize: -1 }).then(response => {
     cities.value = response.data.data
   })
   categoryListStore.fetchCategories({ pageSize: -1 }).then(response => {
     categories.value = response.data.data
-  })
-  categoryListStore.fetchSubCategories({ pageSize: -1 }).then(response => {
-    sub_categories.value = response.data.data
   })
   settingsListStore.fetchProductSize({ pageSize: -1 }).then(response => {
     sizes.value = response.data.data
@@ -130,42 +133,63 @@ onUpdated(() => {
   itemData.is_shalwata = props.item.is_shalwata ?? 0
   itemData.is_delivered = props.item.is_delivered ?? 0
   itemData.is_picked_up = props.item.is_picked_up ?? 0
-  itemData.preparation_ids = props.item.preparation_ids ?? []
-  itemData.size_ids = props.item.size_ids ?? []
-  itemData.cut_ids = props.item.cut_ids ?? []
+  itemData.preparation_ids = props.item.product_preparations ?? []
+  itemData.size_ids = props.item.product_sizes ?? []
+  itemData.cut_ids = props.item.product_cuts ?? []
   itemData.payment_type_ids = props.item.payment_types ?? []
   itemData.city_ids = props.item.cities ?? []
+  itemData.images = props.item.product_images ?? []
 })
 
-const form = ref()
+const refForm = ref()
 
 const resetForm = () => {
   emit('update:isEditOpen', false)
 }
 
-const onFormSubmit = () => {
+const onFormSubmit = async () => {
   isLoading.value = true
-  productsListStore.editProduct(itemData).then(response => {
-    emit('refreshTable')
-    emit('update:isEditOpen', false)
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم تعديل العنصر بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
+
+  const res = await refForm.value.validate()
+  if (res.valid) {
+    productsListStore.editProduct(itemData).then(response => {
+      emit('refreshTable')
+      emit('update:isEditOpen', false)
+      settingsListStore.alertColor = "success"
+      settingsListStore.alertMessage = "تم تعديل العنصر بنجاح"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+        isLoading.value = false
+      }, 2000)
+    }).catch(error => {
+      if (error.response.data.errors) {
+        const errs = Object.keys(error.response.data.errors)
+        errs.forEach(err => {
+          settingsListStore.alertMessage = t(`errors.${err}`)
+        })
+      } else {
+        settingsListStore.alertMessage = "حدث خطأ ما !"
+      }
       isLoading.value = false
-    }, 2000)
-  }).catch(error => {
+      settingsListStore.alertColor = "error"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    })
+  } else {
     isLoading.value = false
+    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  })
+  }
 }
 
 const dialogModelValueUpdate = val => {
@@ -198,7 +222,7 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit" ref="bannerData">
+        <VForm @submit.prevent="onFormSubmit" ref="refForm">
           <VRow>
             <VCol
               cols="12"
@@ -317,7 +341,6 @@ const dialogModelValueUpdate = val => {
                 item-title="name_ar"
                 item-value="id"
                 multiple
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -345,7 +368,6 @@ const dialogModelValueUpdate = val => {
                 item-title="name_ar"
                 item-value="id"
                 multiple
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -373,7 +395,6 @@ const dialogModelValueUpdate = val => {
                 item-title="name_ar"
                 item-value="id"
                 multiple
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -385,13 +406,23 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.product_images')"
                 accept="image/*"
                 prepend-icon=""
+                small-chips
                 prepend-inner-icon="mdi-image"
                 multiple
                 :rules="[requiredValidator]"
               />
             </VCol>
 
-            <VCol cols="12" md="6"></VCol>
+            <VCol cols="12" v-if="itemData.images">
+              <v-carousel show-arrows="hover">
+                <v-carousel-item
+                  v-for="image in itemData.images"
+                  :key="image.id"
+                  :src="image.thumbnail_url"
+                  cover
+                ></v-carousel-item>
+              </v-carousel>
+            </VCol>
 
             <VCol
               cols="12"

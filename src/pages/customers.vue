@@ -200,6 +200,15 @@ onMounted(() => {
             :items="[5, 10, 20, 30, 50]"
           />
         </div>
+
+        <VBtn
+          v-can="'create-user'"
+          prepend-icon="tabler-plus"
+          @click="isAddOpen = true"
+        >
+          {{ t('Add_Customer') }}
+        </VBtn>
+
         <VSpacer/>
 
 
@@ -367,6 +376,7 @@ onMounted(() => {
         />
       </VCardText>
     </VCard>
+    <AddCustomerDialog v-model:is-add-open="isAddOpen" @refreshTable="getCustomers" />
     <EditCustomerDialog v-model:is-edit-open="isEditOpen" @refreshTable="getCustomers" :customer="selectedEmployee"/>
     <DeleteCustomerDialog v-model:is-delete-open="isDeleteOpen" @refreshTable="getCustomers"
                           :customer="selectedEmployee"

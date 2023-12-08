@@ -59,14 +59,8 @@ onMounted(() => {
   ordersListStore.fetchOrderStatus().then(response => {
     orderStatuses.value = response.data.data
   })
-  citiesListStore.fetchCities().then(response => {
-    cities.value = response.data.data
-  })
   countriesListStore.fetchCountries().then(response => {
     countries.value = response.data.data
-  })
-  customersListStore.fetchCustomers({ wallet: 'all' }).then(response => {
-    customers.value = response.data.data
   })
   settingsListStore.fetchDelivery_Periods().then(response => {
     deliveryPeriods.value = response.data.data
@@ -76,6 +70,12 @@ onMounted(() => {
   })
   couponsListStore.fetchCoupons({ per_page: -1 }).then(response => {
     coupons.value = response.data.data
+  })
+})
+
+watch(() => filters.country_ids, (newVal, oldVal) => {
+  citiesListStore.fetchCitiesByCountry(filters.country_ids).then(response => {
+    cities.value = response.data.data
   })
 })
 
@@ -217,7 +217,6 @@ const formatDateTime = data => {
                 :label="t('forms.countries')"
                 item-title="name_ar"
                 item-value="id"
-                multiple
                 :disabled="isLoading"
               />
             </VCol>

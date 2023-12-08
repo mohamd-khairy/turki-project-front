@@ -18,6 +18,9 @@ export const useCategoriesStore = defineStore('CategoriesStore', {
     fetchSubCategory(id) {
       return axios.get(`/sub-categories/${id}`)
     },
+    fetchSubCategoryByCategory(id) {
+      return axios.get(`/sub-categories/by-category-id/${id}`)
+    },
 
     storeCategory(data) {
       const formData = new FormData()

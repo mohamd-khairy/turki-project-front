@@ -19,9 +19,9 @@ const app = createApp(App)
 
 // directives
 app.directive('can', {
-  mounted(el, binding, vnode) {
+  mounted(el, binding) {
     // Assume 'userPermissions' is an array of permissions the user has
-    const userPermissions = JSON.parse(localStorage.getItem('najdPermissions'))
+    const userPermissions = JSON.parse(localStorage.getItem('najdPermissions')) || []
     const requiredPermission = binding.value
 
     if (!userPermissions.includes(requiredPermission) && requiredPermission !== "show") {

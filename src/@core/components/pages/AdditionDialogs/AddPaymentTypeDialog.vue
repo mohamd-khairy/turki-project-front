@@ -25,6 +25,7 @@ const itemData = reactive({
   name_en: null,
   name_ar: null,
   code: null,
+  active: false,
 })
 
 const form = ref()
@@ -34,28 +35,59 @@ const resetForm = () => {
   emit('update:isAddOpen', false)
 }
 
-const onFormSubmit = () => {
+const refForm = ref(null)
+
+const onFormSubmit = async () => {
   isLoading.value = true
-  settingsListStore.storePaymentType(itemData).then(response => {
-    emit('refreshTable')
-    emit('update:isAddOpen', false)
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
-    }, 2000)
-  }).catch(error => {
+
+  const res = await refForm.value.validate()
+  if (res.valid) {
+
+    let item = {
+      name_en: itemData.name_en,
+      name_ar: itemData.name_ar,
+      code: itemData.code,
+      active: itemData.active == true ? 1 : 0,
+    }
+
+    settingsListStore.storePaymentType(item).then(response => {
+      emit('refreshTable')
+      emit('update:isAddOpen', false)
+      settingsListStore.alertColor = "success"
+      settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    }).catch(error => {
+      if (error.response.data.errors) {
+        const errs = Object.keys(error.response.data.errors)
+        errs.forEach(err => {
+          settingsListStore.alertMessage = t(`errors.${err}`)
+        })
+      } else {
+        settingsListStore.alertMessage = "حدث خطأ ما !"
+      }
+      isLoading.value = false
+      settingsListStore.alertColor = "error"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    })
+  }
+  else {
     isLoading.value = false
+    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  })
+  }
 }
 
 const dialogModelValueUpdate = val => {
@@ -86,7 +118,7 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit" ref="bannerData">
+        <VForm @submit.prevent="onFormSubmit" ref="refForm">
           <VRow>
             <VCol
               cols="12"
@@ -116,6 +148,15 @@ const dialogModelValueUpdate = val => {
                 v-model="itemData.code"
                 :label="t('forms.code')"
                 :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSwitch
+                v-model="itemData.active"
+                :label="t('forms.is_active')"
               />
             </VCol>
 

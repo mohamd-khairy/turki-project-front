@@ -189,7 +189,7 @@ const formatDateTime = data => {
             {{ city.name_ar }}
           </td>
           <td>
-            {{ city.country ? city.country : "السعودية" }}
+            {{ city.country ? city.country.name_ar : "لا يوجد" }}
           </td>
           <td @click="changeStatus(city)">
             <VIcon icon="ph:dot-bold" :color="city.is_active == true ? '#008000' : '#f00000'" size="32"></VIcon>

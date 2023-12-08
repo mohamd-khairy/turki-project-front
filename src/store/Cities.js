@@ -7,6 +7,9 @@ export const useCitiesStore = defineStore('CitiesStore', {
     fetchCities(params) {
       return axios.get('cities', { params })
     },
+    fetchCitiesByCountry(id) {
+      return axios.get(`cities/get-city-ByCountry/${id}`)
+    },
 
     // 👉 Fetch Single Country
     fetchCity(id) {

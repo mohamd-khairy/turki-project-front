@@ -112,19 +112,19 @@ onMounted(() => {
           <h3 class="mb-2">
             <VIcon icon="arcticons:destiny-item-manager" size="x-small" color="primary" class="ml-2"></VIcon>
             <span>وقت التسليم: </span>
-            <span class="text-primary">{{ order.order.delivery_period.name_ar }}</span>
+            <span class="text-primary">{{ order.order.delivery_period ? order.order.delivery_period.name_ar : "لا يوجد" }}</span>
           </h3>
           <h3 class="mb-2">
             <VIcon icon="arcticons:destiny-item-manager" size="x-small" color="primary" class="ml-2"></VIcon>
             <span>طريقة الدفع : </span>
-            <span class="text-primary">{{ order.order.payment_type.name_ar }}</span>
+            <span class="text-primary">{{ order.order.payment_type ? order.order.payment_type.name_ar : "لا يوجد" }}</span>
           </h3>
         </VCol>
         <VCol cols="12" class="d-flex justify-space-around flex-wrap">
           <h3 class="mb-2">
             <VIcon icon="iconamoon:invoice-thin" size="x-small" color="primary" class="ml-2"></VIcon>
             <span>رقم الفاتورة: </span>
-            <span class="text-primary">{{ order.order.payment.order_ref_no }}</span>
+            <span class="text-primary">{{ order.order.payment ? order.order.payment.order_ref_no : "لا يوجد" }}</span>
           </h3>
           <h3>
             <VIcon icon="fluent:location-48-regular" size="x-small" color="primary" class="ml-2"></VIcon>
@@ -152,14 +152,14 @@ onMounted(() => {
             </thead>
             <tbody>
             <tr v-for="product in order.products" :key="product.id">
-              <td>{{ product.product ?? "-" }}</td>
-              <td>{{ product.size.name_ar ?? "-" }}</td>
-              <td>{{ product.quantity ?? "0" }}</td>
-              <td>{{ product.cut ?? "-" }}</td>
-              <td>{{ product.preparation ?? "-" }}</td>
+              <td>{{ product.product ? product.product.name_ar : "لا يوجد" }}</td>
+              <td>{{ product.size ? product.size.name_ar : "لا يوجد" }}</td>
+              <td>{{ product.quantity ? product.quantity : "لا يوجد" }}</td>
+              <td>{{ product.cut ? product.cut : "لا يوجد" }}</td>
+              <td>{{ product.preparation ? product.preparation : "لا يوجد" }}</td>
               <td>{{ product.price ?? (product.total_price / product.quantity) }}</td>
-              <td>{{ product.shalwata ?? "-" }}</td>
-              <td>{{ product.total_price ?? "-" }}</td>
+              <td>{{ product.shalwata ?? "لا يوجد" }}</td>
+              <td>{{ product.total_price ?? "لا يوجد" }}</td>
             </tr>
             <tr>
               <td colspan="2">

@@ -1,9 +1,12 @@
 <script setup>
-import { useI18n } from "vue-i18n"
+import countriesList from "@core/utils/countries.json"
+import { useEmployeesStore } from "@/store/Employees"
+import { useRolesStore } from "@/store/Roles"
 import {
+  emailValidator,
   requiredValidator,
 } from '@validators'
-import { useSettingsStore } from "@/store/Settings"
+
 
 const props = defineProps({
   isAddOpen: {
@@ -13,27 +16,63 @@ const props = defineProps({
 })
 
 const emit = defineEmits([
-  'update:isAddOpen',
   'refreshTable',
+  'update:isAddOpen',
 ])
 
-const settingsListStore = useSettingsStore()
+import { useI18n } from "vue-i18n"
+import { useSettingsStore } from "@/store/Settings"
 
 const { t } = useI18n()
-
-const itemData = reactive({
-  name_en: null,
-  name_ar: null,
-  price: null,
-  sale_price: null,
-  weight: null,
-  is_available_for_use: 0,
-})
-
-const form = ref()
+const rolesListStore = useRolesStore()
+const employeesListStore = useEmployeesStore()
+const settingsListStore = useSettingsStore()
+const roles = reactive([])
 const isLoading = ref(false)
 
+onMounted(() => {
+  rolesListStore.fetchRoles().then(response => {
+    roles.value = response.data.data
+  })
+})
+
+// Variables
+const employee = reactive({
+  mobile_country_code: null,
+  mobile: null,
+  name: null,
+  email: null,
+  avatar: {},
+  age: null,
+  gender: null,
+  nationality: "sau",
+  is_active: false,
+  wallet: null,
+})
+
+const genders = reactive([
+  {
+    id: 1,
+    name: "ذكر",
+  },
+  {
+    id: 0,
+    name: "أنثي",
+  },
+])
+
+// Functions
 const resetForm = () => {
+  employee.mobile_country_code = null
+  employee.mobile = null
+  employee.name = null
+  employee.email = null
+  employee.avatar = {}
+  employee.age = null
+  employee.gender = null
+  employee.nationality = null
+  employee.is_active = false
+  employee.wallet = null
   emit('update:isAddOpen', false)
 }
 
@@ -44,12 +83,14 @@ const onFormSubmit = async () => {
 
   const res = await refForm.value.validate()
   if (res.valid) {
-    settingsListStore.storeProductSize(itemData).then(response => {
-      emit('refreshTable')
+    employeesListStore.storeCustomer(employee).then(response => {
+      isLoading.value = false
       emit('update:isAddOpen', false)
+      emit('refreshTable')
       settingsListStore.alertColor = "success"
       settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
       settingsListStore.isAlertShow = true
+      resetForm()
       setTimeout(() => {
         settingsListStore.isAlertShow = false
         settingsListStore.alertMessage = ""
@@ -90,7 +131,7 @@ const dialogModelValueUpdate = val => {
 
 <template>
   <VDialog
-    :width="$vuetify.display.smAndDown ? 'auto' : 650"
+    :width="$vuetify.display.smAndDown ? 'auto' : 650 "
     :model-value="props.isAddOpen"
     @update:model-value="dialogModelValueUpdate"
   >
@@ -100,80 +141,134 @@ const dialogModelValueUpdate = val => {
     <VCard
       class="pa-sm-9 pa-5"
     >
+      <!-- 👉 Title -->
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="game-icons:weight-scale" size="24" color="primary"></VIcon>
+          <VIcon icon="ph:users-four" size="24" color="primary"></VIcon>
           <span class="mx-1 my-1">
-            {{ t('Add_Item') }}
+            {{ t('Add_Customer') }}
           </span>
         </VCardTitle>
       </VCardItem>
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit" ref="refForm">
+        <VForm ref="refForm" @submit.prevent="onFormSubmit">
           <VRow>
             <VCol
               cols="12"
-              md="6"
+              lg="12"
+              sm="6"
             >
               <VTextField
-                v-model="itemData.name_ar"
-                :label="t('forms.name_ar')"
+                v-model="employee.name"
+                :label="t('forms.name')"
                 :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
               cols="12"
-              md="6"
+              lg="12"
+              sm="6"
             >
               <VTextField
-                v-model="itemData.name_en"
-                :label="t('forms.name_en')"
+                v-model="employee.email"
+                :label="t('forms.email')"
+                :rules="[requiredValidator, emailValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              lg="12"
+              sm="6"
+            >
+              <VTextField
+                v-model="employee.mobile_country_code"
+                :label="t('forms.country_code')"
                 :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
               cols="12"
-              md="6"
+              lg="12"
+              sm="6"
             >
               <VTextField
-                v-model="itemData.price"
-                :label="t('forms.price')"
+                v-model="employee.mobile"
+                :label="t('forms.phone')"
                 :rules="[requiredValidator]"
-                type="number"
               />
             </VCol>
             <VCol
               cols="12"
-              md="6"
+              lg="12"
+              sm="6"
             >
               <VTextField
-                v-model="itemData.sale_price"
-                :label="t('forms.sale_price')"
-                :rules="[requiredValidator]"
-                type="number"
+                v-model="employee.age"
+                :label="t('forms.age')"
               />
             </VCol>
             <VCol
               cols="12"
-              md="6"
+              lg="12"
+              sm="6"
             >
-              <VTextField
-                v-model="itemData.weight"
-                :label="t('forms.weight')"
-                :rules="[requiredValidator]"
-                type="number"
+              <VSelect
+                v-model="employee.nationality"
+                :label="t('forms.nationality')"
+                :items="countriesList"
+                item-title="ar"
+                item-value="alpha3"
               />
             </VCol>
             <VCol
               cols="12"
-              md="6"
+              lg="12"
+              sm="6"
             >
-              <VSwitch :label="t('forms.available_for_use')" v-model="itemData.is_available_for_use"></VSwitch>
+              <VSelect
+                v-model="employee.gender"
+                :label="t('forms.gender')"
+                :items="genders"
+                item-title="name"
+                item-value="id"
+                :rules="[requiredValidator]"
+              />
             </VCol>
-
-
+            <VCol
+              cols="12"
+            >
+              <VFileInput
+                v-model="employee.avatar"
+                :label="t('forms.image')"
+                accept="image/*"
+                prepend-icon=""
+                prepend-inner-icon="mdi-image"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              lg="12"
+              sm="6"
+              >
+              <VTextField
+                v-model="employee.wallet"
+                :label="t('forms.wallet')"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              lg="12"
+              sm="6"
+            >
+              <VSwitch
+                v-model="employee.is_active"
+                :label="t('forms.is_active')"
+              />
+            </VCol>
             <VCol
               cols="12"
               class="text-center"
@@ -183,7 +278,7 @@ const dialogModelValueUpdate = val => {
                 type="submit"
                 class="me-3"
               >
-                {{ t('buttons.save') }}
+                {{ t("buttons.save") }}
               </VBtn>
               <VBtn
                 v-else
@@ -198,7 +293,7 @@ const dialogModelValueUpdate = val => {
                 color="secondary"
                 @click="resetForm"
               >
-                {{ t('buttons.cancel') }}
+                {{ t("buttons.cancel") }}
               </VBtn>
             </VCol>
           </VRow>

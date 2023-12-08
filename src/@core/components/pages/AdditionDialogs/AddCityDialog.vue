@@ -27,6 +27,8 @@ const settingsListStore = useSettingsStore()
 const countries = reactive([])
 const isLoading = ref(false)
 
+const refForm = ref(null)
+
 const location = reactive({
   lat: null,
   lng: null,
@@ -53,7 +55,7 @@ const city = reactive({
   name_en: null,
   country_id: null,
   is_available_for_delivery: 0,
-  polygon: "[[25.074497,46.838505],[25.024733,46.327641],[24.685798,46.338627],[24.5159836,4706669],[24.750666,47.014286],[25.069522,46.838505]]",
+  polygon: "",
 })
 
 // Functions
@@ -65,45 +67,66 @@ const resetForm = () => {
   emit('update:isAddOpen', false)
 }
 
-const onFormSubmit = () => {
+const onFormSubmit = async () => {
   isLoading.value = true
-  let cityDt = {
-    name_ar: city.name_ar,
-    name_en: city.name_en,
-    country_id: city.country_id,
-    is_available_for_delivery: city.is_available_for_delivery,
-    polygon: "",
-  }
-  paths.map((path, index) => {
-    console.log(paths.length, index , paths[index])
-    cityDt.polygon += `[${path.lat},${path.lng}]`
-    if(index < paths.length - 1) {
-      cityDt.polygon += ','
+
+  const res = await refForm.value.validate()
+
+  if (res.valid) {
+    let cityDt = {
+      name_ar: city.name_ar,
+      name_en: city.name_en,
+      country_id: city.country_id,
+      is_available_for_delivery: city.is_available_for_delivery,
+      polygon: "",
     }
-  })
-  console.log(`[${cityDt.polygon}]`)
-  cityDt.polygon = `[${cityDt.polygon}]`
-  citiesListStore.storeCity(cityDt).then(response => {
-    emit('update:isAddOpen', false)
-    emit('refreshTable')
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
-    }, 2000)
-    resetForm()
-  }).catch(error => {
+    paths.map((path, index) => {
+      console.log(paths.length, index , paths[index])
+      cityDt.polygon += `[${path.lat},${path.lng}]`
+      if(index < paths.length - 1) {
+        cityDt.polygon += ','
+      }
+    })
+    cityDt.polygon = `[${cityDt.polygon}]`
+    citiesListStore.storeCity(cityDt).then(response => {
+      emit('update:isAddOpen', false)
+      emit('refreshTable')
+      settingsListStore.alertColor = "success"
+      settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+      resetForm()
+    }).catch(error => {
+      if (error.response.data.errors) {
+        const errs = Object.keys(error.response.data.errors)
+        errs.forEach(err => {
+          settingsListStore.alertMessage = t(`errors.${err}`)
+        })
+      } else {
+        settingsListStore.alertMessage = "حدث خطأ ما !"
+      }
+      isLoading.value = false
+      settingsListStore.alertColor = "error"
+      settingsListStore.isAlertShow = true
+      setTimeout(() => {
+        settingsListStore.isAlertShow = false
+        settingsListStore.alertMessage = ""
+      }, 2000)
+    })
+  }
+  else {
     isLoading.value = false
+    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  })
+  }
 }
 
 const dialogModelValueUpdate = val => {
@@ -143,7 +166,7 @@ const getSelectedLocation = loc => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit">
+        <VForm ref="refForm" @submit.prevent="onFormSubmit">
           <VRow>
             <VCol
               cols="12"
