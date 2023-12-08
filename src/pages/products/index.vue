@@ -364,7 +364,7 @@ onMounted(() => {
             {{ ConvertToArabicNumbers(Intl.NumberFormat().format(product.price)) }} {{ t('riyal') }}
           </td>
           <td>
-            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(product['sale price'] ?? 0)) }} {{ t('riyal') }}
+            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(product['sale_price'] ?? 0)) }} {{ t('riyal') }}
           </td>
           <td>
             {{ product.category ? product.category.type_ar : "-" }}
