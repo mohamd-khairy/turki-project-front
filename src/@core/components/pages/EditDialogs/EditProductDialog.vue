@@ -148,7 +148,7 @@ onUpdated(() => {
   itemData.images = props.item.product_images ?? []
 })
 
-const refForm = ref()
+const refForm = ref(null)
 
 const resetForm = () => {
   emit('update:isEditOpen', false)
