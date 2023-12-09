@@ -167,8 +167,6 @@ export const useProductsStore = defineStore('ProductsStore', {
         }
       })
 
-      console.log("PD => ", data)
-
       formData.append("name_ar", data.name_ar)
       formData.append("name_en", data.name_en)
       formData.append("weight", data.weight)
@@ -194,10 +192,11 @@ export const useProductsStore = defineStore('ProductsStore', {
       formData.append("payment_type_ids", payment_ids.split(" ,")[1] ?? "")
       formData.append("city_ids", cty_ids.split(" ,")[1] ?? "")
 
-      data.images.map((img, ind) => {
-        formData.append(`images[${ind}]`, img)
-        console.log("IMG", img)
-      })
+      if(data.images !== []) {
+        data.images.map((img, ind) => {
+          formData.append(`images[${ind}]`, img)
+        })
+      }
 
       return axios.post(`products/update-products/${data.id}`, formData)
     },
