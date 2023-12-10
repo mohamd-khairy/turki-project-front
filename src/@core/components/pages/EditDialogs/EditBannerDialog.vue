@@ -53,9 +53,8 @@ onUpdated(() => {
   bannerData.type = Number(props.banner.type),
   bannerData.redirect_mobile_url = props.banner.redirect_mobile_url,
   bannerData.product_id = props.banner.product_id,
-  bannerData.category_ids = props.banner.category,
+  bannerData.category_ids = props.banner.categories,
   bannerData.city_ids = props.banner.cities
-  console.log(props.banner.category)
 })
 
 const { t } = useI18n()
@@ -148,8 +147,7 @@ const onFormSubmit = async () => {
         settingsListStore.alertMessage = ""
       }, 2000)
     })
-  }
-  else {
+  } else {
     isLoading.value = false
     settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
@@ -275,6 +273,7 @@ const dialogModelValueUpdate = val => {
                 item-title="type_ar"
                 item-value="id"
                 multiple
+                return-object
                 :rules="[requiredValidator]"
               />
             </VCol>

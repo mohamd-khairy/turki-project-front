@@ -18,7 +18,7 @@ export const usePermissionsStore = defineStore('PermissionsStore', {
       return axios.post(`permission` , data)
     },
     editPermission(data) {
-      return axios.post(`permission/${data.id}` , data)
+      return axios.put(`permission/${data.id}` , data)
     },
     deletePermission(data) {
       return axios.delete(`permission/${data.id}`)

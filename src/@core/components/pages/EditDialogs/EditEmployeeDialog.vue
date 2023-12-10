@@ -43,6 +43,7 @@ onUpdated(() => {
   employeeData.gender = props.employee.gender
   employeeData.age = props.employee.age
   employeeData.roles = props.employee.roles
+  employeeData.is_active = props.employee.is_active ?? false
 })
 
 // Variables
@@ -56,6 +57,7 @@ const employeeData = reactive({
   gender: null,
   age: null,
   roles: [],
+  is_active: null,
 })
 
 const genders = reactive([
@@ -240,6 +242,14 @@ const dialogModelValueUpdate = val => {
                 item-title="display_name"
                 item-value="id"
                 multiple
+              />
+            </VCol>
+            <VCol
+              cols="12"
+            >
+              <VSwitch
+                v-model="employeeData.is_active"
+                :label="t('forms.is_active')"
               />
             </VCol>
             <VCol

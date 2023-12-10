@@ -34,7 +34,7 @@ const itemData = reactive({
   city_id: null,
 })
 
-const form = ref()
+const refForm = ref(null)
 
 const resetForm = () => {
   emit('update:isEditOpen', false)
@@ -120,7 +120,7 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit" ref="bannerData">
+        <VForm @submit.prevent="onFormSubmit" ref="refForm">
           <VRow>
             <VCol
               cols="12"

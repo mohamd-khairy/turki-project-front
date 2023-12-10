@@ -34,7 +34,7 @@ const itemData = reactive({
   product_ids: [],
 })
 
-const form = ref()
+const refForm = ref(null)
 const isLoading = ref(false)
 
 const resetForm = () => {

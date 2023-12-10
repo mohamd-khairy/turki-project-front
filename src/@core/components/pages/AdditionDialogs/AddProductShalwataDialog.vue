@@ -36,7 +36,7 @@ const resetForm = () => {
 
 const refForm = ref(null)
 
-const onFormSubmit = () => {
+const onFormSubmit = async () => {
   isLoading.value = true
 
   const res = await refForm.value.validate()
@@ -100,7 +100,7 @@ const dialogModelValueUpdate = val => {
     >
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="ph:knife-thin" size="24" color="primary"></VIcon>
+          <VIcon icon="fluent-mdl2:product" size="24" color="primary"></VIcon>
           <span class="mx-1 my-1">
             {{ t('Add_Item') }}
           </span>

@@ -45,6 +45,7 @@ const employee = reactive({
   gender: null,
   age: null,
   roles: [],
+  is_active: false,
 })
 
 const genders = reactive([
@@ -68,6 +69,7 @@ const resetForm = () => {
   employee.gender = null
   employee.age = null
   employee.roles = []
+  employee.is_active = false
   emit('update:isAddOpen', false)
 }
 
@@ -243,6 +245,14 @@ const dialogModelValueUpdate = val => {
                 item-value="id"
                 multiple
                 :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+            >
+              <VSwitch
+                v-model="employee.is_active"
+                :label="t('forms.is_active')"
               />
             </VCol>
             <VCol

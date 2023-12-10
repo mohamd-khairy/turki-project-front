@@ -67,16 +67,16 @@ const form = ref()
 
 const types = reactive([
   {
+    id: 0,
+    name: "بنر عادي",
+  },
+  {
     id: 1,
     name: "رابط بنر خارجي",
   },
   {
     id: 2,
     name: "رابط بنر داخلي",
-  },
-  {
-    id: 3,
-    name: "بنر عادي",
   },
 ])
 
