@@ -91,7 +91,8 @@ export const useBannersStore = defineStore('BannersStore', {
       formData.append("category_ids", cats_ids)
       formData.append("city_ids", cty_ids)
       if (banner.image[0]) {
-        formData.append("image", banner.image)
+        console.log(banner.image[0])
+        formData.append("image", banner.image[0])
       }
 
       return axios.post(`/banners/update-banner/${banner.id}`, formData)
