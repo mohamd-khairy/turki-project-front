@@ -38,8 +38,7 @@ const itemData = reactive({
   discount_code: null
 })
 
-watch(() => itemData.discount_code, (newVal) => {
-  console.log(newVal)
+watch(() => itemData.discount_code, newVal => {
   itemData.discount_code = newVal
 })
 
@@ -76,7 +75,6 @@ const refForm = ref(null)
 
 const onFormSubmit = async () => {
   isLoading.value = true
-  delete itemData.discount_code
 
   const res = await refForm.value.validate()
   if (res.valid) {

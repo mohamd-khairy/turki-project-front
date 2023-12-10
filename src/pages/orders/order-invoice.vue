@@ -30,7 +30,6 @@ const formatDateTime = data => {
 
 const getOrderDetails = id => {
   ordersListStore.fetchOrder(id).then(response => {
-    console.log(response?.data.data)
     order.value = response?.data.data
     isLoading.value = false
   }).catch(error => {
