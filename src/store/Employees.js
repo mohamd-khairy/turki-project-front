@@ -28,6 +28,7 @@ export const useEmployeesStore = defineStore('EmployeesStore', {
       formData.append("mobile", data.mobile)
       formData.append("gender", data.gender)
       formData.append("age", data.age)
+      formData.append("is_active", data.is_active)
       for (let i = 0; i < data.roles.length; i++) {
         formData.append(`roles[${i}]`, data.roles[i])
       }
@@ -71,6 +72,7 @@ export const useEmployeesStore = defineStore('EmployeesStore', {
       formData.append("mobile", data.mobile)
       formData.append("gender", data.gender)
       formData.append("age", data.age)
+      formData.append("is_active", data.is_active)
       for (let i = 0; i < data.roles.length; i++) {
         formData.append(`roles[${i}]`, data.roles[i].id)
       }

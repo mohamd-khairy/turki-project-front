@@ -101,7 +101,7 @@ export const useSettingsStore = defineStore('SettingsStore', {
       return axios.post(`payment-types/delete-payment-type/${data.id}`)
     },
     deleteProductShalwata(data) {
-      return axios.post(`delete-product-shlwatas/${data.id}`, data)
+      return axios.post(`product-shlwatas/delete-product-shlwatas/${data.id}`, data)
     },
     deleteProductPerparation(data) {
       return axios.post(`Product-preparations/delete-preparations/${data.id}`, data)

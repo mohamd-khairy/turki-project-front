@@ -34,6 +34,7 @@ const permissionData = reactive({
 
 // Functions
 onUpdated(() => {
+  permissionData.id = props.permission.id,
   permissionData.name = props.permission.name,
   permissionData.display_name = props.permission.display_name,
   permissionData.group = props.permission.group
