@@ -80,7 +80,6 @@ const getOrderDetails = () => {
 
   isLoading.value = true
   ordersListStore.fetchOrder(id).then(response => {
-    console.log(response?.data.data)
     order.value = response?.data.data
     isLoading.value = false
   }).catch(error => {
