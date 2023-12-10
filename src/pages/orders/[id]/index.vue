@@ -17,6 +17,9 @@ const isEditProductOpen = ref(false)
 const isAddProductOpen = ref(false)
 const isAddProductCouponOpen = ref(false)
 const selectedProductItem = ref({})
+const productCuts = ref([])
+const productSizes = ref([])
+const productPreparations = ref([])
 
 const { t } = useI18n()
 
@@ -89,6 +92,17 @@ const getOrderDetails = () => {
 
 onMounted(() => {
   getOrderDetails()
+  settingsListStore.fetchProductCut().then(response => {
+    productCuts.value = response.data.data
+  })
+
+  settingsListStore.fetchProductSize().then(response => {
+    productSizes.value = response.data.data
+  })
+
+  settingsListStore.fetchProductPerparation().then(response => {
+    productPreparations.value = response.data.data
+  })
 })
 </script>
 
@@ -134,12 +148,12 @@ onMounted(() => {
     >
       <div class="card">
         <div class="order-content">
-          <h3 class="order-title pb-2">
+          <h1 class="order-title pb-2">
             <span>طلب - </span>
             <span>
               #{{ order ? order.order.ref_no : "الرقم المرجعي" }}
             </span>
-          </h3>
+          </h1>
           <p class="mb-5">
             {{ order ? order.order.comment : "لا يوجد" }}
           </p>
@@ -161,7 +175,10 @@ onMounted(() => {
                 <span>
                   تاريخ الطلب :
                 </span>
-                <VChip class="font-weight-bold">
+                <VChip
+                  size="large"
+                  class="font-weight-bold"
+                >
                   {{ ConvertToArabicNumbers(formatDateTime(order.order.created_at).date) }}
                 </VChip>
               </h3>
@@ -174,7 +191,10 @@ onMounted(() => {
                 <span>
                   توقيت الطلب :
                 </span>
-                <VChip class="font-weight-bold">
+                <VChip
+                  size="large"
+                  class="font-weight-bold"
+                >
                   {{
                     ConvertToArabicNumbers(
                       String(formatDateTime(order.order.created_at).time)
@@ -201,7 +221,10 @@ onMounted(() => {
                 <span>
                   حالة الطلب :
                 </span>
-                <VChip class="font-weight-bold">
+                <VChip
+                  size="large"
+                  class="font-weight-bold"
+                >
                   {{ order.order.order_state.state_ar }}
                 </VChip>
               </h3>
@@ -214,7 +237,10 @@ onMounted(() => {
                 <span>
                   المجموع الفرعي للطلب :
                 </span>
-                <VChip class="mx-1 font-weight-bold">
+                <VChip
+                  size="large"
+                  class="mx-1 font-weight-bold"
+                >
                   {{ order ? ConvertToArabicNumbers(order.order.order_subtotal) : ConvertToArabicNumbers(0) }}
                   ريال
                 </VChip>
@@ -229,6 +255,7 @@ onMounted(() => {
                   المجموع الكلي :
                 </span>
                 <VChip
+                  size="large"
                   class="font-weight-bold"
                   :class="{'text-error': order['sale price'] === 'undefined', 'text-success': order['sale price'] !== 'undefined' }"
                 >
@@ -244,9 +271,28 @@ onMounted(() => {
                   class="ml-2"
                 />
                 <span>
+                  الخصم المطبق  :
+                </span>
+                <VChip
+                  size="large"
+                  class="font-weight-bold"
+                >
+                  {{
+                    order.order.discount_applied !== "undefined" ? ConvertToArabicNumbers(order.order.discount_applied) : ConvertToArabicNumbers(0)
+                  }} ريال
+                </VChip>
+              </h3>
+              <h3 class="text-base font-weight-bold mb-2">
+                <VIcon
+                  icon="arcticons:destiny-item-manager"
+                  color="primary"
+                  class="ml-2"
+                />
+                <span>
                   المجموع الكلي بعد الخصم :
                 </span>
                 <VChip
+                  size="large"
                   class="font-weight-bold"
                   :class="{'text-error': order['sale price'] === 'undefined', 'text-success': order['sale price'] !== 'undefined' }"
                 >
@@ -267,8 +313,8 @@ onMounted(() => {
                   مصاريف التوصيل :
                 </span>
                 <VChip
+                  size="large"
                   class="font-weight-bold"
-                  :class="{'text-error': order.order.delivery_fee === 'undefined', 'text-success': order.order.delivery_fee !== 'undefined' }"
                 >
                   {{
                     order.order.delivery_fee !== "undefined" ? ConvertToArabicNumbers(order.order.delivery_fee) + " ريال " : "لا يوجد"
@@ -287,6 +333,7 @@ onMounted(() => {
                   عنوان التوصيل :
                 </span>
                 <VChip
+                  size="large"
                   class="font-weight-bold"
                   :class="{'text-error': order.order.selected_address.address === 'undefined', 'text-success': order.order.selected_address.address !== 'undefined' }"
                 >
@@ -307,8 +354,8 @@ onMounted(() => {
                   الرصيد المستخدم من المحفظة :
                 </span>
                 <VChip
+                  size="large"
                   class="font-weight-bold"
-                  :class="{'text-error': order.order.wallet_amount_used === 'undefined', 'text-success': order.order.wallet_amount_used !== 'undefined' }"
                 >
                   {{
                     order.order.wallet_amount_used !== "undefined" ? ConvertToArabicNumbers(order.order.wallet_amount_used) + " " + "ريال " : "لا يوجد  "
@@ -327,11 +374,11 @@ onMounted(() => {
                   طريقة الدفع :
                 </span>
                 <VChip
+                  size="large"
                   class="font-weight-bold"
-                  :class="{'text-error': order.order.payment_type_id === 'undefined', 'text-success': order.order.payment_type_id !== 'undefined' }"
                 >
                   {{
-                    order.order.payment_type_id !== "undefined" ? order.order?.payment_type?.name_ar ?? ConvertToArabicNumbers(order.order.payment_type_id) : "لا يوجد  "
+                    order.order.payment_type ? ConvertToArabicNumbers(order.order.payment_type.name_ar) : "لا يوجد  "
                   }}
                 </VChip>
               </h3>
@@ -347,6 +394,7 @@ onMounted(() => {
                   الفئة :
                 </span>
                 <VChip
+                  size="large"
                   class="font-weight-bold"
                   :class="{'text-error': order.category === 'undefined', 'text-success': order.category !== 'undefined' }"
                 >
@@ -367,6 +415,7 @@ onMounted(() => {
                   الفئة الفرعية :
                 </span>
                 <VChip
+                  size="large"
                   class="font-weight-bold"
                   :class="{'text-error': order.sub_category === 'undefined', 'text-success': order.sub_category !== 'undefined' }"
                 >
@@ -387,6 +436,7 @@ onMounted(() => {
                 <VChip
                   v-for="product in order.products"
                   :key="product.id"
+                  size="large"
                   class="font-weight-bold mx-1"
                 >
                   {{ product.product ? product.product.name_ar : "لا يوجد اسم" }}
@@ -420,6 +470,15 @@ onMounted(() => {
                       الاسم
                     </th>
                     <th>
+                      الأحجام
+                    </th>
+                    <th>
+                      التقطيع
+                    </th>
+                    <th>
+                      التجهيز
+                    </th>
+                    <th>
                       الكمية
                     </th>
                     <th>
@@ -439,6 +498,9 @@ onMounted(() => {
                     <td class="px-2">
                       <span>{{ product.product ? product.product.name_ar : "لا يوجد اسم" }}</span>
                     </td>
+                    <td>{{ product.product.size ? product.product.size : "لا يوجد" }}</td>
+                    <td>{{ product.product.cut ? product.product.cut : "لا يوجد" }}</td>
+                    <td>{{ product.product.preparation ? product.product.preparation : "لا يوجد" }}</td>
                     <td class="px-2">
                       <span class="d-block  text-base">
                         {{ ConvertToArabicNumbers(product.quantity) }}
@@ -493,6 +555,9 @@ onMounted(() => {
     <AddNewProduct
       v-model:isAddOpen="isAddProductOpen"
       :order="selectedProductItem"
+      :sizes="productSizes"
+      :cuts="productCuts"
+      :preparations="productPreparations"
       @refreshTable="getOrderDetails"
     />
     <AddProductCoupon
@@ -507,6 +572,9 @@ onMounted(() => {
     <EditOrderItemDialog
       v-model:isEditProductOpen="isEditProductOpen"
       :item="selectedProductItem"
+      :sizes="productSizes"
+      :cuts="productCuts"
+      :preparations="productPreparations"
       @refrshTable="getOrderDetails"
     />
   </div>
@@ -626,6 +694,7 @@ img {
   .card {
     display: grid;
     grid-gap: 1rem;
+    grid-template-columns: 2fr 1.5fr;
     grid-template-columns: 2fr 1fr;
   }
 

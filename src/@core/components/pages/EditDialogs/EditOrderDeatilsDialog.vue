@@ -35,7 +35,10 @@ const itemData = reactive({
   id: null,
   order_state_id: null,
   user_id: null,
-  discount_code: null
+  discount_code: null,
+  delivery_date: null,
+  delivery_period: null,
+  payment_type: null,
 })
 
 watch(() => itemData.discount_code, newVal => {
@@ -45,6 +48,8 @@ watch(() => itemData.discount_code, newVal => {
 const statues = reactive([])
 const users = reactive([])
 const coupons = ref([])
+const delivery_periods = ref([])
+const payment_types = ref([])
 const couponsListStore = useCouponsStore()
 
 const form = ref()
@@ -62,6 +67,12 @@ onMounted(() => {
   })
   couponsListStore.fetchCoupons().then(response => {
     coupons.value = response.data.data
+  })
+  settingsListStore.fetchDelivery_Periods().then(response => {
+    delivery_periods.value = response.data.data
+  })
+  settingsListStore.fetchPaymentTypes().then(response => {
+    payment_types.value = response.data.data
   })
 })
 
@@ -106,8 +117,7 @@ const onFormSubmit = async () => {
         settingsListStore.alertMessage = ""
       }, 2000)
     })
-  }
-  else {
+  } else {
     isLoading.value = false
     settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
@@ -151,6 +161,7 @@ const dialogModelValueUpdate = val => {
           <VRow>
             <VCol
               cols="12"
+              md="6"
             >
               <VSelect
                 v-model="itemData.order_state_id"
@@ -163,6 +174,7 @@ const dialogModelValueUpdate = val => {
             </VCol>
             <VCol
               cols="12"
+              md="6"
             >
               <VSelect
                 v-model="itemData.user_id"
@@ -173,13 +185,38 @@ const dialogModelValueUpdate = val => {
                 :rules="[requiredValidator]"
               />
             </VCol>
-            <VCol>
+            <VCol cols="12"
+                  md="6">
               <VSelect
                 v-model="itemData.discount_code"
                 :label="t('forms.coupon')"
                 :items="coupons"
                 item-title="name"
                 item-value="code"
+              />
+            </VCol>
+            <VCol cols="12"
+                  md="6">
+              <VTextField v-model="itemData.delivery_date" type="date" :label="t('forms.delivery_date')"></VTextField>
+            </VCol>
+            <VCol cols="12"
+                  md="6">
+              <VSelect
+                v-model="itemData.delivery_period"
+                :label="t('forms.delivery_time')"
+                :items="delivery_periods"
+                item-title="name_ar"
+                item-value="id"
+              />
+            </VCol>
+            <VCol cols="12"
+                  md="6">
+              <VSelect
+                v-model="itemData.payment_type"
+                :label="t('forms.payment_type_ids')"
+                :items="payment_types"
+                item-title="name_ar"
+                item-value="id"
               />
             </VCol>
 

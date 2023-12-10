@@ -6,6 +6,7 @@ import {
 import { useSettingsStore } from "@/store/Settings"
 import { useOrdersStore } from "@/store/Orders"
 import { useEmployeesStore } from "@/store/Employees"
+import { useProductsStore } from "@/store/Products"
 
 const props = defineProps({
   isEditProductOpen: {
@@ -14,6 +15,18 @@ const props = defineProps({
   },
   item: {
     type: Object,
+    required: true,
+  },
+  sizes: {
+    type: Array,
+    required: true,
+  },
+  cuts: {
+    type: Array,
+    required: true,
+  },
+  preparations: {
+    type: Array,
     required: true,
   },
 })
@@ -26,12 +39,18 @@ const emit = defineEmits([
 const ordersListStore = useOrdersStore()
 const settingsListStore = useSettingsStore()
 const employeesListStore = useEmployeesStore()
+const productsListStore = useProductsStore()
 const isLoading = ref(false)
+
+
 
 const { t } = useI18n()
 
 const itemData = reactive({
   order_product_id: null,
+  cut_ids: [],
+  size_ids: [],
+  preparation_ids: [],
   quantity: null,
 })
 
@@ -126,10 +145,46 @@ const dialogModelValueUpdate = val => {
           <VRow>
             <VCol
               cols="12"
+              md="6"
             >
               <VTextField v-model="itemData.quantity" :label="t('forms.quantity')"></VTextField>
             </VCol>
-
+            <VCol cols="12"
+              md="6">
+              <VSelect
+                v-model="itemData.cut_ids"
+                :items="props.cuts"
+                :label="t('forms.product_cut')"
+                item-title="name_ar"
+                item-value="id"
+                multiple
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol cols="12"
+              md="6">
+              <VSelect
+                v-model="itemData.size_ids"
+                :items="props.sizes"
+                :label="t('forms.product_size')"
+                item-title="name_ar"
+                item-value="id"
+                multiple
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol cols="12"
+              md="6">
+              <VSelect
+                v-model="itemData.preparation_ids"
+                :items="props.preparations"
+                :label="t('forms.product_preparation')"
+                item-title="name_ar"
+                item-value="id"
+                multiple
+                :rules="[requiredValidator]"
+              />
+            </VCol>
             <VCol
               cols="12"
               class="text-center"

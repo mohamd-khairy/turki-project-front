@@ -32,7 +32,6 @@ const isLoading = ref(false)
 onMounted(() => {
   places.slice(0 , places.length - 1)
   markers.slice(0 , markers.length - 1)
-  console.log("PLACES => ", places,"MARKERS => ",markers)
   countriesListStore.fetchCountries({}).then(response => {
     countries.value = response.data.data
   })
@@ -70,7 +69,6 @@ onUpdated(() => {
   places.length = 0
   markers.length = 0
 
-  console.log("LOC UPDATED", places, markers)
   cityData.id = props.city.id,
   cityData.name_ar = props.city.name_ar,
   cityData.name_en = props.city.name_en,
@@ -119,11 +117,9 @@ const onFormSubmit = async () => {
   }
 
   places.map((path, index) => {
-    console.log(places.length, index , places[index])
     cityDt.polygon.push([path.lat,path.lng])
   })
 
-  console.log(cityDt)
 
   const res = await refForm.value.validate()
   if (res.valid) {
@@ -186,8 +182,6 @@ const addMarker = event => {
     markers.push({ position, ...options })
     places.push(position)
 
-    console.log("PLACES => ", places)
-
   }
 }
 
@@ -196,7 +190,6 @@ const deleteMark = marker => {
 
   markers.splice(index, 1)
   places.splice(index, 1)
-  console.log("PLACES UPDATED => ", places)
 }
 </script>
 

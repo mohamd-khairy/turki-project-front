@@ -23,7 +23,7 @@ const places = reactive([])
 const flightPath = ref({
   path: places,
   geodesic: true,
-  strokeColor: "#FF0000",
+  strokeColor: '#FF0000',
   strokeOpacity: 1.0,
   strokeWeight: 2,
 })
@@ -44,7 +44,6 @@ const geoLocate = () => {
     })
   }
 }
-
 
 const addMarker = event => {
   if (event.latLng) {
@@ -69,6 +68,15 @@ const onMarkerDragged = index => {
   console.log(index)
 }
 
+const deleteMark = marker => {
+  console.log("Mark => ", marker)
+
+  const index = markers.findIndex(item => item.position.lat === marker.position.lat && item.position.lng == marker.position.lng)
+
+  markers.splice(index, 1)
+  places.splice(index, 1)
+}
+
 onMounted(() => {
   geoLocate()
 })
@@ -79,7 +87,7 @@ onMounted(() => {
     <GoogleMap
       api-key="AIzaSyCM2TngqydZtVlZ5hkKjY7x56ut59TTI88"
       style="width: 100%; height: 500px"
-      :center="{lat: props.location.lat == 0 || props.location.lat == null ? 30.0564503 : props.location.lat, lng: props.location.lng == 0 || props.location.lng == null ? -74.1840919 : props.location.lng }"
+      :center="{lat: center.lat, lng: center.lng }"
       :zoom="12"
       @click="addMarker"
     >
@@ -87,8 +95,9 @@ onMounted(() => {
         v-for="(marker, index) in markers"
         :key="index"
         :options="marker"
+        @click="deleteMark(marker)"
       />
-      <Polygon :options="flightPath"/>
+      <Polygon :options="{path: places, geodesic: true, strokeColor: '#FF0000', strokeOpacity: 1.0, strokeWeight: 2}"/>
     </GoogleMap>
   </div>
 </template>
