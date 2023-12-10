@@ -42,19 +42,20 @@ onUpdated(() => {
     cities.value = response.data.data
   })
   bannerData.id = props.banner.id,
-    bannerData.title = props.banner.title,
-    bannerData.title_color = props.banner.title_color,
-    bannerData.sub_title = props.banner.sub_title,
-    bannerData.sub_title_color = props.banner.sub_title_color,
-    bannerData.button_text = props.banner.button_text,
-    bannerData.button_text_color = props.banner.button_text_color,
-    bannerData.redirect_url = props.banner.redirect_url,
-    bannerData.is_active = props.banner.is_active,
-    bannerData.type = props.banner.type,
-    bannerData.redirect_mobile_url = props.banner.redirect_mobile_url,
-    bannerData.product_id = props.banner.product_id,
-    bannerData.category_id = props.banner.category,
-    bannerData.city_ids = props.banner.cities
+  bannerData.title = props.banner.title,
+  bannerData.title_color = props.banner.title_color,
+  bannerData.sub_title = props.banner.sub_title,
+  bannerData.sub_title_color = props.banner.sub_title_color,
+  bannerData.button_text = props.banner.button_text,
+  bannerData.button_text_color = props.banner.button_text_color,
+  bannerData.redirect_url = props.banner.redirect_url,
+  bannerData.is_active = props.banner.is_active,
+  bannerData.type = Number(props.banner.type),
+  bannerData.redirect_mobile_url = props.banner.redirect_mobile_url,
+  bannerData.product_id = props.banner.product_id,
+  bannerData.category_ids = props.banner.category,
+  bannerData.city_ids = props.banner.cities
+  console.log(props.banner.category)
 })
 
 const { t } = useI18n()
@@ -247,12 +248,12 @@ const dialogModelValueUpdate = val => {
                 accept="image/*"
                 prepend-icon=""
                 prepend-inner-icon="mdi-image"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
               cols="12"
               md="6"
+              v-if="bannerData.type == 2"
             >
               <VSelect
                 v-model="bannerData.product_id"

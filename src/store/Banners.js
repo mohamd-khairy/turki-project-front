@@ -36,17 +36,17 @@ export const useBannersStore = defineStore('BannersStore', {
       formData.append("redirect_url", banner.redirect_url)
       formData.append("is_active", banner.is_active)
       formData.append("type", banner.type)
-      if(banner.redirect_mobile_url !== null) {
+      if (banner.redirect_mobile_url !== null) {
         formData.append("redirect_mobile_url", banner.redirect_mobile_url)
       }
-      if(banner.product_id !== null) {
+      if (banner.product_id !== null) {
         formData.append("product_id", banner.product_id)
       }
-      if(banner.category_ids !== []) {
+      if (banner.category_ids !== []) {
         formData.append("category_ids", banner.category_ids)
       }
       formData.append("city_ids", cty_ids)
-      if(banner.image !== {}) {
+      if (banner.image !== {}) {
         formData.append("image", banner.image[0])
       }
 
@@ -55,6 +55,7 @@ export const useBannersStore = defineStore('BannersStore', {
 
     // 👉 Edit banner
     editBanner(banner) {
+
       const formData = new FormData()
 
       let cty_ids = ""
@@ -66,7 +67,6 @@ export const useBannersStore = defineStore('BannersStore', {
         }
       })
 
-
       formData.append("title", banner.title)
       formData.append("title_color", banner.title_color)
       formData.append("sub_title", banner.sub_title)
@@ -76,18 +76,28 @@ export const useBannersStore = defineStore('BannersStore', {
       formData.append("redirect_url", banner.redirect_url)
       formData.append("is_active", banner.is_active)
       formData.append("type", banner.type)
-      if(banner.redirect_mobile_url !== null) {
+      if (banner.redirect_mobile_url !== null) {
         formData.append("redirect_mobile_url", banner.redirect_mobile_url)
       }
-      if(banner.product_id !== null) {
+      if (banner.product_id !== null) {
         formData.append("product_id", banner.product_id)
       }
-      if(banner.category_ids !== []) {
-        formData.append("category_ids", banner.category_ids)
+
+      let cats_ids = []
+
+      if (banner.category_ids !== []) {
+        console.log()
+        // banner.category_ids.map(cat => {
+        //   console.log(cat)
+        //   cats_ids.push(cat.id)
+        // })
       }
+      formData.append("category_ids", cats_ids)
       formData.append("city_ids", cty_ids)
-      if(banner.image !== {}) {
-        formData.append("image", banner.image[0])
+
+
+      if (banner.image !== {} && typeof banner.image == 'object') {
+        formData.append("image", banner.image)
       }
 
       return axios.post(`/banners/update-banner/${banner.id}`, formData)

@@ -40,6 +40,7 @@ const preparations = reactive([])
 const sizes = reactive([])
 const cuts = reactive([])
 const payment_type_ids = reactive([])
+const images = ref([])
 
 const itemData = reactive({
   id: null,
@@ -145,7 +146,7 @@ onUpdated(() => {
   itemData.cut_ids = props.item.product_cuts ?? []
   itemData.payment_type_ids = props.item.product_payment_types ?? []
   itemData.city_ids = props.item.cities ?? []
-  itemData.images = props.item.product_images ?? []
+  images.value = props.item.product_images ?? []
 })
 
 const refForm = ref(null)
@@ -420,10 +421,10 @@ const dialogModelValueUpdate = val => {
               />
             </VCol>
 
-            <VCol cols="12" v-if="itemData.images">
+            <VCol cols="12" v-if="images.length > 0">
               <v-carousel show-arrows="hover">
                 <v-carousel-item
-                  v-for="image in itemData.images"
+                  v-for="image in images"
                   :key="image.id"
                   :src="image.thumbnail_url"
                   cover
