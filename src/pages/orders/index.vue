@@ -404,6 +404,12 @@ const formatDateTime = data => {
             scope="col"
             class="font-weight-semibold"
           >
+            {{ t('forms.order_payment_status') }}
+          </th>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
             {{ t('forms.order_subtotal') }}
           </th>
           <th
@@ -459,6 +465,9 @@ const formatDateTime = data => {
           </td>
           <td @click="openEdit(order)">
             <VChip style="cursor: pointer">{{ order.order_state_ar }}</VChip>
+          </td>
+          <td>
+            <VChip style="cursor: pointer">{{ order.order_payment_status ? order.order_payment_status : "لا يوجد" }}</VChip>
           </td>
           <td>
             {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.order_subtotal)) }}

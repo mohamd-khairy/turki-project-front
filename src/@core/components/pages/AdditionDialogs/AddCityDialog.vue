@@ -19,6 +19,7 @@ const emit = defineEmits([
 
 import { useI18n } from "vue-i18n"
 import { useSettingsStore } from "@/store/Settings"
+import { GoogleMap, Marker, Polygon } from "vue3-google-map"
 
 const { t } = useI18n()
 const citiesListStore = useCitiesStore()
@@ -38,6 +39,7 @@ onMounted(() => {
   navigator.geolocation.getCurrentPosition(position => {
     location.lat = position.coords.latitude
     location.lng = position.coords.longitude
+    markers.push({ position: { lat: position.coords.latitude, lng: position.coords.longitude } })
   })
   countriesListStore.fetchCountries().then(response => {
     countries.value = response.data.data
@@ -49,6 +51,9 @@ const getPathsData = data => {
 }
 
 const paths = reactive([])
+const places = reactive([])
+const center = reactive({ lat: 30.0564503, lng: -74.1840919 })
+const markers = reactive([])
 
 const city = reactive({
   name_ar: null,
@@ -61,10 +66,10 @@ const city = reactive({
 // Functions
 const resetForm = () => {
   city.name_ar = null,
-  city.name_en = null,
-  city.country_id = null,
-  city.is_available_for_delivery = false,
-  city.polygon = []
+    city.name_en = null,
+    city.country_id = null,
+    city.is_available_for_delivery = false,
+    city.polygon = []
   emit('update:isAddOpen', false)
 }
 
@@ -81,10 +86,10 @@ const onFormSubmit = async () => {
       is_available_for_delivery: city.is_available_for_delivery,
       polygon: [],
     }
-    paths.map((path, index) => {
-      console.log(paths.length, index , paths[index])
-      cityDt.polygon.push([path.lat,path.lng])
+    places.map((path, index) => {
+      cityDt.polygon.push([path.lat, path.lng])
     })
+
     // cityDt.polygon = `[${cityDt.polygon}]`
     console.log(cityDt.polygon)
     citiesListStore.storeCity(cityDt).then(response => {
@@ -116,8 +121,7 @@ const onFormSubmit = async () => {
         settingsListStore.alertMessage = ""
       }, 2000)
     })
-  }
-  else {
+  } else {
     isLoading.value = false
     settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
@@ -134,12 +138,38 @@ const dialogModelValueUpdate = val => {
 }
 
 const getSelectedLocation = loc => {
+  markers.length = 0
   location.lat = loc.lat
   location.lng = loc.lng
   city.latitude = loc.lat
   city.longitude = loc.lng
+  markers.push({ position: { lat: loc.lat, lng: loc.lng } })
 }
 
+const addMarker = event => {
+  if (event.latLng) {
+    const position = {
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng(),
+    }
+
+    const options = {
+      // draggable: true,
+      label: 'Marker',
+    }
+
+    markers.push({ position, ...options })
+    places.push(position)
+
+  }
+}
+
+const deleteMark = marker => {
+  const index = markers.findIndex(item => item.position.lat === marker.position.lat && item.position.lng == marker.position.lng)
+
+  markers.splice(index, 1)
+  places.splice(index, 1)
+}
 </script>
 
 <template>
@@ -212,8 +242,25 @@ const getSelectedLocation = loc => {
               <VSwitch :label="t('available_for_delivery')" v-model="city.is_available_for_delivery"></VSwitch>
             </VCol>
             <VCol cols="12">
-              <MapAutoComplete></MapAutoComplete>
-              <AddCityMap :location="location" @getPaths="getPathsData"></AddCityMap>
+              <MapAutoComplete @select-location="getSelectedLocation"></MapAutoComplete>
+              <!--              <AddCityMap :location="location" @getPaths="getPathsData"></AddCityMap>-->
+              <GoogleMap
+                api-key="AIzaSyCM2TngqydZtVlZ5hkKjY7x56ut59TTI88"
+                style="width: 100%; height: 500px"
+                :center="{lat: location.lat, lng: location.lng }"
+                :zoom="12"
+                @click="addMarker"
+              >
+                <Marker
+                  v-for="(marker, index) in markers"
+                  :key="index"
+                  :options="marker"
+                  @click="deleteMark(marker)"
+                />
+                <Polygon
+                  :options="{path: places, geodesic: true, strokeColor: '#FF0000', strokeOpacity: 1.0, strokeWeight: 2}"
+                />
+              </GoogleMap>
             </VCol>
             <VCol
               cols="12"
