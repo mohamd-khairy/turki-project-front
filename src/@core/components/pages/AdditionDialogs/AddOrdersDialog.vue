@@ -164,13 +164,12 @@ const dialogModelValueUpdate = val => {
 }
 
 const AddQuantity = data => {
-  console.log("DT => ", data)
   itemData.products.push({
     product_id: selectedProduct.value.id,
-    quantity: data.quantity,
-    cut_ids: data.cut_ids,
-    size_ids: data.size_ids,
-    preparation_ids: data.preparation_ids,
+    quantity: data.quantity ?? 0,
+    cut_id: data.cut_id ?? null,
+    size_id: data.size_id ?? null,
+    preparation_id: data.preparation_id ?? null,
   })
 }
 
@@ -316,7 +315,6 @@ onMounted(() => {
                   :label="t('Coupons')"
                   item-title="name"
                   item-value="name"
-                  :rules="[requiredValidator]"
                 />
               </VCol>
               <VCol
