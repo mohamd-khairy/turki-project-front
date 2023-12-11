@@ -271,10 +271,30 @@ onMounted(() => {
                   class="ml-2"
                 />
                 <span>
+                  كود الخصم   :
+                </span>
+                <VChip
+                  size="large"
+                  color="primary"
+                  class="font-weight-bold"
+                >
+                  {{
+                    order.order.applied_discount_code ? order.order.applied_discount_code : "لا يوجد"
+                  }} 
+                </VChip>
+              </h3>
+              <h3 class="text-base font-weight-bold mb-2">
+                <VIcon
+                  icon="arcticons:destiny-item-manager"
+                  color="primary"
+                  class="ml-2"
+                />
+                <span>
                   الخصم المطبق  :
                 </span>
                 <VChip
                   size="large"
+                  color="primary"
                   class="font-weight-bold"
                 >
                   {{
