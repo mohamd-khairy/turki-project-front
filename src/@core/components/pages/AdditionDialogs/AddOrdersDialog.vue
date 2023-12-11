@@ -164,9 +164,13 @@ const dialogModelValueUpdate = val => {
 }
 
 const AddQuantity = data => {
+  console.log("DT => ", data)
   itemData.products.push({
     product_id: selectedProduct.value.id,
-    quantity: data.value,
+    quantity: data.quantity,
+    cut_ids: data.cut_ids,
+    size_ids: data.size_ids,
+    preparation_ids: data.preparation_ids,
   })
 }
 
@@ -329,7 +333,7 @@ onMounted(() => {
                   :rules="[requiredValidator]"
                 >
                 </VSelect>
-                <span class="text-sm mt-1 font-weight-bold">* إضغط علي المنتج لإضافة الكمية</span>
+                <span class="text-sm mt-1 font-weight-bold">* إضغط علي المنتج لإستكمال البيانات (مطلوب)</span>
                 <div class="mt-2">
                   <v-chip class="mx-2" label v-for="pd in selectedProducts" :key="pd.id" @click.prevent.stop="getProductData(pd)">
                     <span>{{ pd.name_ar }}</span>
@@ -377,7 +381,7 @@ onMounted(() => {
       </VCard>
     </VDialog>
 
-    <AddProductQunatity v-model:is-add-open="isQuantityOpen" @addProductQuantity="AddQuantity"></AddProductQunatity>
+    <AddProductQunatity v-model:is-add-open="isQuantityOpen" @addProductQuantity="AddQuantity" :item="selectedProduct"></AddProductQunatity>
     <AddCustomerDialog v-model:is-add-open="isAddCustomerOpen" @refreshTable="getCustomers"></AddCustomerDialog>
     <AddCustomerAddressDialog v-model:is-add-open="isAddCustomerAddressOpen" :customer="selectedCustomer"></AddCustomerAddressDialog>
   </div>

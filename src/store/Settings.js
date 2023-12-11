@@ -19,9 +19,6 @@ export const useSettingsStore = defineStore('SettingsStore', {
     fetchNotDelivery_Periods(params) {
       return axios.get('not-delivery-date', { params })
     },
-    fetchProductCut(params) {
-      return axios.get('product-cuts', { params })
-    },
     fetchPaymentTypes(params) {
       return axios.get('payment-types', { params })
     },
@@ -33,6 +30,18 @@ export const useSettingsStore = defineStore('SettingsStore', {
     },
     fetchProductSize(params) {
       return axios.get('product-sizes', { params })
+    },
+    fetchProductCut(params) {
+      return axios.get('product-cuts', { params })
+    },
+    fetchProductPerparationByID(id) {
+      return axios.get(`Product-preparations/${id}`)
+    },
+    fetchProductSizeByID(id) {
+      return axios.get(`product-sizes/${id}`)
+    },
+    fetchProductCutByID(id) {
+      return axios.get(`product-cuts/${id}`)
     },
 
     storeProductTags(data) {

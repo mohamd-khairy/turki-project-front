@@ -7,6 +7,9 @@ export const useProductsStore = defineStore('ProductsStore', {
     fetchProducts(params) {
       return axios.get('products', { params })
     },
+    fetchProductsAll(params) {
+      return axios.get('products/all')
+    },
     fetchProduct(id) {
       return axios.get(`products/${id}`)
     },
