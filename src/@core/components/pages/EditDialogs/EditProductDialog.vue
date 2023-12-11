@@ -417,7 +417,6 @@ const dialogModelValueUpdate = val => {
                 small-chips
                 prepend-inner-icon="mdi-image"
                 multiple
-                :rules="[requiredValidator]"
               />
             </VCol>
 

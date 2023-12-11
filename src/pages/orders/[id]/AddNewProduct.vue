@@ -70,6 +70,9 @@ const resetForm = () => {
   itemData.order_id = null
   itemData.product_id = null
   itemData.quantity = null
+  itemData.cut_ids = []
+  itemData.size_ids = []
+  itemData.preparation_ids = []
   emit('update:isAddOpen', false)
 }
 
@@ -150,7 +153,8 @@ const dialogModelValueUpdate = val => {
         <VForm @submit.prevent="onFormSubmit" ref="refForm">
           <VRow>
             <VCol cols="12"
-                  md="6">
+                  md="6"
+            >
               <VSelect
                 v-model="itemData.product_id"
                 :items="products"
@@ -161,14 +165,16 @@ const dialogModelValueUpdate = val => {
               />
             </VCol>
             <VCol cols="12"
-                  md="6">
+                  md="6"
+            >
               <VTextField v-model="itemData.quantity"
                           :label="t('forms.quantity')"
                           :rules="[requiredValidator]"
               ></VTextField>
             </VCol>
             <VCol cols="12"
-                  md="6">
+                  md="6"
+            >
               <VSelect
                 v-model="itemData.cut_ids"
                 :items="props.cuts"
@@ -180,7 +186,8 @@ const dialogModelValueUpdate = val => {
               />
             </VCol>
             <VCol cols="12"
-                  md="6">
+                  md="6"
+            >
               <VSelect
                 v-model="itemData.size_ids"
                 :items="props.sizes"
@@ -192,7 +199,8 @@ const dialogModelValueUpdate = val => {
               />
             </VCol>
             <VCol cols="12"
-                  md="6">
+                  md="6"
+            >
               <VSelect
                 v-model="itemData.preparation_ids"
                 :items="props.preparations"

@@ -39,7 +39,7 @@ onMounted(() => {
   navigator.geolocation.getCurrentPosition(position => {
     location.lat = position.coords.latitude
     location.lng = position.coords.longitude
-    markers.push({ position: { lat: position.coords.latitude, lng: position.coords.longitude } })
+    // markers.push({ position: { lat: position.coords.latitude, lng: position.coords.longitude } })
   })
   countriesListStore.fetchCountries().then(response => {
     countries.value = response.data.data
@@ -143,7 +143,7 @@ const getSelectedLocation = loc => {
   location.lng = loc.lng
   city.latitude = loc.lat
   city.longitude = loc.lng
-  markers.push({ position: { lat: loc.lat, lng: loc.lng } })
+  // markers.push({ position: { lat: loc.lat, lng: loc.lng } })
 }
 
 const addMarker = event => {

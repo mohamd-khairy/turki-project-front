@@ -65,7 +65,7 @@ onMounted(() => {
   settingsListStore.fetchDelivery_Periods().then(response => {
     deliveryPeriods.value = response.data.data
   })
-  productsListStore.fetchProducts({ per_page: -1 }).then(response => {
+  productsListStore.fetchProductsAll().then(response => {
     products.value = response.data.data
   })
   couponsListStore.fetchCoupons({ per_page: -1 }).then(response => {
@@ -109,7 +109,6 @@ const getOrders = () => {
   })
 }
 
-// 👉 Fetch Categories
 // watchEffect(() => {
 //   getOrders()
 // })
@@ -120,6 +119,10 @@ watchEffect(() => {
   if (rowPerPage.value) {
     currentPage.value = 1
   }
+})
+
+watch(() => currentPage.value, (newVal,oldVal) => {
+  getOrders()
 })
 
 const paginateOrders = computed(() => {
@@ -467,7 +470,8 @@ const formatDateTime = data => {
             <VChip style="cursor: pointer">{{ order.order_state_ar }}</VChip>
           </td>
           <td>
-            <VChip style="cursor: pointer">{{ order.order_payment_status ? order.order_payment_status : "لا يوجد" }}</VChip>
+            <VChip style="cursor: pointer">{{ order.order_payment_status ? order.order_payment_status : "لا يوجد" +
+              "" }}</VChip>
           </td>
           <td>
             {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.order_subtotal)) }}

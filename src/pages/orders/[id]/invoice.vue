@@ -95,11 +95,6 @@ onMounted(() => {
           </h3>
           <h3 class="mb-2">
             <VIcon icon="arcticons:destiny-item-manager" size="x-small" color="primary" class="ml-2"></VIcon>
-            <span>الجنسية: </span>
-            <span class="text-primary">{{ order.order.customer.nationality }}</span>
-          </h3>
-          <h3 class="mb-2">
-            <VIcon icon="arcticons:destiny-item-manager" size="x-small" color="primary" class="ml-2"></VIcon>
             <span>الجوال: </span>
             <span class="text-primary">{{ order.order.customer.mobile }}</span>
           </h3>
@@ -154,8 +149,8 @@ onMounted(() => {
               <td>{{ product.product ? product.product.name_ar : "لا يوجد" }}</td>
               <td>{{ product.size ? product.size.name_ar : "لا يوجد" }}</td>
               <td>{{ product.quantity ? product.quantity : "لا يوجد" }}</td>
-              <td>{{ product.cut ? product.cut : "لا يوجد" }}</td>
-              <td>{{ product.preparation ? product.preparation : "لا يوجد" }}</td>
+              <td>{{ product.cut ? product.cut.name_ar : "لا يوجد" }}</td>
+              <td>{{ product.preparation ? product.preparation.name_ar : "لا يوجد" }}</td>
               <td>{{ product.price ?? (product.total_price / product.quantity) }}</td>
               <td>{{ product.shalwata ?? "لا يوجد" }}</td>
               <td>{{ product.total_price ?? "لا يوجد" }}</td>

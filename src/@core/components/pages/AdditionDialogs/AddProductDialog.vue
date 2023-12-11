@@ -30,9 +30,10 @@ const { t } = useI18n()
 const cities = reactive([])
 const categories = reactive([])
 const sub_categories = reactive([])
-const preparations = reactive([])
-const sizes = reactive([])
-const cuts = reactive([])
+const preparations = ref([])
+const sizes = ref([])
+const cuts = ref([])
+const shalwatas = ref([])
 const payment_type_ids = reactive([])
 
 const refForm = ref(null)
@@ -55,6 +56,7 @@ const itemData = reactive({
   category_id: null,
   sub_category_id: null,
   is_shalwata: 0,
+  shalwata_id: null,
   preparation_ids: [],
   size_ids: [],
   cut_ids: [],
@@ -84,6 +86,12 @@ const getProductSizes = () => {
   })
 }
 
+const getProductShalwata = () => {
+  settingsListStore.fetchProductShalwata({ pageSize: -1 }).then(response => {
+    shalwatas.value = response.data.data
+  })
+}
+
 const getProductCuts = () => {
   settingsListStore.fetchProductCut({ pageSize: -1 }).then(response => {
     cuts.value = response.data.data
@@ -102,17 +110,30 @@ const getPaymentTypes = () => {
   })
 }
 
+const getAllData = async () => {
+  isLoading.value = true
+
+  const allRequests = () => {
+    citiesListStore.fetchCities({ pageSize: -1 }).then(response => {
+      cities.value = response.data.data
+    })
+    categoryListStore.fetchCategories({ pageSize: -1 }).then(response => {
+      categories.value = response.data.data
+    })
+    getProductSizes()
+    getProductCuts()
+    getProductPerparation()
+    getPaymentTypes()
+    getProductShalwata()
+  }
+
+  await allRequests()
+}
+
 onMounted(() => {
-  citiesListStore.fetchCities({ pageSize: -1 }).then(response => {
-    cities.value = response.data.data
+  getAllData().then(res => {
+    isLoading.value = false
   })
-  categoryListStore.fetchCategories({ pageSize: -1 }).then(response => {
-    categories.value = response.data.data
-  })
-  getProductSizes()
-  getProductCuts()
-  getProductPerparation()
-  getPaymentTypes()
 })
 
 const form = ref()
@@ -193,6 +214,7 @@ const dialogModelValueUpdate = val => {
     <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
 
     <VCard
+      :loading="isLoading"
       class="pa-sm-9 pa-5"
     >
       <VCardItem>
@@ -324,7 +346,7 @@ const dialogModelValueUpdate = val => {
                 <VCol cols="12" lg="9" sm="12">
                   <VSelect
                     v-model="itemData.cut_ids"
-                    :items="cuts.value"
+                    :items="cuts"
                     :label="t('forms.product_cut')"
                     item-title="name_ar"
                     item-value="id"
@@ -351,7 +373,7 @@ const dialogModelValueUpdate = val => {
                 <VCol cols="12" lg="9" sm="12">
                   <VSelect
                     v-model="itemData.size_ids"
-                    :items="sizes.value"
+                    :items="sizes"
                     :label="t('forms.product_size')"
                     item-title="name_ar"
                     item-value="id"
@@ -380,7 +402,7 @@ const dialogModelValueUpdate = val => {
                 <VCol cols="12" lg="9" sm="12">
                   <VSelect
                     v-model="itemData.preparation_ids"
-                    :items="preparations.value"
+                    :items="preparations"
                     :label="t('forms.product_preparation')"
                     item-title="name_ar"
                     item-value="id"
@@ -398,6 +420,20 @@ const dialogModelValueUpdate = val => {
                   </VBtn>
                 </VCol>
               </VRow>
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+              v-if="!itemData.is_shalwata"
+            >
+              <VSelect
+                v-model="itemData.shalwata_id"
+                :items="shalwatas"
+                :label="t('forms.shalwata')"
+                item-title="name_ar"
+                item-value="id"
+                multiple
+              />
             </VCol>
             <VCol
               cols="12"
@@ -441,8 +477,6 @@ const dialogModelValueUpdate = val => {
                 :rules="[requiredValidator]"
               />
             </VCol>
-
-            <VCol cols="12" md="6"></VCol>
 
             <VCol
               cols="12"

@@ -3,10 +3,28 @@ import { useI18n } from "vue-i18n"
 import {
   requiredValidator,
 } from '@validators'
+import { useSettingsStore } from "@/store/Settings"
+import { useProductsStore } from "@/store/Products"
 
 const props = defineProps({
   isAddOpen: {
     type: Boolean,
+    required: true,
+  },
+  item: {
+    type: Object,
+    required: true,
+  },
+  sizes: {
+    type: Array,
+    required: true,
+  },
+  cuts: {
+    type: Array,
+    required: true,
+  },
+  preparations: {
+    type: Array,
     required: true,
   },
 })
@@ -17,16 +35,31 @@ const emit = defineEmits([
 ])
 
 const { t } = useI18n()
+const settingsListStore = useSettingsStore()
+const productsListStore = useProductsStore()
 
-const quantity = ref(1)
-const isLoading = ref(false)
+
+const productCuts = ref([])
+const productSizes = ref([])
+const productPreparations = ref([])
+
+const itemData = reactive({
+  quantity: null,
+  cut_ids: [],
+  size_ids: [],
+  preparation_ids: [],
+})
+
+const isLoadingCuts = ref(false)
+const isLoadingSizes = ref(false)
+const isLoadingPreparations = ref(false)
 
 const resetForm = () => {
   emit('update:isAddOpen', false)
 }
 
 const onFormSubmit = () => {
-  emit('addProductQuantity', quantity)
+  emit('addProductQuantity', itemData)
   emit('update:isAddOpen', false)
 }
 
@@ -34,8 +67,26 @@ const dialogModelValueUpdate = val => {
   emit('update:isAddOpen', val)
 }
 
+onMounted(() => {
+  isLoadingCuts.value = true
+  isLoadingSizes.value = true
+  isLoadingPreparations.value = true
+})
+
 onUpdated(() => {
-  quantity.value = 1
+  itemData.quantity = 1
+  if(props.item) {
+    if(props.item.id) {
+      productsListStore.fetchProduct(props.item.id).then(response => {
+        productPreparations.value = response.data.data.preparations
+        productSizes.value = response.data.data.sizes
+        productCuts.value = response.data.data.cuts
+        isLoadingCuts.value = false
+        isLoadingSizes.value = false
+        isLoadingPreparations.value = false
+      })
+    }
+  }
 })
 </script>
 
@@ -50,6 +101,7 @@ onUpdated(() => {
       <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
 
       <VCard
+        :loading="isLoadingCuts || isLoadingSizes || isLoadingPreparations"
         class="pa-sm-9 pa-5"
       >
         <VCardItem>
@@ -69,11 +121,51 @@ onUpdated(() => {
             <VRow>
               <VCol
                 cols="12"
+                md="6"
               >
                 <VTextField
-                  v-model="quantity"
+                  v-model="itemData.quantity"
                   :label="t('forms.quantity')"
                   :rules="[requiredValidator]"
+                />
+              </VCol>
+              <VCol cols="12"
+                    md="6">
+                <VSelect
+                  v-model="itemData.cut_ids"
+                  :items="productCuts"
+                  :label="t('forms.product_cut')"
+                  item-title="name_ar"
+                  item-value="id"
+                  multiple
+                  :rules="[requiredValidator]"
+                  :disabled="isLoadingCuts"
+                />
+              </VCol>
+              <VCol cols="12"
+                    md="6">
+                <VSelect
+                  v-model="itemData.size_ids"
+                  :items="productSizes"
+                  :label="t('forms.product_size')"
+                  item-title="name_ar"
+                  item-value="id"
+                  multiple
+                  :rules="[requiredValidator]"
+                  :disabled="isLoadingSizes"
+                />
+              </VCol>
+              <VCol cols="12"
+                    md="6">
+                <VSelect
+                  v-model="itemData.preparation_ids"
+                  :items="productPreparations"
+                  :label="t('forms.product_preparation')"
+                  item-title="name_ar"
+                  item-value="id"
+                  multiple
+                  :rules="[requiredValidator]"
+                  :disabled="isLoadingPreparations"
                 />
               </VCol>
 

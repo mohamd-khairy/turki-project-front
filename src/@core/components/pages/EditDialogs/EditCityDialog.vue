@@ -19,7 +19,7 @@ const emit = defineEmits([
 ])
 
 import { useI18n } from "vue-i18n"
-import { GoogleMap, Marker, Polygon } from "vue3-google-map"
+import { GoogleMap, Marker, Polygon, Circle } from "vue3-google-map"
 import { useSettingsStore } from "@/store/Settings"
 
 const { t } = useI18n()
@@ -167,6 +167,16 @@ const dialogModelValueUpdate = val => {
   emit('update:isEditOpen', val)
 }
 
+const getSelectedLocation = loc => {
+  markers.length = 0
+  location.lat = loc.lat
+  location.lng = loc.lng
+  center.lat = loc.lat
+  center.lng = loc.lng
+
+  // markers.push({ position: { lat: loc.lat, lng: loc.lng } })
+}
+
 const addMarker = event => {
   if (event.latLng) {
     const position = {
@@ -260,13 +270,13 @@ const deleteMark = marker => {
               <VSwitch :label="t('available_for_delivery')" v-model="cityData.is_available_for_delivery"></VSwitch>
             </VCol>
             <VCol cols="12">
-              <MapAutoComplete></MapAutoComplete>
+              <MapAutoComplete @select-location="getSelectedLocation"></MapAutoComplete>
               <!--              <AddCityMap :location="location" @getPaths="getPathsData"></AddCityMap>-->
               <GoogleMap
                 api-key="AIzaSyCM2TngqydZtVlZ5hkKjY7x56ut59TTI88"
                 style="width: 100%; height: 500px"
                 :center="{ lat: Number(center.lat), lng: Number(center.lng) }"
-                :zoom="8"
+                :zoom="10"
                 @click="addMarker"
               >
                 <Marker

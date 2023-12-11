@@ -39,6 +39,7 @@ const router = useRouter()
 // 👉 Fetch Categories
 const getProducts = () => {
   isLoading.value = true
+  // products.value = []
   productListStore.fetchProducts({
     q: searchQuery.value,
     per_page: rowPerPage.value,
