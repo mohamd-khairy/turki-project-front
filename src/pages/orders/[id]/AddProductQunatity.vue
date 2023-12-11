@@ -45,9 +45,9 @@ const productPreparations = ref([])
 
 const itemData = reactive({
   quantity: null,
-  cut_ids: [],
-  size_ids: [],
-  preparation_ids: [],
+  cut_id: null,
+  size_id: null,
+  preparation_id: null,
 })
 
 const isLoadingCuts = ref(false)
@@ -55,15 +55,23 @@ const isLoadingSizes = ref(false)
 const isLoadingPreparations = ref(false)
 
 const resetForm = () => {
-  emit('update:isAddOpen', false)
+  itemData.quantity = 1
+  itemData.cut_id = null
+  itemData.size_id = null
+  itemData.preparation_id = null
+  productCuts.value = []
+  productSizes.value = []
+  productPreparations.value = []
 }
 
 const onFormSubmit = () => {
   emit('addProductQuantity', itemData)
   emit('update:isAddOpen', false)
+  resetForm()
 }
 
 const dialogModelValueUpdate = val => {
+  resetForm()
   emit('update:isAddOpen', val)
 }
 
@@ -74,7 +82,7 @@ onMounted(() => {
 })
 
 onUpdated(() => {
-  itemData.quantity = 1
+  resetForm()
   if(props.item) {
     if(props.item.id) {
       productsListStore.fetchProduct(props.item.id).then(response => {
@@ -132,12 +140,11 @@ onUpdated(() => {
               <VCol cols="12"
                     md="6">
                 <VSelect
-                  v-model="itemData.cut_ids"
+                  v-model="itemData.cut_id"
                   :items="productCuts"
                   :label="t('forms.product_cut')"
                   item-title="name_ar"
                   item-value="id"
-                  multiple
                   :rules="[requiredValidator]"
                   :disabled="isLoadingCuts"
                 />
@@ -145,12 +152,11 @@ onUpdated(() => {
               <VCol cols="12"
                     md="6">
                 <VSelect
-                  v-model="itemData.size_ids"
+                  v-model="itemData.size_id"
                   :items="productSizes"
                   :label="t('forms.product_size')"
                   item-title="name_ar"
                   item-value="id"
-                  multiple
                   :rules="[requiredValidator]"
                   :disabled="isLoadingSizes"
                 />
@@ -158,12 +164,11 @@ onUpdated(() => {
               <VCol cols="12"
                     md="6">
                 <VSelect
-                  v-model="itemData.preparation_ids"
+                  v-model="itemData.preparation_id"
                   :items="productPreparations"
                   :label="t('forms.product_preparation')"
                   item-title="name_ar"
                   item-value="id"
-                  multiple
                   :rules="[requiredValidator]"
                   :disabled="isLoadingPreparations"
                 />
