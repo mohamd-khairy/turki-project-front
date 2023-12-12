@@ -164,10 +164,6 @@ const dialogModelValueUpdate = val => {
 }
 
 const AddQuantity = data => {
-  console.log("Element Index => ", selectedProducts.value.findIndex(item => item.id == data.id))
-  console.log("Array => ", selectedProducts.value)
-
-  let index = selectedProducts.value.findIndex(item => item.id == data.id)
 
   itemData.products.push({
     product_id: selectedProduct.value.id,
