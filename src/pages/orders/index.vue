@@ -253,7 +253,7 @@ const formatDateTime = data => {
                 :items="orderStatuses"
                 label="حالة الطلب"
                 item-title="state_ar"
-                item-value="id"
+                item-value="code"
                 multiple
                 :disabled="isLoading"
               />
@@ -354,11 +354,13 @@ const formatDateTime = data => {
             v-model="rowPerPage"
             variant="outlined"
             :items="[5, 10, 20, 30, 50]"
+            :disabled="isLoading"
           />
         </div>
         <VBtn
           prepend-icon="tabler-plus"
           @click="isAddOpen = true"
+          :disabled="isLoading"
         >
           إضافة طلب
         </VBtn>
@@ -373,6 +375,12 @@ const formatDateTime = data => {
       <VTable class="text-no-wrap product-list-table">
         <thead>
         <tr>
+          <th
+            scope="col"
+            class="font-weight-semibold"
+          >
+
+          </th>
           <th
             scope="col"
             class="font-weight-semibold"
@@ -458,10 +466,13 @@ const formatDateTime = data => {
             #{{ ConvertToArabicNumbers(Intl.NumberFormat().format(++i)) }}
           </td>
           <td>
+            {{order.ref_no}}
+          </td>
+          <td>
             {{ order.customer_name }}
           </td>
           <td>
-            {{ order.address_address }}
+            {{ order.address_address.toString().length > 20 ? order.address_address.toString().slice(0,20) + "..." : order.address_address }}
           </td>
           <td>
             {{ ConvertToArabicNumbers(order.delivery_date) }}

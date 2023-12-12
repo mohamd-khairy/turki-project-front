@@ -518,9 +518,9 @@ onMounted(() => {
                     <td class="px-2">
                       <span>{{ product.product ? product.product.name_ar : "لا يوجد اسم" }}</span>
                     </td>
-                    <td>{{ product.product.size ? product.product.size : "لا يوجد" }}</td>
-                    <td>{{ product.product.cut ? product.product.cut : "لا يوجد" }}</td>
-                    <td>{{ product.product.preparation ? product.product.preparation : "لا يوجد" }}</td>
+                    <td>{{ product.size ? product.size.name_ar : "لا يوجد" }}</td>
+                    <td>{{ product.cut ? product.cut.name_ar : "لا يوجد" }}</td>
+                    <td>{{ product.preparation ? product.preparation.name_ar : "لا يوجد" }}</td>
                     <td class="px-2">
                       <span class="d-block  text-base">
                         {{ ConvertToArabicNumbers(product.quantity) }}

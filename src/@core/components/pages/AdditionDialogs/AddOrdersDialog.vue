@@ -164,6 +164,7 @@ const dialogModelValueUpdate = val => {
 }
 
 const AddQuantity = data => {
+
   itemData.products.push({
     product_id: selectedProduct.value.id,
     quantity: data.quantity ?? 0,
@@ -171,6 +172,7 @@ const AddQuantity = data => {
     size_id: data.size_id ?? null,
     preparation_id: data.preparation_id ?? null,
   })
+  selectedProducts.value.splice(index, 1)
 }
 
 onMounted(() => {
