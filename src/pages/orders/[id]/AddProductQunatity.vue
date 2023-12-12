@@ -44,6 +44,7 @@ const productSizes = ref([])
 const productPreparations = ref([])
 
 const itemData = reactive({
+  id: null,
   quantity: null,
   cut_id: null,
   size_id: null,
@@ -62,11 +63,12 @@ const resetForm = () => {
   productCuts.value = []
   productSizes.value = []
   productPreparations.value = []
+  emit('update:isAddOpen', false)
 }
 
 const onFormSubmit = () => {
   emit('addProductQuantity', itemData)
-  emit('update:isAddOpen', false)
+  // emit('update:isAddOpen', false)
   resetForm()
 }
 
@@ -75,14 +77,11 @@ const dialogModelValueUpdate = val => {
   emit('update:isAddOpen', val)
 }
 
-onMounted(() => {
+onUpdated(() => {
   isLoadingCuts.value = true
   isLoadingSizes.value = true
   isLoadingPreparations.value = true
-})
-
-onUpdated(() => {
-  resetForm()
+  itemData.id = props.item.id
   if(props.item) {
     if(props.item.id) {
       productsListStore.fetchProduct(props.item.id).then(response => {
@@ -134,7 +133,6 @@ onUpdated(() => {
                 <VTextField
                   v-model="itemData.quantity"
                   :label="t('forms.quantity')"
-                  :rules="[requiredValidator]"
                 />
               </VCol>
               <VCol cols="12"
@@ -145,7 +143,6 @@ onUpdated(() => {
                   :label="t('forms.product_cut')"
                   item-title="name_ar"
                   item-value="id"
-                  :rules="[requiredValidator]"
                   :disabled="isLoadingCuts"
                 />
               </VCol>
@@ -157,7 +154,6 @@ onUpdated(() => {
                   :label="t('forms.product_size')"
                   item-title="name_ar"
                   item-value="id"
-                  :rules="[requiredValidator]"
                   :disabled="isLoadingSizes"
                 />
               </VCol>
@@ -169,7 +165,6 @@ onUpdated(() => {
                   :label="t('forms.product_preparation')"
                   item-title="name_ar"
                   item-value="id"
-                  :rules="[requiredValidator]"
                   :disabled="isLoadingPreparations"
                 />
               </VCol>

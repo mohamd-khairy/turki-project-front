@@ -57,7 +57,7 @@ onMounted(() => {
   categoriesListStore.fetchSubCategories({ pageSize: -1 }).then(response => {
     subCategories.value = response.data.data
   })
-  productsListStore.fetchProducts({ pageSize: -1 }).then(response => {
+  productsListStore.fetchProductsAll().then(response => {
     products.value = response.data.data
   })
   employeesListStore.fetchEmployees({ pageSize: -1 }).then(response => {
@@ -69,7 +69,7 @@ onUpdated(() => {
   couponData.id = props.coupon.id
   couponData.name = props.coupon.name
   couponData.code = props.coupon.code
-  couponData.product_ids = props.coupon.product_ids == "" ? [] : props.coupon.product_ids
+  couponData.product_ids = props.coupon.product_ids
   couponData.discount_amount_percent = props.coupon.discount_amount_percent
   couponData.description_ar = props.coupon.description_ar
   couponData.description_en = props.coupon.description_en

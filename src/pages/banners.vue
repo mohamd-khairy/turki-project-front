@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
 
-const backend = process.env.VUE_APP_SERVER_URL || 'https://najdiya.com.sa'
+const backend = 'https://najdiya.com.sa/laravel/public'
 const bannersListStore = useBannersStore()
 const searchQuery = ref('')
 const selectedStatus = ref()

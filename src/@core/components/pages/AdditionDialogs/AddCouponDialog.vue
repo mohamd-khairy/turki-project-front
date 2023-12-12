@@ -57,7 +57,7 @@ onMounted(() => {
   categoriesListStore.fetchSubCategories({}).then(response => {
     subCategories.value = response.data.data
   })
-  productsListStore.fetchProducts({}).then(response => {
+  productsListStore.fetchProductsAll({}).then(response => {
     products.value = response.data.data
   })
   employeesListStore.fetchEmployees({ pageSize: -1 }).then(response => {

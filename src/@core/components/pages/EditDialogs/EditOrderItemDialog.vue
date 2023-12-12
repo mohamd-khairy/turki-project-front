@@ -43,7 +43,6 @@ const productsListStore = useProductsStore()
 const isLoading = ref(false)
 
 
-
 const { t } = useI18n()
 
 const itemData = reactive({
@@ -61,8 +60,27 @@ const resetForm = () => {
 }
 
 onUpdated(() => {
+  console.log(typeof props.item.preparation , props.item.preparation)
   itemData.order_product_id = props.item ? props.item.id : 0
   itemData.quantity = props.item ? props.item.quantity : 0
+  if (typeof props.item.preparation == 'object') {
+    // itemData.cut_ids.push(props.item.preparation)
+    itemData.preparation_ids = [props.item.preparation]
+  }else {
+    itemData.preparation_ids = props.item.preparation
+  }
+  if (typeof props.item.cut == 'object') {
+    // itemData.cut_ids.push(props.item.preparation)
+    itemData.cut_ids = [props.item.cut]
+  }else {
+    itemData.cut_ids = props.item.cut
+  }
+  if (typeof props.item.size == 'object') {
+    // itemData.size_ids.push(props.item.preparation)
+    itemData.size_ids = [props.item.size]
+  }else {
+    itemData.size_ids = props.item.size
+  }
 })
 
 const refForm = ref(null)
@@ -100,8 +118,7 @@ const onFormSubmit = async () => {
         settingsListStore.alertMessage = ""
       }, 2000)
     })
-  }
-  else {
+  } else {
     isLoading.value = false
     settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
     settingsListStore.alertColor = "error"
@@ -150,7 +167,8 @@ const dialogModelValueUpdate = val => {
               <VTextField v-model="itemData.quantity" :label="t('forms.quantity')"></VTextField>
             </VCol>
             <VCol cols="12"
-              md="6">
+                  md="6"
+            >
               <VSelect
                 v-model="itemData.cut_ids"
                 :items="props.cuts"
@@ -162,7 +180,8 @@ const dialogModelValueUpdate = val => {
               />
             </VCol>
             <VCol cols="12"
-              md="6">
+                  md="6"
+            >
               <VSelect
                 v-model="itemData.size_ids"
                 :items="props.sizes"
@@ -174,7 +193,8 @@ const dialogModelValueUpdate = val => {
               />
             </VCol>
             <VCol cols="12"
-              md="6">
+                  md="6"
+            >
               <VSelect
                 v-model="itemData.preparation_ids"
                 :items="props.preparations"
