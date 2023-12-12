@@ -1,12 +1,12 @@
 <script setup>
-import { useI18n } from "vue-i18n"
-import {
-  requiredValidator,
-} from '@validators'
-import { useCitiesStore } from "@/store/Cities"
 import { useCategoriesStore } from "@/store/Categories"
+import { useCitiesStore } from "@/store/Cities"
 import { useProductsStore } from "@/store/Products"
 import { useSettingsStore } from "@/store/Settings"
+import {
+requiredValidator,
+} from '@validators'
+import { useI18n } from "vue-i18n"
 
 const props = defineProps({
   isEditOpen: {
@@ -41,6 +41,7 @@ const sizes = reactive([])
 const cuts = reactive([])
 const payment_type_ids = reactive([])
 const images = ref([])
+const shalwatas = ref([])
 
 const itemData = reactive({
   id: null,
@@ -69,6 +70,7 @@ const itemData = reactive({
   payment_type_ids: [],
   city_ids: [],
   images: [],
+  shalwata_id: null,
   not_dates: [
     {
       date_mm_dd: null,
@@ -118,6 +120,12 @@ onMounted(() => {
   settingsListStore.fetchPaymentTypes({ pageSize: -1 }).then(response => {
     payment_type_ids.value = response.data.data
   })
+
+  settingsListStore.fetchProductShalwata({ pageSize: -1 }).then(response => {
+    shalwatas.value = response.data.data
+  })
+
+
 })
 
 onUpdated(() => {
@@ -138,6 +146,7 @@ onUpdated(() => {
   itemData.is_karashah = props.item.is_karashah ?? 0
   itemData.category_id = props.item.category ? props.item.category : null
   itemData.sub_category_id = props.item.sub_category ?? 0
+  itemData.shalwata_id = props.item.shalwata_id// ? props.item.shalwata_id: props.item.shalwata
   itemData.is_shalwata = props.item.is_shalwata ?? 0
   itemData.is_delivered = props.item.is_delivered ?? 0
   itemData.is_picked_up = props.item.is_picked_up ?? 0
@@ -174,6 +183,7 @@ const onFormSubmit = async () => {
     }).catch(error => {
       if (error.response.data.errors) {
         const errs = Object.keys(error.response.data.errors)
+
         errs.forEach(err => {
           settingsListStore.alertMessage = t(`errors.${err}`)
         })
@@ -212,16 +222,18 @@ const dialogModelValueUpdate = val => {
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
 
     <VCard
       class="pa-sm-9 pa-5"
     >
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="streamline:shopping-bag-hand-bag-1-shopping-bag-purse-goods-item-products" size="24"
-                 color="primary"
-          ></VIcon>
+          <VIcon
+            icon="streamline:shopping-bag-hand-bag-1-shopping-bag-purse-goods-item-products"
+            size="24"
+            color="primary"
+          />
           <span class="mx-1 my-1">
             {{ t('Edit_Item') }}
           </span>
@@ -230,7 +242,10 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit" ref="refForm">
+        <VForm
+          ref="refForm"
+          @submit.prevent="onFormSubmit"
+        >
           <VRow>
             <VCol
               cols="12"
@@ -420,15 +435,32 @@ const dialogModelValueUpdate = val => {
               />
             </VCol>
 
-            <VCol cols="12" v-if="images.length > 0">
-              <v-carousel show-arrows="hover">
-                <v-carousel-item
+            <VCol
+              v-if="!itemData.is_shalwata"
+              cols="12"
+              md="6"
+            >
+              <VSelect
+                v-model="itemData.shalwata_id"
+                :items="shalwatas"
+                :label="t('forms.shalwata')"
+                item-title="name_ar"
+                item-value="id"
+              />
+            </VCol>
+
+            <VCol
+              v-if="images.length > 0"
+              cols="12"
+            >
+              <VCarousel show-arrows="hover">
+                <VCarouselItem
                   v-for="image in images"
                   :key="image.id"
                   :src="image.thumbnail_url"
                   cover
-                ></v-carousel-item>
-              </v-carousel>
+                />
+              </VCarousel>
             </VCol>
 
             <VCol
@@ -511,7 +543,11 @@ const dialogModelValueUpdate = val => {
                 type="submit"
                 class="position-relative me-3"
               >
-                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
+                <VIcon
+                  icon="mingcute:loading-line"
+                  class="loading"
+                  size="32"
+                />
               </VBtn>
 
               <VBtn

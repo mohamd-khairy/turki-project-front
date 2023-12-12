@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import axios from '@axios'
+import { defineStore } from 'pinia'
 
 export const useProductsStore = defineStore('ProductsStore', {
   actions: {
@@ -112,6 +112,11 @@ export const useProductsStore = defineStore('ProductsStore', {
       formData.append("cut_ids", cut_ids.split(" ,")[1] ?? "")
       formData.append("payment_type_ids", payment_ids.split(" ,")[1] ?? "")
       formData.append("city_ids", cty_ids.split(" ,")[1] ?? "")
+
+      if(data.shalwata_id){
+        formData.append("shalwata_id", data.shalwata_id ?? null)
+      }
+
       for (let i = 0; i < data.images.length; i++) {
         // console.log(`Image[${i}] => `, data.images[i])
         formData.append(`images[${i}]`, data.images[i])
@@ -195,6 +200,9 @@ export const useProductsStore = defineStore('ProductsStore', {
       formData.append("payment_type_ids", payment_ids.split(" ,")[1] ?? "")
       formData.append("city_ids", cty_ids.split(" ,")[1] ?? "")
 
+      if(data.shalwata_id){
+        formData.append("shalwata_id", data.shalwata_id ?? null)
+      }
       if(data.images !== []) {
         data.images.map((img, ind) => {
           formData.append(`images[${ind}]`, img)
