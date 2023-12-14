@@ -1,12 +1,12 @@
 <script setup>
-import { useI18n } from "vue-i18n"
-import {
-  requiredValidator,
-} from '@validators'
-import { useSettingsStore } from "@/store/Settings"
-import { useOrdersStore } from "@/store/Orders"
-import { useEmployeesStore } from "@/store/Employees"
 import { useCouponsStore } from "@/store/Coupons"
+import { useEmployeesStore } from "@/store/Employees"
+import { useOrdersStore } from "@/store/Orders"
+import { useSettingsStore } from "@/store/Settings"
+import {
+requiredValidator,
+} from '@validators'
+import { useI18n } from "vue-i18n"
 
 const props = defineProps({
   isEditOpen: {
@@ -103,6 +103,7 @@ const onFormSubmit = async () => {
     }).catch(error => {
       if (error.response.data.errors) {
         const errs = Object.keys(error.response.data.errors)
+
         errs.forEach(err => {
           settingsListStore.alertMessage = t(`errors.${err}`)
         })
@@ -141,14 +142,18 @@ const dialogModelValueUpdate = val => {
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
 
     <VCard
       class="pa-sm-9 pa-5"
     >
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="solar:delivery-broken" size="24" color="primary"></VIcon>
+          <VIcon
+            icon="solar:delivery-broken"
+            size="24"
+            color="primary"
+          />
           <span class="mx-1 my-1">
             {{ t('تعديل حالة الطلب') }}
           </span>
@@ -157,7 +162,10 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit" ref="refForm">
+        <VForm
+          ref="refForm"
+          @submit.prevent="onFormSubmit"
+        >
           <VRow>
             <VCol
               cols="12"
@@ -182,11 +190,14 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.user')"
                 item-title="username"
                 item-value="id"
-                :rules="[requiredValidator]"
               />
             </VCol>
-            <VCol cols="12"
-                  md="6">
+            <!-- :rules="[requiredValidator]" -->
+
+            <VCol
+              cols="12"
+              md="6"
+            >
               <VSelect
                 v-model="itemData.discount_code"
                 :label="t('forms.coupon')"
@@ -195,12 +206,20 @@ const dialogModelValueUpdate = val => {
                 item-value="code"
               />
             </VCol>
-            <VCol cols="12"
-                  md="6">
-              <VTextField v-model="itemData.delivery_date" type="date" :label="t('forms.delivery_date')"></VTextField>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VTextField
+                v-model="itemData.delivery_date"
+                type="date"
+                :label="t('forms.delivery_date')"
+              />
             </VCol>
-            <VCol cols="12"
-                  md="6">
+            <VCol
+              cols="12"
+              md="6"
+            >
               <VSelect
                 v-model="itemData.delivery_period"
                 :label="t('forms.delivery_time')"
@@ -209,8 +228,10 @@ const dialogModelValueUpdate = val => {
                 item-value="id"
               />
             </VCol>
-            <VCol cols="12"
-                  md="6">
+            <VCol
+              cols="12"
+              md="6"
+            >
               <VSelect
                 v-model="itemData.payment_type"
                 :label="t('forms.payment_type_ids')"
@@ -236,7 +257,11 @@ const dialogModelValueUpdate = val => {
                 type="submit"
                 class="position-relative me-3"
               >
-                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
+                <VIcon
+                  icon="mingcute:loading-line"
+                  class="loading"
+                  size="32"
+                />
               </VBtn>
 
               <VBtn

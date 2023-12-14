@@ -1,13 +1,13 @@
 <script setup>
-import { useI18n } from "vue-i18n"
-import { useProductsStore } from "@/store/Products"
 import { useBannersStore } from "@/store/Banners"
 import { useCategoriesStore } from "@/store/Categories"
 import { useCitiesStore } from "@/store/Cities"
-import {
-  requiredValidator,
-} from '@validators'
+import { useProductsStore } from "@/store/Products"
 import { useSettingsStore } from "@/store/Settings"
+import {
+requiredValidator,
+} from '@validators'
+import { useI18n } from "vue-i18n"
 
 const props = defineProps({
   isAddOpen: {

@@ -1,12 +1,12 @@
 <script setup>
-import { useI18n } from "vue-i18n"
-import {
-  requiredValidator,
-} from '@validators'
-import { useCitiesStore } from "@/store/Cities"
 import { useCategoriesStore } from "@/store/Categories"
+import { useCitiesStore } from "@/store/Cities"
 import { useProductsStore } from "@/store/Products"
 import { useSettingsStore } from "@/store/Settings"
+import {
+requiredValidator,
+} from '@validators'
+import { useI18n } from "vue-i18n"
 
 const props = defineProps({
   isAddOpen: {
@@ -172,6 +172,7 @@ const onFormSubmit = async () => {
     }).catch(error => {
       if (error.response.data.errors) {
         const errs = Object.keys(error.response.data.errors)
+
         errs.forEach(err => {
           settingsListStore.alertMessage = t(`errors.${err}`)
         })
@@ -211,7 +212,7 @@ const dialogModelValueUpdate = val => {
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
 
     <VCard
       :loading="isLoading"
@@ -219,9 +220,11 @@ const dialogModelValueUpdate = val => {
     >
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="streamline:shopping-bag-hand-bag-1-shopping-bag-purse-goods-item-products" size="24"
-                 color="primary"
-          ></VIcon>
+          <VIcon
+            icon="streamline:shopping-bag-hand-bag-1-shopping-bag-purse-goods-item-products"
+            size="24"
+            color="primary"
+          />
           <span class="mx-1 my-1">
             {{ t('Add_Item') }}
           </span>
@@ -230,7 +233,10 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit" ref="refForm">
+        <VForm
+          ref="refForm"
+          @submit.prevent="onFormSubmit"
+        >
           <VRow>
             <VCol
               cols="12"
@@ -343,7 +349,11 @@ const dialogModelValueUpdate = val => {
               md="6"
             >
               <VRow align="center">
-                <VCol cols="12" lg="9" sm="12">
+                <VCol
+                  cols="12"
+                  lg="9"
+                  sm="12"
+                >
                   <VSelect
                     v-model="itemData.cut_ids"
                     :items="cuts"
@@ -353,14 +363,21 @@ const dialogModelValueUpdate = val => {
                     multiple
                   />
                 </VCol>
-                <VCol cols="12" lg="3" sm="12">
+                <VCol
+                  cols="12"
+                  lg="3"
+                  sm="12"
+                >
                   <VBtn
                     type="button"
                     size="small"
                     class="position-relative me-3"
                     @click="isAddCutsOpen = true"
                   >
-                    <VIcon icon="material-symbols-light:add" size="20"></VIcon>
+                    <VIcon
+                      icon="material-symbols-light:add"
+                      size="20"
+                    />
                   </VBtn>
                 </VCol>
               </VRow>
@@ -370,7 +387,11 @@ const dialogModelValueUpdate = val => {
               md="6"
             >
               <VRow align="center">
-                <VCol cols="12" lg="9" sm="12">
+                <VCol
+                  cols="12"
+                  lg="9"
+                  sm="12"
+                >
                   <VSelect
                     v-model="itemData.size_ids"
                     :items="sizes"
@@ -381,14 +402,21 @@ const dialogModelValueUpdate = val => {
                     :rules="[requiredValidator]"
                   />
                 </VCol>
-                <VCol cols="12" lg="3" sm="12">
+                <VCol
+                  cols="12"
+                  lg="3"
+                  sm="12"
+                >
                   <VBtn
                     type="button"
                     size="small"
                     class="position-relative me-3"
                     @click="isAddSizeOpen = true"
                   >
-                    <VIcon icon="material-symbols-light:add" size="20"></VIcon>
+                    <VIcon
+                      icon="material-symbols-light:add"
+                      size="20"
+                    />
                   </VBtn>
                 </VCol>
               </VRow>
@@ -398,8 +426,11 @@ const dialogModelValueUpdate = val => {
               md="6"
             >
               <VRow align="center">
-
-                <VCol cols="12" lg="9" sm="12">
+                <VCol
+                  cols="12"
+                  lg="9"
+                  sm="12"
+                >
                   <VSelect
                     v-model="itemData.preparation_ids"
                     :items="preparations"
@@ -409,22 +440,29 @@ const dialogModelValueUpdate = val => {
                     multiple
                   />
                 </VCol>
-                <VCol cols="12" lg="3" sm="12">
+                <VCol
+                  cols="12"
+                  lg="3"
+                  sm="12"
+                >
                   <VBtn
                     type="button"
                     size="small"
                     class="position-relative me-3"
                     @click="isAddPreparationOpen = true"
                   >
-                    <VIcon icon="material-symbols-light:add" size="20"></VIcon>
+                    <VIcon
+                      icon="material-symbols-light:add"
+                      size="20"
+                    />
                   </VBtn>
                 </VCol>
               </VRow>
             </VCol>
             <VCol
+              v-if="!itemData.is_shalwata"
               cols="12"
               md="6"
-              v-if="!itemData.is_shalwata"
             >
               <VSelect
                 v-model="itemData.shalwata_id"
@@ -432,7 +470,6 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.shalwata')"
                 item-title="name_ar"
                 item-value="id"
-                multiple
               />
             </VCol>
             <VCol
@@ -559,7 +596,11 @@ const dialogModelValueUpdate = val => {
                 type="submit"
                 class="position-relative me-3"
               >
-                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
+                <VIcon
+                  icon="mingcute:loading-line"
+                  class="loading"
+                  size="32"
+                />
               </VBtn>
 
               <VBtn
@@ -574,9 +615,17 @@ const dialogModelValueUpdate = val => {
         </VForm>
       </VCardText>
     </VCard>
-    <AddProductSizeDialog v-model:is-add-open="isAddSizeOpen" @refreshTable="getProductSizes"></AddProductSizeDialog>
-    <AddProductPreparationDialog v-model:is-add-open="isAddPreparationOpen" @refreshTable="getProductPerparation"
-    ></AddProductPreparationDialog>
-    <AddProductCutDialog v-model:is-add-open="isAddCutsOpen" @refreshTable="getProductCuts"></AddProductCutDialog>
+    <AddProductSizeDialog
+      v-model:is-add-open="isAddSizeOpen"
+      @refreshTable="getProductSizes"
+    />
+    <AddProductPreparationDialog
+      v-model:is-add-open="isAddPreparationOpen"
+      @refreshTable="getProductPerparation"
+    />
+    <AddProductCutDialog
+      v-model:is-add-open="isAddCutsOpen"
+      @refreshTable="getProductCuts"
+    />
   </VDialog>
 </template>

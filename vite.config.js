@@ -12,6 +12,7 @@ import vuetify from 'vite-plugin-vuetify'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base:"",//"/laravel/public/",
   plugins: [
     vue(),
     vueJsx(),
@@ -42,12 +43,12 @@ export default defineConfig({
     }),
     DefineOptions(),
     VueI18n({
-    runtimeOnly: true,
-    compositionOnly: true,
-    include: [
-      fileURLToPath(new URL('./src/plugins/i18n/locales/**', import.meta.url)),
-    ],
-  }),
+      runtimeOnly: true,
+      compositionOnly: true,
+      include: [
+        fileURLToPath(new URL('./src/plugins/i18n/locales/**', import.meta.url)),
+      ],
+    }),
   ],
   define: { 'process.env': {} },
   resolve: {
