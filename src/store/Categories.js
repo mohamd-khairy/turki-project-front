@@ -58,6 +58,8 @@ export const useCategoriesStore = defineStore('CategoriesStore', {
     editSubCategory(data) {
       const formData = new FormData()
 
+      console.log("Sub => ", data)
+
       let cty_ids = " "
       Object.values(data.city_ids).map(ctid => {
         // cty_ids = cty_ids + ',' + ctid.id
@@ -71,7 +73,7 @@ export const useCategoriesStore = defineStore('CategoriesStore', {
       formData.append("type_ar", data.type_ar)
       formData.append("type_en", data.type_en)
       formData.append("description", data.description)
-      formData.append("category_id", data.category_id.id)
+      formData.append("category_id", data.category_id)
       formData.append("city_ids", cty_ids.split(" ,")[1])
 
       return axios.post(`/sub-categories/update-sub-category/${data.id}`, formData)

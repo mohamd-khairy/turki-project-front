@@ -160,7 +160,7 @@ onMounted(() => {
                 الإجمالي شامل الضريبة
               </td>
               <td colspan="6">
-                {{ order.order.order_subtotal }} ريال سعودي
+                {{ order.order.total_amount }} ريال سعودي
               </td>
             </tr>
             <tr>
@@ -184,7 +184,7 @@ onMounted(() => {
                 ضريبة القيمة المضافة
               </td>
               <td colspan="6">
-                225 ريال سعودي
+                {{ order.order.delivery_fee }} ريال سعودي
               </td>
             </tr>
             <tr>
@@ -208,7 +208,7 @@ onMounted(() => {
                 إجمالي المتبقي
               </td>
               <td colspan="6">
-                1725 ريال سعودي
+                0 ريال سعودي
               </td>
             </tr>
             <tr>

@@ -42,7 +42,7 @@ const filterOptions = reactive([
 
 const getCustomers = () => {
   customersListStore.fetchCustomers({
-    q: searchQuery.value,
+    search: searchQuery.value,
     wallet: filters.wallet,
   }).then(response => {
     customers.value = response.data.data
@@ -153,6 +153,9 @@ onMounted(() => {
             </VCol>
           </VRow>
         </VCol>
+        <VCol cols="12" lg="3" md="4" sm="6">
+          <VTextField v-model="searchQuery" label="بحث" class="search-wrap" prepend-inner-icon="iconamoon:search-thin"></VTextField>
+        </VCol>
         <VCol cols="12" lg="4" md="6" sm="6">
           <VRow align="center" justify="end">
             <VCol cols="12" lg="5" md="5" sm="6">
@@ -210,7 +213,6 @@ onMounted(() => {
         </VBtn>
 
         <VSpacer/>
-
 
       </VCardText>
 
@@ -376,10 +378,17 @@ onMounted(() => {
         />
       </VCardText>
     </VCard>
-    <AddCustomerDialog v-model:is-add-open="isAddOpen" @refreshTable="getCustomers" />
+    <AddCustomerDialog v-model:is-add-open="isAddOpen" @refreshTable="getCustomers"/>
     <EditCustomerDialog v-model:is-edit-open="isEditOpen" @refreshTable="getCustomers" :customer="selectedEmployee"/>
     <DeleteCustomerDialog v-model:is-delete-open="isDeleteOpen" @refreshTable="getCustomers"
                           :customer="selectedEmployee"
     />
   </div>
 </template>
+
+<style lang="scss" scoped>
+.search-wrap {
+  //max-width: 300px;
+  //width: 300px;
+}
+</style>

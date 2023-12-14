@@ -39,11 +39,14 @@ onMounted(() => {
 })
 
 onUpdated(() => {
+  console.log(
+    props.subCategory
+  )
   categoryData.id = props.subCategory.id
   categoryData.type_ar = props.subCategory.type_ar
   categoryData.type_en = props.subCategory.type_en
   categoryData.description = props.subCategory.description
-  categoryData.category_id = props.subCategory.category
+  categoryData.category_id = props.subCategory.category ? props.subCategory.category.id : null
   categoryData.city_ids = props.subCategory.cities
 })
 
