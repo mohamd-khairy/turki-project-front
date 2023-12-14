@@ -160,7 +160,7 @@ onMounted(() => {
                 الإجمالي شامل الضريبة
               </td>
               <td colspan="6">
-                {{ order.order.total_amount }} ريال سعودي
+                {{ Number(order.order.order_subtotal) + Number(order.order.delivery_fee) ?? 0 }} ريال سعودي
               </td>
             </tr>
             <tr>
@@ -168,7 +168,7 @@ onMounted(() => {
                 الخصم
               </td>
               <td colspan="6">
-                {{ order.order.discount_applied }} ريال سعودي
+                {{ order.order.discount_applied ?? 0}} ريال سعودي
               </td>
             </tr>
             <tr>
@@ -176,7 +176,7 @@ onMounted(() => {
                 الإجمالي غير شامل الضريبة بعد الخصم
               </td>
               <td colspan="6">
-                1500 ريال سعودي
+                {{ order.order.total_amount_after_discount ?? 0 }} ريال سعودي
               </td>
             </tr>
             <tr>
@@ -192,7 +192,7 @@ onMounted(() => {
                 الإجمالي شامل الضريبة بعد الخصم
               </td>
               <td colspan="6">
-                {{ order.order.total_amount_after_discount }} ريال سعودي
+                {{ order.order.total_amount ?? 0 }} ريال سعودي
               </td>
             </tr>
             <tr>
@@ -200,7 +200,7 @@ onMounted(() => {
                 المسدد
               </td>
               <td colspan="6">
-                0 ريال سعودي
+                {{ order.order.payment ? order.order.payment.price : 0 }} ريال سعودي
               </td>
             </tr>
             <tr>
@@ -208,7 +208,7 @@ onMounted(() => {
                 إجمالي المتبقي
               </td>
               <td colspan="6">
-                0 ريال سعودي
+                {{ order.order.payment ? order.order.total_amount - order.order.payment.price < 0 ? 0 : order.order.total_amount - order.order.payment.price  : order.order.total_amount }} ريال سعودي
               </td>
             </tr>
             <tr>
@@ -216,7 +216,7 @@ onMounted(() => {
                 الملاحظة
               </td>
               <td colspan="6">
-
+                {{ order.order.comment ?? "لا يوجد" }}
               </td>
             </tr>
             <tr>

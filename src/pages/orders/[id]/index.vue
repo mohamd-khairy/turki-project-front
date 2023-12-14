@@ -227,6 +227,13 @@ onMounted(() => {
                 >
                   {{ order.order.order_state.state_ar }}
                 </VChip>
+                <VChip
+                  size="large"
+                  class="font-weight-bold mx-2"
+                  :class="{'text-error': order.order.paid == 0, 'text-success': order.order.paid == 1}"
+                >
+                  {{ order.order.paid == 1 ? "مدفوع" : "غير مدفوع" }}
+                </VChip>
               </h3>
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
@@ -587,7 +594,7 @@ onMounted(() => {
     <EditOrderDeatilsDialog
       v-model:isEditOpen="isEditOpen"
       :item="order"
-      @refrshTable="getOrderDetails"
+      @refreshTable="getOrderDetails"
     />
     <EditOrderItemDialog
       v-model:isEditProductOpen="isEditProductOpen"
@@ -595,7 +602,7 @@ onMounted(() => {
       :sizes="productSizes"
       :cuts="productCuts"
       :preparations="productPreparations"
-      @refrshTable="getOrderDetails"
+      @refreshTable="getOrderDetails"
     />
   </div>
 </template>

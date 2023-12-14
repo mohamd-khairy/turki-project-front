@@ -481,8 +481,7 @@ const formatDateTime = data => {
             <VChip style="cursor: pointer">{{ order.order_state_ar }}</VChip>
           </td>
           <td>
-            <VChip style="cursor: pointer">{{ order.order_payment_status ? order.order_payment_status : "لا يوجد" +
-              "" }}</VChip>
+            <VChip style="cursor: pointer" :class="{'text-error': order.paid == 0, 'text-success': order.paid == 1}">{{ order.paid == 1 ? "مدفوع" : "غير مدفوع" }}</VChip>
           </td>
           <td>
             {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.order_subtotal)) }}
@@ -529,7 +528,7 @@ const formatDateTime = data => {
         </tbody>
 
         <!-- 👉 table footer  -->
-        <tfoot v-show="!orders.length || isLoading">
+        <tfoot v-show="orders.length == 0">
         <tr>
           <td
             colspan="8"

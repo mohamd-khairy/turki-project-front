@@ -4,7 +4,7 @@ import { useEmployeesStore } from "@/store/Employees"
 import { useOrdersStore } from "@/store/Orders"
 import { useSettingsStore } from "@/store/Settings"
 import {
-requiredValidator,
+  requiredValidator,
 } from '@validators'
 import { useI18n } from "vue-i18n"
 
@@ -39,6 +39,7 @@ const itemData = reactive({
   delivery_date: null,
   delivery_period: null,
   payment_type: null,
+  paid: null,
 })
 
 watch(() => itemData.discount_code, newVal => {
@@ -80,9 +81,20 @@ onUpdated(() => {
   itemData.id = props.item.order ? props.item.order.id : 0
   itemData.order_state_id = props.item.order ? props.item.order.order_state_id : 0
   itemData.discount_code = props.item.order ? props.item.order.applied_discount_code : null
+  itemData.paid = props.item.order ? props.item.order.paid : null
 })
 
 const refForm = ref(null)
+
+const payment_status = reactive([
+  {
+    id: 1,
+    name: "مدفوع",
+  }, {
+    id: 0,
+    name: "غير مدفوع",
+  },
+])
 
 const onFormSubmit = async () => {
   isLoading.value = true
@@ -142,7 +154,7 @@ const dialogModelValueUpdate = val => {
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
 
     <VCard
       class="pa-sm-9 pa-5"
@@ -237,6 +249,18 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.payment_type_ids')"
                 :items="payment_types"
                 item-title="name_ar"
+                item-value="id"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="6"
+            >
+              <VSelect
+                v-model="itemData.paid"
+                :label="t('forms.payment_status')"
+                :items="payment_status"
+                item-title="name"
                 item-value="id"
               />
             </VCol>
