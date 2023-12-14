@@ -163,7 +163,6 @@ const dialogModelValueUpdate = val => {
                 v-model="itemData.weight"
                 :label="t('forms.weight')"
                 :rules="[requiredValidator]"
-                type="number"
               />
             </VCol>
             <VCol

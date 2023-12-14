@@ -48,7 +48,7 @@ onUpdated(() => {
   itemData.name_ar = props.item.name_ar
   itemData.name_en = props.item.name_en
   itemData.color = props.item.color
-  itemData.product_ids = props.item.products
+  itemData.product_ids = props.item.product_ids
 })
 
 
@@ -57,17 +57,20 @@ const onFormSubmit = async () => {
 
   const res = await refForm.value.validate()
   if (res.valid) {
-    Object.values(props.item.products).map(pd => {
-      product_ids.value.push(pd.id)
+    Object.values(itemData.products).map(pd => {
+      console.log(typeof pd, pd)
     })
+    console.log(product_ids.value)
 
     const item = {
       id: itemData.id,
       name_ar: itemData.name_ar,
       name_en: itemData.name_en,
       color: itemData.color,
-      product_ids: [...product_ids.value],
+      product_ids: product_ids.value,
     }
+
+    console.log("PDS => ", product_ids.value)
 
     settingsListStore.editProductTags(item).then(response => {
       emit('refreshTable')
@@ -176,6 +179,7 @@ const dialogModelValueUpdate = val => {
                 item-title="name_ar"
                 item-value="id"
                 multiple
+                return-object
                 :rules="[requiredValidator]"
               />
             </VCol>

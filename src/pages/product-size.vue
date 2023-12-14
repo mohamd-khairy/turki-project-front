@@ -195,8 +195,7 @@ const formatDateTime = data => {
             {{ ConvertToArabicNumbers(Intl.NumberFormat().format(item.sale_price)) }}
           </td>
           <td>
-<!--            {{ ConvertToArabicNumbers(item.weight) }}-->
-            {{item.weight}}
+            {{ ConvertToArabicNumbers(item.weight) }}
           </td>
 
           <td>
