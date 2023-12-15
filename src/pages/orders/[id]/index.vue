@@ -155,7 +155,7 @@ onMounted(() => {
             </span>
           </h1>
           <p class="mb-5">
-            {{ order.order.comment ? order.order.comment : "لا يوجد ملاحظات" }}
+            {{ order.order.comment ? order.order.comment : "لا يوجد ملاحظات علي الطلب" }}
           </p>
 
           <div class="order-detail mt-5">
@@ -375,7 +375,7 @@ onMounted(() => {
                   :class="{'text-error': order.order.selected_address.address === 'undefined', 'text-success': order.order.selected_address.address !== 'undefined' }"
                 >
                   {{
-                    order.order.selected_address.address !== "undefined" ? order.order.selected_address.address : "لا يوجد"
+                    order.order.selected_address.address !== "undefined" ? ConvertToArabicNumbers(order.order.selected_address.address) : "لا يوجد"
                   }}
                 </VChip>
               </h3>

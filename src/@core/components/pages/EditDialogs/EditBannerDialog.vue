@@ -203,6 +203,13 @@ const dialogModelValueUpdate = val => {
           <VRow>
             <VCol
               cols="12"
+            >
+              <div class="d-flex justify-center align-center">
+                <img :src="props.banner.url" alt="" class="banner-logo">
+              </div>
+            </VCol>
+            <VCol
+              cols="12"
               md="6"
             >
               <VTextField
@@ -304,6 +311,7 @@ const dialogModelValueUpdate = val => {
               />
             </VCol>
 
+
             <VCol
               cols="12"
               class="text-center"
@@ -337,3 +345,12 @@ const dialogModelValueUpdate = val => {
     </VCard>
   </VDialog>
 </template>
+
+<style>
+.banner-logo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+</style>
