@@ -43,7 +43,7 @@ onUpdated(() => {
   employeeData.gender = props.employee.gender
   employeeData.age = props.employee.age
   employeeData.roles = props.employee.roles
-  employeeData.is_active = props.employee.is_active ?? false
+  employeeData.is_active = props.employee.is_active == 1 ? true : false
 })
 
 // Variables

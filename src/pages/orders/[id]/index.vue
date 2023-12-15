@@ -189,6 +189,22 @@ onMounted(() => {
                   class="ml-2"
                 />
                 <span>
+                  تاريخ التوصيل :
+                </span>
+                <VChip
+                  size="large"
+                  class="font-weight-bold"
+                >
+                  {{ ConvertToArabicNumbers(order.order.delivery_date.toString().split('-')[1] + "-" + order.order.delivery_date.toString().split('-')[0]) }}
+                </VChip>
+              </h3>
+              <h3 class="text-base font-weight-bold mb-2">
+                <VIcon
+                  icon="arcticons:destiny-item-manager"
+                  color="primary"
+                  class="ml-2"
+                />
+                <span>
                   توقيت الطلب :
                 </span>
                 <VChip
@@ -365,7 +381,7 @@ onMounted(() => {
                   :class="{'text-error': order.order.selected_address.address === 'undefined', 'text-success': order.order.selected_address.address !== 'undefined' }"
                 >
                   {{
-                    order.order.selected_address.address !== "undefined" ? ConvertToArabicNumbers(order.order.selected_address.address) + "كيلو جرام" : "لا يوجد "
+                    order.order.selected_address.address !== "undefined" ? order.order.selected_address.address : "لا يوجد"
                   }}
                 </VChip>
               </h3>
@@ -406,48 +422,6 @@ onMounted(() => {
                 >
                   {{
                     order.order.payment_type ? ConvertToArabicNumbers(order.order.payment_type.name_ar) : "لا يوجد  "
-                  }}
-                </VChip>
-              </h3>
-            </div>
-            <div class="order-price">
-              <h3 class="text-base font-weight-bold mb-2">
-                <VIcon
-                  icon="arcticons:destiny-item-manager"
-                  color="primary"
-                  class="ml-2"
-                />
-                <span>
-                  الفئة :
-                </span>
-                <VChip
-                  size="large"
-                  class="font-weight-bold"
-                  :class="{'text-error': order.category === 'undefined', 'text-success': order.category !== 'undefined' }"
-                >
-                  {{
-                    order.category ? order.category.type_ar : "لايوجد"
-                  }}
-                </VChip>
-              </h3>
-            </div>
-            <div class="order-price">
-              <h3 class="text-base font-weight-bold mb-2">
-                <VIcon
-                  icon="arcticons:destiny-item-manager"
-                  color="primary"
-                  class="ml-2"
-                />
-                <span>
-                  الفئة الفرعية :
-                </span>
-                <VChip
-                  size="large"
-                  class="font-weight-bold"
-                  :class="{'text-error': order.sub_category === 'undefined', 'text-success': order.sub_category !== 'undefined' }"
-                >
-                  {{
-                    order.sub_category ? order.sub_category.type_ar : "لايوجد"
                   }}
                 </VChip>
               </h3>
@@ -721,8 +695,7 @@ img {
   .card {
     display: grid;
     grid-gap: 1rem;
-    grid-template-columns: 2fr 1.5fr;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2fr 2fr;
   }
 
   .card-wrapper {

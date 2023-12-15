@@ -182,7 +182,7 @@ const formatDateTime = data => {
             {{ order.log_name }}
           </td>
           <td>
-            {{ order.causer ? order.causer.username ? order.causer.username : '-' : '-' }}
+            {{ order.causer ? order.causer.email ? order.causer.email : '-' : '-' }}
           </td>
           <td>
             {{ order.causer_type }}
@@ -190,8 +190,15 @@ const formatDateTime = data => {
           <td>
             {{ order.description ? order.description : '-' }}
           </td>
+<!--          <td>-->
+<!--            {{ order.subject ? order.subject.name_ar ? order.subject.name_ar : '-' : '-' }}-->
+<!--          </td>-->
           <td>
-            {{ order.subject ? order.subject.name_ar ? order.subject.name_ar : '-' : '-' }}
+            <div v-for="(attr, ind) in order.properties.attributes" :key="ind">
+              <VChip>{{ attr }}</VChip>
+              :
+              <VChip> {{ ind }} </VChip>
+            </div>
           </td>
           <td>
             {{ order.subject_type }}

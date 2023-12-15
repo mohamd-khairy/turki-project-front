@@ -273,7 +273,6 @@ const dialogModelValueUpdate = val => {
                 item-title="type_ar"
                 item-value="id"
                 multiple
-                return-object
                 :rules="[requiredValidator]"
               />
             </VCol>

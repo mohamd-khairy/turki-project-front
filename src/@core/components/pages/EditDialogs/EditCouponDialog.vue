@@ -60,7 +60,7 @@ onMounted(() => {
   productsListStore.fetchProductsAll().then(response => {
     products.value = response.data.data
   })
-  employeesListStore.fetchEmployees({ pageSize: -1 }).then(response => {
+  employeesListStore.fetchCustomers({ pageSize: -1 }).then(response => {
     customers.value = response.data.data
   })
 })
@@ -297,7 +297,7 @@ const dialogModelValueUpdate = val => {
                   v-model="couponData.client_ids"
                   :items="customers.value"
                   :label="t('forms.customers')"
-                  item-title="username"
+                  item-title="name"
                   item-value="id"
                   multiple
                   :rules="[requiredValidator]"

@@ -85,7 +85,7 @@ export const useBannersStore = defineStore('BannersStore', {
       let cats_ids = []
 
       banner.category_ids.map(cat => {
-        cats_ids.push(cat.id)
+        cats_ids.push(typeof cat == 'object' ? cat.id : cat)
       })
 
       formData.append("category_ids", cats_ids)

@@ -38,6 +38,10 @@ const refForm = ref(null)
 const isLoading = ref(false)
 
 const resetForm = () => {
+  itemData.name_ar = null
+  itemData.name_en = null
+  itemData.color = null
+  itemData.product_ids = []
   emit('update:isAddOpen', false)
 }
 
@@ -47,6 +51,7 @@ const onFormSubmit = async () => {
   const res = await refForm.value.validate()
   if (res.valid) {
     settingsListStore.storeProductTags(itemData).then(response => {
+      resetForm()
       emit('refreshTable')
       emit('update:isAddOpen', false)
       settingsListStore.alertColor = "success"

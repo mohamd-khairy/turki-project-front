@@ -21,6 +21,7 @@ const props = defineProps({
 
 const emit = defineEmits([
   'update:isAddOpen',
+  'refreshTable',
 ])
 
 import { useI18n } from "vue-i18n"
@@ -94,6 +95,7 @@ const onFormSubmit = async () => {
       settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
       settingsListStore.isAlertShow = true
       resetForm()
+      emit('refreshTable')
       setTimeout(() => {
         settingsListStore.isAlertShow = false
         settingsListStore.alertMessage = ""

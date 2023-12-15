@@ -15,6 +15,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  itemSaved: {
+    type: Object,
+    required: true,
+  },
   sizes: {
     type: Array,
     required: true,
@@ -45,7 +49,7 @@ const productPreparations = ref([])
 
 const itemData = reactive({
   id: null,
-  quantity: null,
+  quantity: 1,
   cut_id: null,
   size_id: null,
   preparation_id: null,
@@ -78,10 +82,15 @@ const dialogModelValueUpdate = val => {
 }
 
 onUpdated(() => {
+  console.log("ITEM SAVED => ", props.itemSaved)
   isLoadingCuts.value = true
   isLoadingSizes.value = true
   isLoadingPreparations.value = true
   itemData.id = props.item.id
+  itemData.quantity = props.itemSaved.quantity
+  itemData.cut_id = props.itemSaved.cut_id
+  itemData.size_id = props.itemSaved.size_id
+  itemData.preparation_id = props.itemSaved.preparation_id
   if(props.item) {
     if(props.item.id) {
       productsListStore.fetchProduct(props.item.id).then(response => {

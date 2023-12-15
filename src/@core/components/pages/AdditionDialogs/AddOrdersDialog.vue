@@ -68,7 +68,7 @@ const itemData = reactive({
   products: [],
 })
 
-const form = ref()
+const savedProduct = ref({})
 const isLoading = ref(false)
 const isAddCustomerOpen = ref(false)
 const isAddCustomerAddressOpen = ref(false)
@@ -83,8 +83,10 @@ const changeDate = ev => {
 }
 
 watch(() => itemData.customer_id, (newVal, oldVal) => {
-  selectedCustomer.value = itemData.customer_id
-  addresses.value = getAddresses()
+  if(itemData.customer_id !== null) {
+    selectedCustomer.value = itemData.customer_id
+    addresses.value = getAddresses()
+  }
 })
 
 watch(() => itemData.country_id, (newVal, oldVal) => {
@@ -163,8 +165,16 @@ const dialogModelValueUpdate = val => {
   emit('update:isAddOpen', val)
 }
 
-const AddQuantity = data => {
+const closeModel = () => {
+  emit('update:isAddOpen', false)
+  itemData.customer_id = null
+  getCustomers()
+}
 
+
+const AddQuantity = data => {
+  console.log("ITEM COLLECTED => ", data)
+  savedProduct.value = data
   itemData.products.push({
     product_id: selectedProduct.value.id,
     quantity: data.quantity ?? 0,
@@ -172,7 +182,6 @@ const AddQuantity = data => {
     size_id: data.size_id ?? null,
     preparation_id: data.preparation_id ?? null,
   })
-  selectedProducts.value.splice(index, 1)
 }
 
 onMounted(() => {
@@ -236,6 +245,33 @@ onMounted(() => {
               </VCol>
               <VCol
                 cols="12"
+                v-if="itemData.customer_id !== null"
+              >
+                <VRow align="center">
+                  <VCol cols="12" lg="10" sm="12">
+                    <VSelect
+                      v-model="itemData.address_id"
+                      :items="addresses"
+                      :label="t('forms.customer_addresses')"
+                      item-title="address"
+                      item-value="id"
+                      :rules="[requiredValidator]"
+                    />
+                  </VCol>
+                  <VCol cols="12" lg="2" sm="12">
+                    <VBtn
+                      type="button"
+                      size="small"
+                      class="position-relative me-3"
+                      @click="isAddCustomerAddressOpen = true"
+                    >
+                      <VIcon icon="material-symbols-light:add" size="24"></VIcon>
+                    </VBtn>
+                  </VCol>
+                </VRow>
+              </VCol>
+              <VCol
+                cols="12"
               >
                 <VSelect
                   v-model="itemData.country_id"
@@ -281,33 +317,7 @@ onMounted(() => {
                   :rules="[requiredValidator]"
                 />
               </VCol>
-              <VCol
-                cols="12"
-                v-if="itemData.customer_id !== null"
-              >
-                <VRow align="center">
-                  <VCol cols="12" lg="10" sm="12">
-                    <VSelect
-                      v-model="itemData.address_id"
-                      :items="addresses"
-                      :label="t('forms.customer_addresses')"
-                      item-title="address"
-                      item-value="id"
-                      :rules="[requiredValidator]"
-                    />
-                  </VCol>
-                  <VCol cols="12" lg="2" sm="12">
-                    <VBtn
-                      type="button"
-                      size="small"
-                      class="position-relative me-3"
-                      @click="isAddCustomerAddressOpen = true"
-                    >
-                      <VIcon icon="material-symbols-light:add" size="24"></VIcon>
-                    </VBtn>
-                  </VCol>
-                </VRow>
-              </VCol>
+
               <VCol
                 cols="12"
               >
@@ -381,8 +391,8 @@ onMounted(() => {
       </VCard>
     </VDialog>
 
-    <AddProductQunatity v-model:is-add-open="isQuantityOpen" @addProductQuantity="AddQuantity" :item="selectedProduct"></AddProductQunatity>
+    <AddProductQunatity v-model:is-add-open="isQuantityOpen" @addProductQuantity="AddQuantity" :item-saved="savedProduct" :item="selectedProduct"></AddProductQunatity>
     <AddCustomerDialog v-model:is-add-open="isAddCustomerOpen" @refreshTable="getCustomers"></AddCustomerDialog>
-    <AddCustomerAddressDialog v-model:is-add-open="isAddCustomerAddressOpen" :customer="selectedCustomer"></AddCustomerAddressDialog>
+    <AddCustomerAddressDialog v-model:is-add-open="isAddCustomerAddressOpen" :customer="selectedCustomer" @refreshTable="closeModel"></AddCustomerAddressDialog>
   </div>
 </template>

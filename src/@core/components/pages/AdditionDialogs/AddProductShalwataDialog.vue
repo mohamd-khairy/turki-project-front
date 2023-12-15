@@ -29,6 +29,9 @@ const form = ref()
 const isLoading = ref(false)
 
 const resetForm = () => {
+  itemData.name_en = null
+  itemData.name_ar = null
+  itemData.price = null
   emit('update:isAddOpen', false)
 }
 
@@ -36,48 +39,36 @@ const refForm = ref(null)
 
 const onFormSubmit = async () => {
   isLoading.value = true
-
-  const res = refForm.value.validate()
-  if (res.valid) {
-    settingsListStore.storeProductShalwata(itemData).then(response => {
-      emit('refreshTable')
-      emit('update:isAddOpen', false)
-      settingsListStore.alertColor = "success"
-      settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
-      settingsListStore.isAlertShow = true
-      setTimeout(() => {
-        settingsListStore.isAlertShow = false
-        settingsListStore.alertMessage = ""
-      }, 2000)
-    }).catch(error => {
-      if (error.response.data.errors) {
-        const errs = Object.keys(error.response.data.errors)
-
-        errs.forEach(err => {
-          settingsListStore.alertMessage = t(`errors.${err}`)
-        })
-      } else {
-        settingsListStore.alertMessage = "حدث خطأ ما !"
-      }
-      isLoading.value = false
-      settingsListStore.alertColor = "error"
-      settingsListStore.isAlertShow = true
-      setTimeout(() => {
-        settingsListStore.isAlertShow = false
-        settingsListStore.alertMessage = ""
-      }, 2000)
-    })
-  }
-  else {
+  settingsListStore.storeProductShalwata(itemData).then(response => {
+    resetForm()
+    emit('refreshTable')
+    emit('update:isAddOpen', false)
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم إضافة العنصر بنجاح"
+    settingsListStore.isAlertShow = true
     isLoading.value = false
-    settingsListStore.alertMessage = "يرجي تعبئة الحقول المطلوبة !"
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
+  }).catch(error => {
+    if (error.response.data.errors) {
+      const errs = Object.keys(error.response.data.errors)
+
+      errs.forEach(err => {
+        settingsListStore.alertMessage = t(`errors.${err}`)
+      })
+    } else {
+      settingsListStore.alertMessage = "حدث خطأ ما !"
+    }
+    isLoading.value = false
     settingsListStore.alertColor = "error"
     settingsListStore.isAlertShow = true
     setTimeout(() => {
       settingsListStore.isAlertShow = false
       settingsListStore.alertMessage = ""
     }, 2000)
-  }
+  })
 }
 
 const dialogModelValueUpdate = val => {
@@ -92,7 +83,7 @@ const dialogModelValueUpdate = val => {
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
 
     <VCard
       class="pa-sm-9 pa-5"
@@ -124,7 +115,6 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="itemData.name_ar"
                 :label="t('forms.name_ar')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -134,7 +124,6 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="itemData.name_en"
                 :label="t('forms.name_en')"
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol
@@ -144,7 +133,6 @@ const dialogModelValueUpdate = val => {
               <VTextField
                 v-model="itemData.price"
                 :label="t('forms.price')"
-                :rules="[requiredValidator]"
               />
             </VCol>
 

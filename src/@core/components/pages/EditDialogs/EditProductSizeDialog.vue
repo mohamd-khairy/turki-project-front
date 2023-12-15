@@ -31,7 +31,7 @@ const itemData = reactive({
   price: null,
   sale_price: null,
   weight: null,
-  is_available_for_use: 0,
+  is_available_for_use: false,
 })
 
 const refForm = ref(null)
@@ -47,6 +47,7 @@ onUpdated(() => {
   itemData.price = props.item.price
   itemData.sale_price = props.item.sale_price
   itemData.weight = props.item.weight
+  itemData.is_available_for_use = props.item.use_again == 1 ? true : false
 })
 
 const onFormSubmit = async () => {
