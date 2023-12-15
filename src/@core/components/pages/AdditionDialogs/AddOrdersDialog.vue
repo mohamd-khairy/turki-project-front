@@ -189,6 +189,7 @@ const AddQuantity = data => {
   savedProduct.cut_id = data.cut_id
   savedProduct.size_id = data.size_id
   savedProduct.preparation_id = data.preparation_id
+
   itemData.products.push({
     product_id: selectedProduct.value.id,
     quantity: data.quantity ?? 0,
