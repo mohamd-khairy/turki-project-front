@@ -154,12 +154,14 @@ const openEdit = banner => {
             >
               {{ t('forms.image') }}
             </th>
-            <th
+            <!--
+              <th
               scope="col"
               class="font-weight-semibold"
-            >
+              >
               {{ t('forms.category_type') }}
-            </th>
+              </th> 
+            -->
             <!--            <th -->
             <!--              scope="col" -->
             <!--              class="font-weight-semibold" -->
@@ -239,9 +241,11 @@ const openEdit = banner => {
                 size="32"
               />
             </td>
-            <td>
+            <!--
+              <td>
               {{ banner.category ? banner.category.type_ar : "لا يوجد" }}
-            </td>
+              </td> 
+            -->
 
             <td
               v-can="'update-banner' || 'delete-banner'"

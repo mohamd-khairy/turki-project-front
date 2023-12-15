@@ -20,7 +20,9 @@ const ConvertToArabicNumbers = num => {
 <template>
   <VCard height="400">
     <VCardTitle class="text-end">
-      <router-link to="/orders">عرض جميع الطلبات</router-link>
+      <RouterLink to="/orders">
+        عرض جميع الطلبات
+      </RouterLink>
     </VCardTitle>
     <VTable class="text-no-wrap order-list-table">
       <thead>
@@ -53,9 +55,12 @@ const ConvertToArabicNumbers = num => {
       </thead>
 
       <tbody>
-        <tr v-for="(order, i) in props.orders" :key="i">
+        <tr
+          v-for="(order, i) in props.orders"
+          :key="i"
+        >
           <td>
-            #{{ ++i }}
+            #{{ order.ref_no }}
           </td>
           <td>
             {{ order.order_state }}
