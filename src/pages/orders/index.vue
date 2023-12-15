@@ -1,14 +1,13 @@
 <script setup>
-import moment from "moment"
-import { useI18n } from "vue-i18n"
-import { useOrdersStore } from "@/store/Orders"
-import { requiredValidator } from "@validators"
 import { useCitiesStore } from "@/store/Cities"
 import { useCountriesStore } from "@/store/Countries"
+import { useCouponsStore } from "@/store/Coupons"
 import { useEmployeesStore } from "@/store/Employees"
+import { useOrdersStore } from "@/store/Orders"
 import { useProductsStore } from "@/store/Products"
 import { useSettingsStore } from "@/store/Settings"
-import { useCouponsStore } from "@/store/Coupons"
+import moment from "moment"
+import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
 const router = useRouter()
@@ -168,12 +167,12 @@ const filterOrders = () => {
 
 const clearFilter = () => {
   filters.city_ids = [],
-    filters.country_ids = [],
-    filters.order_state_ids = [],
-    filters.date_from = null,
-    filters.date_to = null,
-    filters.delivery_date = null,
-    filters.customer_id = null
+  filters.country_ids = [],
+  filters.order_state_ids = [],
+  filters.date_from = null,
+  filters.date_to = null,
+  filters.delivery_date = null,
+  filters.customer_id = null
   filterOrders()
 }
 
@@ -211,11 +210,22 @@ const formatDateTime = data => {
   <div>
     <VCard class="mb-5 pa-5">
       <VRow>
-        <VCol cols="12" lg="3" md="4" sm="6">
+        <VCol
+          cols="12"
+          lg="3"
+          md="4"
+          sm="6"
+        >
           <VRow>
-            <VCol cols="12" class="d-flex align-center gap-3">
+            <VCol
+              cols="12"
+              class="d-flex align-center gap-3"
+            >
               <div class="icon">
-                <VIcon icon="material-symbols:globe" color="primary"></VIcon>
+                <VIcon
+                  icon="material-symbols:globe"
+                  color="primary"
+                />
               </div>
               <VSelect
                 v-model="filters.country_ids"
@@ -226,9 +236,15 @@ const formatDateTime = data => {
                 :disabled="isLoading"
               />
             </VCol>
-            <VCol cols="12" class="d-flex align-center gap-3">
+            <VCol
+              cols="12"
+              class="d-flex align-center gap-3"
+            >
               <div class="icon">
-                <VIcon icon="solar:city-broken" color="primary"></VIcon>
+                <VIcon
+                  icon="solar:city-broken"
+                  color="primary"
+                />
               </div>
               <VSelect
                 v-model="filters.city_ids"
@@ -242,11 +258,22 @@ const formatDateTime = data => {
             </VCol>
           </VRow>
         </VCol>
-        <VCol cols="12" lg="3" md="4" sm="6">
+        <VCol
+          cols="12"
+          lg="3"
+          md="4"
+          sm="6"
+        >
           <VRow>
-            <VCol cols="12" class="d-flex align-center gap-3">
+            <VCol
+              cols="12"
+              class="d-flex align-center gap-3"
+            >
               <div class="icon">
-                <VIcon icon="solar:delivery-broken" color="primary"></VIcon>
+                <VIcon
+                  icon="solar:delivery-broken"
+                  color="primary"
+                />
               </div>
               <VSelect
                 v-model="filters.order_state_ids"
@@ -258,9 +285,15 @@ const formatDateTime = data => {
                 :disabled="isLoading"
               />
             </VCol>
-            <VCol cols="12" class="d-flex align-center gap-3">
+            <VCol
+              cols="12"
+              class="d-flex align-center gap-3"
+            >
               <div class="icon">
-                <VIcon icon="clarity:users-line" color="primary"></VIcon>
+                <VIcon
+                  icon="clarity:users-line"
+                  color="primary"
+                />
               </div>
               <VSelect
                 v-model="filters.customer_id"
@@ -273,11 +306,22 @@ const formatDateTime = data => {
             </VCol>
           </VRow>
         </VCol>
-        <VCol cols="12" lg="3" md="4" sm="6">
+        <VCol
+          cols="12"
+          lg="3"
+          md="4"
+          sm="6"
+        >
           <VRow>
-            <VCol cols="12" class="d-flex align-center gap-3">
+            <VCol
+              cols="12"
+              class="d-flex align-center gap-3"
+            >
               <div class="icon">
-                <VIcon icon="fluent-mdl2:date-time" color="primary"></VIcon>
+                <VIcon
+                  icon="fluent-mdl2:date-time"
+                  color="primary"
+                />
               </div>
               <VTextField
                 v-model="filters.date_from"
@@ -286,9 +330,15 @@ const formatDateTime = data => {
                 :disabled="isLoading"
               />
             </VCol>
-            <VCol cols="12" class="d-flex align-center gap-3">
+            <VCol
+              cols="12"
+              class="d-flex align-center gap-3"
+            >
               <div class="icon">
-                <VIcon icon="fluent-mdl2:date-time" color="primary"></VIcon>
+                <VIcon
+                  icon="fluent-mdl2:date-time"
+                  color="primary"
+                />
               </div>
               <VTextField
                 v-model="filters.date_to"
@@ -299,11 +349,22 @@ const formatDateTime = data => {
             </VCol>
           </VRow>
         </VCol>
-        <VCol cols="12" lg="3" md="4" sm="6">
+        <VCol
+          cols="12"
+          lg="3"
+          md="4"
+          sm="6"
+        >
           <VRow>
-            <VCol cols="12" class="d-flex align-center gap-3">
+            <VCol
+              cols="12"
+              class="d-flex align-center gap-3"
+            >
               <div class="icon">
-                <VIcon icon="fluent-mdl2:date-time" color="primary"></VIcon>
+                <VIcon
+                  icon="fluent-mdl2:date-time"
+                  color="primary"
+                />
               </div>
               <VTextField
                 v-model="filters.delivery_date"
@@ -312,7 +373,10 @@ const formatDateTime = data => {
                 :disabled="isLoading"
               />
             </VCol>
-            <VCol cols="12" class="d-flex align-center gap-3">
+            <VCol
+              cols="12"
+              class="d-flex align-center gap-3"
+            >
               <VBtn
                 v-if="!isLoading"
                 prepend-icon="solar:filter-bold-duotone"
@@ -327,7 +391,11 @@ const formatDateTime = data => {
                 type="submit"
                 class="position-relative me-3 w-100"
               >
-                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
+                <VIcon
+                  icon="mingcute:loading-line"
+                  class="loading"
+                  size="32"
+                />
               </VBtn>
               <VBtn
                 prepend-icon="healthicons:x"
@@ -344,7 +412,11 @@ const formatDateTime = data => {
     </VCard>
     <VCard :loading="isLoading">
       <VCardTitle class="d-flex align-center">
-        <VIcon icon="solar:delivery-broken" size="24" color="primary"></VIcon>
+        <VIcon
+          icon="solar:delivery-broken"
+          size="24"
+          color="primary"
+        />
         <span class="mx-1">{{ t('Orders') }}</span>
       </VCardTitle>
       <VCardText class="d-flex align-center flex-wrap gap-2 py-4">
@@ -359,189 +431,196 @@ const formatDateTime = data => {
         </div>
         <VBtn
           prepend-icon="tabler-plus"
-          @click="isAddOpen = true"
           :disabled="isLoading"
+          @click="isAddOpen = true"
         >
           إضافة طلب
         </VBtn>
 
-        <VSpacer/>
-
-
+        <VSpacer />
       </VCardText>
 
-      <VDivider/>
+      <VDivider />
 
       <VTable class="text-no-wrap product-list-table">
         <thead>
-        <tr>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
+          <tr>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            />
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.id') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.customer_name') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.address_address') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.delivery_date') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.order_state_ar') }} <span class="text-primary">( {{ t('forms.click_change_status') }} )</span>
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.order_payment_status') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.order_subtotal') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.payment_type_name') }}
+            </th>
+            <!--
+              <th
+              scope="col"
+              class="font-weight-semibold"
+              >
+              {{ t('forms.total_amount') }}
+              </th> 
+            -->
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.total_amount_after_discount') }}
+            </th>
 
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.id') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.customer_name') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.address_address') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.delivery_date') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.order_state_ar') }} <span class="text-primary">( {{ t('forms.click_change_status') }} )</span>
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.order_payment_status') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.order_subtotal') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.payment_type_name') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.total_amount') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.total_amount_after_discount') }}
-          </th>
-
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.created_at') }}
-          </th>
-          <th
-            scope="col"
-            class="font-weight-semibold"
-          >
-            {{ t('forms.actions') }}
-          </th>
-        </tr>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.created_at') }}
+            </th>
+            <th
+              scope="col"
+              class="font-weight-semibold"
+            >
+              {{ t('forms.actions') }}
+            </th>
+          </tr>
         </thead>
 
         <tbody v-if="!isLoading">
-        <tr
-          v-for="(order, i) in orders"
-          :key="order.id"
-        >
-          <td>
-            #{{ ConvertToArabicNumbers(Intl.NumberFormat().format(++i)) }}
-          </td>
-          <td>
-            {{order.ref_no}}
-          </td>
-          <td>
-            {{ order.customer_name }}
-          </td>
-          <td>
-            {{ order.address_address.toString().length > 20 ? order.address_address.toString().slice(0,20) + "..." : order.address_address }}
-          </td>
-          <td>
-            {{ ConvertToArabicNumbers(order.delivery_date) }}
-          </td>
-          <td @click="openEdit(order)">
-            <VChip style="cursor: pointer">{{ order.order_state_ar }}</VChip>
-          </td>
-          <td>
-            <VChip style="cursor: pointer" :class="{'text-error': order.paid == 0, 'text-success': order.paid == 1}">{{ order.paid == 1 ? "مدفوع" : "غير مدفوع" }}</VChip>
-          </td>
-          <td>
-            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.order_subtotal)) }}
-          </td>
-          <td>
-            {{ order.payment_type_name }}
-          </td>
-          <td>
-            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount)) }}
-          </td>
-          <td>
-            {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount_after_discount)) }}
-          </td>
-          <td>
-            {{ ConvertToArabicNumbers(formatDateTime(order.created_at).date) }}
-          </td>
-          <td>
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-              @click="openInvoice(order)"
-            >
-              <VIcon
-                :size="22"
-                icon="iconamoon:invoice-thin"
-              />
-            </VBtn>
-            <VBtn
-              icon
-              variant="plain"
-              color="default"
-              size="x-small"
-              @click="openDetails(order)"
-            >
-              <VIcon
-                :size="22"
-                icon="tabler-eye"
-              />
-            </VBtn>
-          </td>
-        </tr>
+          <tr
+            v-for="(order, i) in orders"
+            :key="order.id"
+          >
+            <td>
+              #{{ ConvertToArabicNumbers(Intl.NumberFormat().format(++i)) }}
+            </td>
+            <td>
+              {{ order.ref_no }}
+            </td>
+            <td>
+              {{ order.customer_name }}
+            </td>
+            <td>
+              {{ order.address_address.toString().length > 20 ? order.address_address.toString().slice(0,20) + "..." : order.address_address }}
+            </td>
+            <td>
+              {{ ConvertToArabicNumbers(order.delivery_date) }}
+            </td>
+            <td @click="openEdit(order)">
+              <VChip style="cursor: pointer;">
+                {{ order.order_state_ar }}
+              </VChip>
+            </td>
+            <td>
+              <VChip
+                style="cursor: pointer;"
+                :class="{'text-error': order.paid == 0, 'text-success': order.paid == 1}"
+              >
+                {{ order.paid == 1 ? "مدفوع" : "غير مدفوع" }}
+              </VChip>
+            </td>
+            <td>
+              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.order_subtotal)) }}
+            </td>
+            <td>
+              {{ order.payment_type_name }}
+            </td>
+            <!--
+              <td>
+              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount)) }}
+              </td> 
+            -->
+            <td>
+              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount_after_discount)) }}
+            </td>
+            <td>
+              {{ ConvertToArabicNumbers(formatDateTime(order.created_at).date) }}
+            </td>
+            <td>
+              <VBtn
+                icon
+                variant="plain"
+                color="default"
+                size="x-small"
+                @click="openInvoice(order)"
+              >
+                <VIcon
+                  :size="22"
+                  icon="iconamoon:invoice-thin"
+                />
+              </VBtn>
+              <VBtn
+                icon
+                variant="plain"
+                color="default"
+                size="x-small"
+                @click="openDetails(order)"
+              >
+                <VIcon
+                  :size="22"
+                  icon="tabler-eye"
+                />
+              </VBtn>
+            </td>
+          </tr>
         </tbody>
 
         <!-- 👉 table footer  -->
         <tfoot v-show="orders.length == 0">
-        <tr>
-          <td
-            colspan="8"
-            class="text-center text-body-1"
-          >
-            لا يوجد بيانات
-          </td>
-        </tr>
+          <tr>
+            <td
+              colspan="8"
+              class="text-center text-body-1"
+            >
+              لا يوجد بيانات
+            </td>
+          </tr>
         </tfoot>
       </VTable>
       <!-- !SECTION -->
 
-      <VDivider/>
+      <VDivider />
 
       <VCardText class="d-flex align-center flex-wrap justify-space-between gap-4 py-3">
         <span class="text-sm text-disabled">{{ paginationData }}</span>
@@ -556,14 +635,24 @@ const formatDateTime = data => {
         />
       </VCardText>
     </VCard>
-    <OrderInvoice :item="selectedOrder" v-model:is-open="isOpen"/>
-    <AddOrdersDialog v-model:is-add-open="isAddOpen" @refreshTable="getOrders" :products="products"
-                     :countries="countries"
-                     :cities="cities"
-                     :customers="customers"
-                     :deliveryPeriods="deliveryPeriods"
-                     :coupons="coupons"
+    <OrderInvoice
+      v-model:is-open="isOpen"
+      :item="selectedOrder"
     />
-    <EditOrderDialog :item="selectedOrder" v-model:is-edit-open="isEditOpen" @refreshTable="getOrders"/>
+    <AddOrdersDialog
+      v-model:is-add-open="isAddOpen"
+      :products="products"
+      :countries="countries"
+      :cities="cities"
+      :customers="customers"
+      :delivery-periods="deliveryPeriods"
+      :coupons="coupons"
+      @refreshTable="getOrders"
+    />
+    <EditOrderDialog
+      v-model:is-edit-open="isEditOpen"
+      :item="selectedOrder"
+      @refreshTable="getOrders"
+    />
   </div>
 </template>
