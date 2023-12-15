@@ -82,7 +82,6 @@ const dialogModelValueUpdate = val => {
 }
 
 onUpdated(() => {
-  console.log("ITEM SAVED => ", props.itemSaved)
   isLoadingCuts.value = true
   isLoadingSizes.value = true
   isLoadingPreparations.value = true

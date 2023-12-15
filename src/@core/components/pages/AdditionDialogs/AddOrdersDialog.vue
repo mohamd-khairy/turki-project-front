@@ -68,7 +68,13 @@ const itemData = reactive({
   products: [],
 })
 
-const savedProduct = ref({})
+const savedProduct = reactive({
+  quantity: 1,
+  cut_id: null,
+  size_id: null,
+  preparation_id: null,
+})
+
 const isLoading = ref(false)
 const isAddCustomerOpen = ref(false)
 const isAddCustomerAddressOpen = ref(false)
@@ -171,10 +177,18 @@ const closeModel = () => {
   getCustomers()
 }
 
+const resetItem = () => {
+  savedProduct.quantity = 1
+  savedProduct.cut_id = null
+  savedProduct.size_id = null
+  savedProduct.preparation_id = null
+}
 
 const AddQuantity = data => {
-  console.log("ITEM COLLECTED => ", data)
-  savedProduct.value = data
+  savedProduct.quantity = data.quantity ?? 1
+  savedProduct.cut_id = data.cut_id
+  savedProduct.size_id = data.size_id
+  savedProduct.preparation_id = data.preparation_id
   itemData.products.push({
     product_id: selectedProduct.value.id,
     quantity: data.quantity ?? 0,
@@ -182,6 +196,7 @@ const AddQuantity = data => {
     size_id: data.size_id ?? null,
     preparation_id: data.preparation_id ?? null,
   })
+  resetItem()
 }
 
 onMounted(() => {
