@@ -114,6 +114,19 @@ const resetForm = () => {
 
 const refForm = ref(null)
 
+watch(() => bannerData.type, (newVal,oldVal) => {
+  if (newVal == 0) {
+    bannerData.redirect_url = null
+    bannerData.product_id = null
+  }
+  if (newVal == 1) {
+    bannerData.product_id = null
+  }
+  if (newVal == 2) {
+    bannerData.redirect_url = null
+  }
+})
+
 const onFormSubmit = async () => {
   isLoading.value = true
 
