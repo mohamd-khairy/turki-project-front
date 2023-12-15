@@ -194,7 +194,7 @@ const formatDateTime = data => {
 <!--            {{ order.subject ? order.subject.name_ar ? order.subject.name_ar : '-' : '-' }}-->
 <!--          </td>-->
           <td>
-            <div v-for="(attr, ind) in order.properties.attributes" :key="ind">
+            <div v-for="(attr, ind) in order.properties.attributes" :key="ind" class="mb-1">
               <VChip>{{ attr }}</VChip>
               :
               <VChip> {{ ind }} </VChip>

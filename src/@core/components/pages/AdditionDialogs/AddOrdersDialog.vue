@@ -165,6 +165,29 @@ const onFormSubmit = async () => {
 const getProductData = ev => {
   isQuantityOpen.value = true
   selectedProduct.value = ev
+
+  let targetId = ev.id
+  let indexToRemove = -1
+
+  itemData.products.some((obj, index) => {
+    if (obj.product_id === targetId) {
+      indexToRemove = index
+      savedProduct.quantity = obj.quantity
+      savedProduct.cut_id = obj.cut_id
+      savedProduct.size_id = obj.size_id
+      savedProduct.preparation_id = obj.preparation_id
+
+      return true // Found the object, exit the loop
+    }
+    else {
+      savedProduct.quantity = null
+      savedProduct.cut_id = null
+      savedProduct.size_id = null
+      savedProduct.preparation_id = null
+    }
+
+    return false // Continue searching
+  })
 }
 
 const dialogModelValueUpdate = val => {
@@ -190,6 +213,24 @@ const AddQuantity = data => {
   savedProduct.size_id = data.size_id
   savedProduct.preparation_id = data.preparation_id
 
+  let targetId = data.id
+
+  let indexToRemove = -1 // Initialize to -1, indicating no match found
+
+  itemData.products.some((obj, index) => {
+    if (obj.product_id === targetId) {
+      indexToRemove = index
+
+      return true // Found the object, exit the loop
+    }
+
+    return false // Continue searching
+  })
+  if (indexToRemove !== -1) {
+    // Remove the object with the matching ID
+    itemData.products.splice(indexToRemove, 1)
+  }
+
   itemData.products.push({
     product_id: selectedProduct.value.id,
     quantity: data.quantity ?? 0,
@@ -197,7 +238,8 @@ const AddQuantity = data => {
     size_id: data.size_id ?? null,
     preparation_id: data.preparation_id ?? null,
   })
-  resetItem()
+  console.log(data, itemData.products)
+  // resetItem()
 }
 
 onMounted(() => {

@@ -296,6 +296,7 @@
     "use_times_per_user": "عدد إستخدام الكوبون للمستخدم",
     "sub_category": "الفئة الفرعية",
     "sub_categories": "الفئات الفرعية",
+    "updated_at": "تاريخ التعديل",
     "statuses": {
       "active": "نشط",
       "inactive": "غير نشط",

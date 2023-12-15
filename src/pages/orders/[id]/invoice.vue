@@ -152,7 +152,7 @@ onMounted(() => {
               <td>{{ product.cut ? product.cut.name_ar : "لا يوجد" }}</td>
               <td>{{ product.preparation ? product.preparation.name_ar : "لا يوجد" }}</td>
               <td>{{ product.price ?? (product.total_price / product.quantity) }}</td>
-              <td>{{ product.shalwata ?? "لا يوجد" }}</td>
+              <td>{{ product.shalwata ? "مع شلوطة" :  "بدون شلوطة" }}</td>
               <td>{{ product.total_price ?? "لا يوجد" }}</td>
             </tr>
             <tr>

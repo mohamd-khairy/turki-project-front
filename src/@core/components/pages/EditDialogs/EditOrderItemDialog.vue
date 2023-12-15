@@ -33,7 +33,7 @@ const props = defineProps({
 
 const emit = defineEmits([
   'update:isEditProductOpen',
-  'refrshTable',
+  'refreshTable',
 ])
 
 const ordersListStore = useOrdersStore()
@@ -60,7 +60,6 @@ const resetForm = () => {
 }
 
 onUpdated(() => {
-  console.log(typeof props.item.preparation , props.item.preparation)
   itemData.order_product_id = props.item ? props.item.id : 0
   itemData.quantity = props.item ? props.item.quantity : 0
   if (typeof props.item.preparation == 'object') {
@@ -91,7 +90,7 @@ const onFormSubmit = async () => {
   const res = await refForm.value.validate()
   if (res.valid) {
     ordersListStore.editOrderProduct(itemData).then(response => {
-      emit('refrshTable')
+      emit('refreshTable')
       emit('update:isEditProductOpen', false)
       settingsListStore.alertColor = "success"
       settingsListStore.alertMessage = "تم تعديل حالة الطلب بنجاح"
@@ -158,7 +157,7 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit" ref="bannerData">
+        <VForm @submit.prevent="onFormSubmit" ref="refForm">
           <VRow>
             <VCol
               cols="12"

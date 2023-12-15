@@ -155,7 +155,7 @@ onMounted(() => {
             </span>
           </h1>
           <p class="mb-5">
-            {{ order ? order.order.comment : "لا يوجد" }}
+            {{ order.order.comment ? order.order.comment : "لا يوجد ملاحظات" }}
           </p>
 
           <div class="order-detail mt-5">
@@ -165,7 +165,7 @@ onMounted(() => {
                 تفاصيل الطلب
               </span>
             </h2>
-            <div>
+            <div class="d-flex gap-2 flex-wrap">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -226,8 +226,6 @@ onMounted(() => {
                   }}
                 </VChip>
               </h3>
-            </div>
-            <div class="order-price">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -303,7 +301,7 @@ onMounted(() => {
                 >
                   {{
                     order.order.applied_discount_code ? order.order.applied_discount_code : "لا يوجد"
-                  }} 
+                  }}
                 </VChip>
               </h3>
               <h3 class="text-base font-weight-bold mb-2">
@@ -344,8 +342,6 @@ onMounted(() => {
                   }} ريال
                 </VChip>
               </h3>
-            </div>
-            <div class="order-price">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -364,8 +360,6 @@ onMounted(() => {
                   }}
                 </VChip>
               </h3>
-            </div>
-            <div class="order-price">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -385,8 +379,6 @@ onMounted(() => {
                   }}
                 </VChip>
               </h3>
-            </div>
-            <div class="order-price">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -405,8 +397,6 @@ onMounted(() => {
                   }}
                 </VChip>
               </h3>
-            </div>
-            <div class="order-price">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -425,8 +415,6 @@ onMounted(() => {
                   }}
                 </VChip>
               </h3>
-            </div>
-            <div class="order-price">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -509,7 +497,7 @@ onMounted(() => {
                     </td>
                     <td class="px-2">
                       <span class="text-success font-weight-bold">
-                        {{ ConvertToArabicNumbers(Intl.NumberFormat().format(product.total_price)) }} ريال
+                        {{ product.size ? ConvertToArabicNumbers(Intl.NumberFormat().format(product.size.sale_price * product.quantity)) : "غير معروف" }} ريال
                       </span>
                     </td>
                     <td>
@@ -658,7 +646,7 @@ img {
   content: "";
   inline-size: 50%;
   inset-block-end: 0;
-  inset-inline-end: 0;
+  inset-inline-end: 50%;
 }
 
 .order-detail h2 {
@@ -693,9 +681,9 @@ img {
 
 @media screen and (min-width: 992px) {
   .card {
-    display: grid;
-    grid-gap: 1rem;
-    grid-template-columns: 2fr 2fr;
+    //display: grid;
+    //grid-gap: 1rem;
+    //grid-template-columns: 2fr 2fr;
   }
 
   .card-wrapper {
