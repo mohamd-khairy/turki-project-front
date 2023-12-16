@@ -60,7 +60,7 @@ const ConvertToArabicNumbers = num => {
           :key="i"
         >
           <td>
-            #{{ order.ref_no }}
+            #{{ order.id }}
           </td>
           <td>
             {{ order.order_state }}
