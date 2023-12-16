@@ -85,7 +85,7 @@ const resetForm = () => {
 }
 
 const changeDate = ev => {
-  itemData.delivery_date = moment(delivery_date.value).format("YY-MM-DD")
+  itemData.delivery_date = moment(delivery_date.value).format("YYYY-MM-DD")
 }
 
 watch(() => itemData.customer_id, (newVal, oldVal) => {
