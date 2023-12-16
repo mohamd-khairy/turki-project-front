@@ -13,11 +13,6 @@ dist
 dist-ssr
 *.local
 
-jsconfig.json
-vite.config.js
-src/@iconify/icons-bundle.js
-
-
 /cypress/videos/
 /cypress/screenshots/
 

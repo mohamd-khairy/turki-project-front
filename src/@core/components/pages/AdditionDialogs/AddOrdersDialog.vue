@@ -55,6 +55,8 @@ const delivery_date = ref(null)
 const cities = ref([])
 const selectedProducts = ref([])
 const customers = ref([])
+const customersCopy = ref([])
+const searchTerm = ref('')
 
 const itemData = reactive({
   customer_id: null,
@@ -105,6 +107,7 @@ const getCustomers = () => {
   itemData.customer_id = null
   customersListStore.fetchCustomers({ wallet: 'all' }).then(response => {
     customers.value = response.data.data
+    customersCopy.value = response.data.data
   })
 }
 
@@ -243,6 +246,15 @@ const AddQuantity = data => {
   // resetItem()
 }
 
+const searchCustomer = e => {
+  if(!searchTerm.value){
+    customers.value = customersCopy.value
+  }
+  customers.value = customers.value.filter(customer => {    
+    return customer.name.toLowerCase().indexOf(searchTerm.value.toLowerCase()) > -1 || customer.mobile.toLowerCase().indexOf(searchTerm.value.toLowerCase()) > -1
+  })
+}
+
 onMounted(() => {
   getCustomers()
 })
@@ -297,7 +309,20 @@ onMounted(() => {
                       item-title="name_mobile"
                       item-value="id"
                       :rules="[requiredValidator]"
-                    />
+                    >
+                      <template #prepend-item>
+                        <VListItem>
+                          <VListItemContent>
+                            <VTextField
+                              v-model="searchTerm"
+                              placeholder="Search"
+                              @input="searchCustomer"
+                            />
+                          </VListItemContent>
+                        </VListItem>
+                        <VDivider class="mt-2" />
+                      </template>
+                    </VSelect>
                   </VCol>
                   <VCol
                     cols="12"

@@ -20,6 +20,7 @@ const settingsListStore = useSettingsStore()
 const customersListStore = useEmployeesStore()
 const couponsListStore = useCouponsStore()
 const searchQuery = ref('')
+const searchTerm = ref('')
 const selectedStatus = ref()
 const rowPerPage = ref(10)
 const currentPage = ref(1)
@@ -28,6 +29,7 @@ const totalOrders = ref(0)
 const orders = ref([])
 const cities = ref([])
 const customers = ref([])
+const customersCopy = ref([])
 const countries = ref([])
 const products = ref([])
 const coupons = ref([])
@@ -72,6 +74,7 @@ onMounted(() => {
   })
   customersListStore.fetchCustomers({ wallet: "all" }).then(response => {
     customers.value = response.data.data
+    customersCopy.value = response.data.data
   })
 })
 
@@ -137,6 +140,16 @@ const paginateOrders = computed(() => {
 // const filteredItems = () => {
 //   return orders.value.filter(item => item.name.toLowerCase().includes(searchQuery.value.toString()))
 // }
+
+const searchCustomer = e => {
+  if(!searchTerm.value){
+    customers.value = customersCopy.value
+  }
+  customers.value = customers.value.filter(customer => {    
+    return customer.name.toLowerCase().indexOf(searchTerm.value.toLowerCase()) > -1 || customer.mobile.toLowerCase().indexOf(searchTerm.value.toLowerCase()) > -1
+  })
+}
+
 
 const nextPage = () => {
   if ((currentPage.value * rowPerPage.value) < orders.value.length) currentPage.value
@@ -302,7 +315,20 @@ const formatDateTime = data => {
                 item-title="name_mobile"
                 item-value="id"
                 :disabled="isLoading"
-              />
+              >
+                <template #prepend-item>
+                  <VListItem>
+                    <VListItemContent>
+                      <VTextField
+                        v-model="searchTerm"
+                        placeholder="Search"
+                        @input="searchCustomer"
+                      />
+                    </VListItemContent>
+                  </VListItem>
+                  <VDivider class="mt-2" />
+                </template>
+              </VSelect>
             </VCol>
           </VRow>
         </VCol>
