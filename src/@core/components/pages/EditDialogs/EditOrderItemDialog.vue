@@ -1,12 +1,12 @@
 <script setup>
-import { useI18n } from "vue-i18n"
-import {
-  requiredValidator,
-} from '@validators'
-import { useSettingsStore } from "@/store/Settings"
-import { useOrdersStore } from "@/store/Orders"
 import { useEmployeesStore } from "@/store/Employees"
+import { useOrdersStore } from "@/store/Orders"
 import { useProductsStore } from "@/store/Products"
+import { useSettingsStore } from "@/store/Settings"
+import {
+requiredValidator,
+} from '@validators'
+import { useI18n } from "vue-i18n"
 
 const props = defineProps({
   isEditProductOpen: {
@@ -104,6 +104,7 @@ const onFormSubmit = async () => {
     }).catch(error => {
       if (error.response.data.errors) {
         const errs = Object.keys(error.response.data.errors)
+
         errs.forEach(err => {
           settingsListStore.alertMessage = t(`errors.${err}`)
         })
@@ -142,14 +143,18 @@ const dialogModelValueUpdate = val => {
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
 
     <VCard
       class="pa-sm-9 pa-5"
     >
       <VCardItem>
         <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-          <VIcon icon="solar:delivery-broken" size="24" color="primary"></VIcon>
+          <VIcon
+            icon="solar:delivery-broken"
+            size="24"
+            color="primary"
+          />
           <span class="mx-1 my-1">
             تعديل تفاصيل المنتج
           </span>
@@ -158,16 +163,23 @@ const dialogModelValueUpdate = val => {
 
       <VCardText>
         <!-- 👉 Form -->
-        <VForm @submit.prevent="onFormSubmit" ref="bannerData">
+        <VForm
+          ref="refForm"
+          @submit.prevent="onFormSubmit"
+        >
           <VRow>
             <VCol
               cols="12"
               md="6"
             >
-              <VTextField v-model="itemData.quantity" :label="t('forms.quantity')"></VTextField>
+              <VTextField
+                v-model="itemData.quantity"
+                :label="t('forms.quantity')"
+              />
             </VCol>
-            <VCol cols="12"
-                  md="6"
+            <VCol
+              cols="12"
+              md="6"
             >
               <VSelect
                 v-model="itemData.cut_ids"
@@ -179,8 +191,9 @@ const dialogModelValueUpdate = val => {
                 :rules="[requiredValidator]"
               />
             </VCol>
-            <VCol cols="12"
-                  md="6"
+            <VCol
+              cols="12"
+              md="6"
             >
               <VSelect
                 v-model="itemData.size_ids"
@@ -192,8 +205,9 @@ const dialogModelValueUpdate = val => {
                 :rules="[requiredValidator]"
               />
             </VCol>
-            <VCol cols="12"
-                  md="6"
+            <VCol
+              cols="12"
+              md="6"
             >
               <VSelect
                 v-model="itemData.preparation_ids"
@@ -221,7 +235,11 @@ const dialogModelValueUpdate = val => {
                 type="submit"
                 class="position-relative me-3"
               >
-                <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
+                <VIcon
+                  icon="mingcute:loading-line"
+                  class="loading"
+                  size="32"
+                />
               </VBtn>
 
               <VBtn
