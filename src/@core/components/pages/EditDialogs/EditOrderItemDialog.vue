@@ -59,22 +59,22 @@ const resetForm = () => {
 
 onUpdated(() => {
   itemData.order_product_id = props.item ? props.item.id : 0
-  itemData.quantity = props.item ? props.item.quantity : 0
+  itemData.quantity = props.item ? props.item.quantity : 1
   if (typeof props.item.preparation == 'object') {
     // itemData.cut_ids.push(props.item.preparation)
-    itemData.preparation_ids = [props.item.preparation]
+    itemData.preparation_ids = props.item.preparation.id
   }else {
     itemData.preparation_ids = props.item.preparation
   }
   if (typeof props.item.cut == 'object') {
     // itemData.cut_ids.push(props.item.preparation)
-    itemData.cut_ids = [props.item.cut]
+    itemData.cut_ids = props.item.cut.id
   }else {
     itemData.cut_ids = props.item.cut
   }
   if (typeof props.item.size == 'object') {
     // itemData.size_ids.push(props.item.preparation)
-    itemData.size_ids = [props.item.size]
+    itemData.size_ids = props.item.size.id
   }else {
     itemData.size_ids = props.item.size
   }

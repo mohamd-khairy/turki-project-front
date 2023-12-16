@@ -299,7 +299,7 @@ const formatDateTime = data => {
                 v-model="filters.customer_id"
                 :items="customers"
                 label="العميل"
-                item-title="name"
+                item-title="name_mobile"
                 item-value="id"
                 :disabled="isLoading"
               />
@@ -442,13 +442,9 @@ const formatDateTime = data => {
 
       <VDivider />
 
-      <VTable class="text-no-wrap product-list-table">
+      <VTable class="text-no-wrap product-list-table text-center">
         <thead>
           <tr>
-            <th
-              scope="col"
-              class="font-weight-semibold"
-            />
             <th
               scope="col"
               class="font-weight-semibold"
@@ -477,7 +473,7 @@ const formatDateTime = data => {
               scope="col"
               class="font-weight-semibold"
             >
-              {{ t('forms.order_state_ar') }} <span class="text-primary">( {{ t('forms.click_change_status') }} )</span>
+              {{ t('forms.order_state_ar') }} <br><span class="text-primary">( {{ t('forms.click_change_status') }} )</span>
             </th>
             <th
               scope="col"
@@ -485,12 +481,14 @@ const formatDateTime = data => {
             >
               {{ t('forms.order_payment_status') }}
             </th>
-            <th
+            <!--
+              <th
               scope="col"
               class="font-weight-semibold"
-            >
+              >
               {{ t('forms.order_subtotal') }}
-            </th>
+              </th> 
+            -->
             <th
               scope="col"
               class="font-weight-semibold"
@@ -512,12 +510,14 @@ const formatDateTime = data => {
               {{ t('forms.total_amount_after_discount') }}
             </th>
 
-            <th
+            <!--
+              <th
               scope="col"
               class="font-weight-semibold"
-            >
+              >
               {{ t('forms.created_at') }}
-            </th>
+              </th> 
+            -->
             <th
               scope="col"
               class="font-weight-semibold"
@@ -532,20 +532,22 @@ const formatDateTime = data => {
             v-for="(order, i) in orders"
             :key="order.id"
           >
-            <td>
+            <!--
+              <td>
               #{{ ConvertToArabicNumbers(Intl.NumberFormat().format(++i)) }}
-            </td>
+              </td> 
+            -->
             <td>
               {{ order.ref_no }}
             </td>
             <td>
-              {{ order.customer_name }}
+              {{ order.customer_name + '(' + order.customer_mobile +')' }}
             </td>
             <td>
               {{ order.address_address.toString().length > 20 ? order.address_address.toString().slice(0,20) + "..." : order.address_address }}
             </td>
             <td>
-              {{ ConvertToArabicNumbers(order.delivery_date) }}
+              {{ ConvertToArabicNumbers(formatDateTime(order.delivery_date).date) }}
             </td>
             <td @click="openEdit(order)">
               <VChip style="cursor: pointer;">
@@ -560,9 +562,11 @@ const formatDateTime = data => {
                 {{ order.paid == 1 ? "مدفوع" : "غير مدفوع" }}
               </VChip>
             </td>
-            <td>
+            <!--
+              <td>
               {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.order_subtotal)) }}
-            </td>
+              </td> 
+            -->
             <td>
               {{ order.payment_type_name }}
             </td>
@@ -574,9 +578,11 @@ const formatDateTime = data => {
             <td>
               {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount_after_discount)) }}
             </td>
-            <td>
+            <!--
+              <td>
               {{ ConvertToArabicNumbers(formatDateTime(order.created_at).date) }}
-            </td>
+              </td> 
+            -->
             <td>
               <VBtn
                 icon

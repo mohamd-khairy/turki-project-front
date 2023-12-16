@@ -189,22 +189,6 @@ onMounted(() => {
                   class="ml-2"
                 />
                 <span>
-                  تاريخ التوصيل :
-                </span>
-                <VChip
-                  size="large"
-                  class="font-weight-bold"
-                >
-                  {{ ConvertToArabicNumbers(order.order.delivery_date) }}
-                </VChip>
-              </h3>
-              <h3 class="text-base font-weight-bold mb-2">
-                <VIcon
-                  icon="arcticons:destiny-item-manager"
-                  color="primary"
-                  class="ml-2"
-                />
-                <span>
                   توقيت الطلب :
                 </span>
                 <VChip
@@ -224,6 +208,33 @@ onMounted(() => {
                           .toLowerCase() + "صباحاً",
                     )
                   }}
+                </VChip>
+              </h3>
+              <h3 class="text-base font-weight-bold mb-2">
+                <VIcon
+                  icon="arcticons:destiny-item-manager"
+                  color="primary"
+                  class="ml-2"
+                />
+                <span>
+                  تاريخ التوصيل :
+                </span>
+                <VChip
+                  size="large"
+                  class="font-weight-bold"
+                >
+                  {{ ConvertToArabicNumbers(formatDateTime(order.order.delivery_date).date) }}
+                </VChip>
+              </h3>
+              <h3>
+                <span>
+                  توقيت التوصيل :
+                </span>
+                <VChip
+                  size="large"
+                  class="font-weight-bold"
+                >
+                  {{ order.order.delivery_period.name_ar }}
                 </VChip>
               </h3>
               <h3 class="text-base font-weight-bold mb-2">
@@ -472,6 +483,11 @@ onMounted(() => {
                     <th>
                       الكمية
                     </th>
+                    <th>الكرشة</th>
+                    <th>الكوارع</th>
+                    <th>اللية</th>
+                    <th>الرأس</th>
+                    <th>الشلوطة</th>
                     <th>
                       السعر
                     </th>
@@ -497,6 +513,11 @@ onMounted(() => {
                         {{ ConvertToArabicNumbers(product.quantity) }}
                       </span>
                     </td>
+                    <td>{{ product.is_karashah ? "مع كرشة" : "بدون كرشة" }}</td>
+                    <td>{{ product.is_kwar3 ? "مع كوارع" : "بدون كوارع" }}</td>
+                    <td>{{ product.is_lyh ? "مع لية" : "بدون لية" }}</td>
+                    <td>{{ product.is_Ras ? "مع رأس" : "بدون رأس" }}</td>
+                    <td>{{ product.shalwata ? "مع شلوطة" : "بدون شلوطة" }}</td>
                     <td class="px-2">
                       <span class="text-success font-weight-bold">
                         {{ product.size ? ConvertToArabicNumbers(Intl.NumberFormat().format(product.size.sale_price * product.quantity)) : "غير معروف" }} ريال

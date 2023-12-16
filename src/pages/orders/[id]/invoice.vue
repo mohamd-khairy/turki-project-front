@@ -226,8 +226,12 @@ onMounted(() => {
                 <th>الكمية</th>
                 <th>التقطيع</th>
                 <th>التجهيز</th>
-                <th>السعر</th>
+                <th>الكرشة</th>
+                <th>الكوارع</th>
+                <th>اللية</th>
+                <th>الرأس</th>
                 <th>الشلوطة</th>
+                <th>السعر</th>
                 <th>الاجمالي</th>
               </tr>
             </thead>
@@ -241,77 +245,81 @@ onMounted(() => {
                 <td>{{ product.quantity ? product.quantity : "لا يوجد" }}</td>
                 <td>{{ product.cut ? product.cut.name_ar : "لا يوجد" }}</td>
                 <td>{{ product.preparation ? product.preparation.name_ar : "لا يوجد" }}</td>
-                <td>{{ product.price ?? (product.total_price / product.quantity) }}</td>
+                <td>{{ product.is_karashah ? "مع كرشة" : "بدون كرشة" }}</td>
+                <td>{{ product.is_kwar3 ? "مع كوارع" : "بدون كوارع" }}</td>
+                <td>{{ product.is_lyh ? "مع لية" : "بدون لية" }}</td>
+                <td>{{ product.is_Ras ? "مع رأس" : "بدون رأس" }}</td>
                 <td>{{ product.shalwata ? "مع شلوطة" : "بدون شلوطة" }}</td>
+                <td>{{ product.price ?? (product.total_price / product.quantity) }}</td>
                 <td>{{ product.total_price ?? "لا يوجد" }}</td>
               </tr>
               <tr>
-                <td colspan="2">
+                <td colspan="4">
                   الإجمالي شامل الضريبة
                 </td>
-                <td colspan="6">
+                <td colspan="8">
                   {{ Number(order.order.order_subtotal) }} ريال سعودي
                 </td>
               </tr>
               <tr>
-                <td colspan="2">
+                <td colspan="4">
                   الخصم
                 </td>
-                <td colspan="6">
+                <td colspan="8">
                   {{ order.order.discount_applied ?? 0 }} ريال سعودي
                 </td>
               </tr>
               <tr>
-                <td colspan="2">
+                <td colspan="4">
                   الإجمالي غير شامل الضريبة بعد الخصم
                 </td>
-                <td colspan="6">
+                <td colspan="8">
                   {{ order.order.total_amount_after_tax ?? 0 }} ريال سعودي
                 </td>
               </tr>
               <tr>
-                <td colspan="2">
+                <td colspan="4">
                   ضريبة القيمة المضافة
                 </td>
-                <td colspan="6">
+                <td colspan="8">
                   {{ order.order.tax_fees }} ريال سعودي
                 </td>
               </tr>
               <tr>
-                <td colspan="2">
+                <td colspan="4">
                   الإجمالي شامل الضريبة بعد الخصم
                 </td>
-                <td colspan="6">
+                <td colspan="8">
                   {{ order.order.total_amount_after_discount ?? 0 }} ريال سعودي
                 </td>
               </tr>
               <tr>
-                <td colspan="2">
+                <td colspan="4">
                   المسدد
                 </td>
-                <td colspan="6">
+                <td colspan="8">
                   {{ order.order.payment ? order.order.payment.price : 0 }} ريال سعودي
                 </td>
               </tr>
               <tr>
-                <td colspan="2">
+                <td colspan="4">
                   إجمالي المتبقي
                 </td>
-                <td colspan="6">
+                <td colspan="8">
                   {{ order.order.payment ? order.order.total_amount - order.order.payment.price < 0 ? 0 : order.order.total_amount_after_discount - order.order.payment.price : order.order.total_amount }} ريال سعودي
                 </td>
               </tr>
               <tr>
-                <td colspan="2">
+                <td colspan="4">
                   الملاحظة
                 </td>
-                <td colspan="6">
+                <td colspan="8">
                   {{ order.order.comment ?? "لا يوجد" }}
                 </td>
               </tr>
               <tr>
                 <td
-                  colspan="8"
+                  colspan="12"
                   class="text-center"
                 >
                   جميع الأسعار تشمل الضريبة
