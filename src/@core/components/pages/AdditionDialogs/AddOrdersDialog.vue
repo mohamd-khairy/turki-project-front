@@ -1,15 +1,15 @@
 <script setup>
 import AddProductQunatity from "@/pages/orders/[id]/AddProductQunatity.vue"
-import { useI18n } from "vue-i18n"
 import {
-  requiredValidator,
+requiredValidator,
 } from '@validators'
+import { useI18n } from "vue-i18n"
 
-import { useSettingsStore } from "@/store/Settings"
-import { useOrdersStore } from "@/store/Orders"
-import moment from "moment"
 import { useCitiesStore } from "@/store/Cities"
 import { useEmployeesStore } from "@/store/Employees"
+import { useOrdersStore } from "@/store/Orders"
+import { useSettingsStore } from "@/store/Settings"
+import moment from "moment"
 
 const props = defineProps({
   isAddOpen: {
@@ -110,9 +110,8 @@ const getCustomers = () => {
 
 const getAddresses = () => {
   let selected_customer = customers.value.filter(obj => obj.id === itemData.customer_id)
-  let addresses = selected_customer[0].addresses
-
-  return addresses
+  
+  return selected_customer[0].addresses
 }
 
 const refForm = ref(null)
@@ -135,6 +134,7 @@ const onFormSubmit = async () => {
     }).catch(error => {
       if (error.response.data.errors) {
         const errs = Object.keys(error.response.data.errors)
+
         errs.forEach(err => {
           settingsListStore.alertMessage = t(`errors.${err}`)
         })
@@ -165,6 +165,29 @@ const onFormSubmit = async () => {
 const getProductData = ev => {
   isQuantityOpen.value = true
   selectedProduct.value = ev
+
+  let targetId = ev.id
+  let indexToRemove = -1
+
+  itemData.products.some((obj, index) => {
+    if (obj.product_id === targetId) {
+      indexToRemove = index
+      savedProduct.quantity = obj.quantity
+      savedProduct.cut_id = obj.cut_id
+      savedProduct.size_id = obj.size_id
+      savedProduct.preparation_id = obj.preparation_id
+
+      return true // Found the object, exit the loop
+    }
+    else {
+      savedProduct.quantity = null
+      savedProduct.cut_id = null
+      savedProduct.size_id = null
+      savedProduct.preparation_id = null
+    }
+
+    return false // Continue searching
+  })
 }
 
 const dialogModelValueUpdate = val => {
@@ -189,6 +212,25 @@ const AddQuantity = data => {
   savedProduct.cut_id = data.cut_id
   savedProduct.size_id = data.size_id
   savedProduct.preparation_id = data.preparation_id
+
+  let targetId = data.id
+
+  let indexToRemove = -1 // Initialize to -1, indicating no match found
+
+  itemData.products.some((obj, index) => {
+    if (obj.product_id === targetId) {
+      indexToRemove = index
+
+      return true // Found the object, exit the loop
+    }
+
+    return false // Continue searching
+  })
+  if (indexToRemove !== -1) {
+    // Remove the object with the matching ID
+    itemData.products.splice(indexToRemove, 1)
+  }
+
   itemData.products.push({
     product_id: selectedProduct.value.id,
     quantity: data.quantity ?? 0,
@@ -196,7 +238,9 @@ const AddQuantity = data => {
     size_id: data.size_id ?? null,
     preparation_id: data.preparation_id ?? null,
   })
-  resetItem()
+  console.log(data, itemData.products)
+
+  // resetItem()
 }
 
 onMounted(() => {
@@ -212,58 +256,78 @@ onMounted(() => {
       @update:model-value="dialogModelValueUpdate"
     >
       <!-- Dialog close btn -->
-      <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
+      <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
 
       <VCard
         class="pa-sm-9 pa-5"
       >
         <VCardItem>
           <VCardTitle class="text-h5 d-flex flex-column align-center gap-2 text-center mb-3">
-            <VIcon icon="solar:tag-broken" size="24"
-                   color="primary"
-            ></VIcon>
+            <VIcon
+              icon="solar:tag-broken"
+              size="24"
+              color="primary"
+            />
             <span class="mx-1 my-1">
-            {{ t('Add_Item') }}
-          </span>
+              {{ t('Add_Item') }}
+            </span>
           </VCardTitle>
         </VCardItem>
 
         <VCardText>
           <!-- 👉 Form -->
-          <VForm @submit.prevent="onFormSubmit" ref="refForm">
+          <VForm
+            ref="refForm"
+            @submit.prevent="onFormSubmit"
+          >
             <VRow>
               <VCol
                 cols="12"
               >
                 <VRow align="center">
-                  <VCol cols="12" lg="10" sm="12">
+                  <VCol
+                    cols="12"
+                    lg="10"
+                    sm="12"
+                  >
                     <VSelect
                       v-model="itemData.customer_id"
                       :items="customers"
                       :label="t('Customers')"
-                      item-title="name"
+                      item-title="name_mobile"
                       item-value="id"
                       :rules="[requiredValidator]"
                     />
                   </VCol>
-                  <VCol cols="12" lg="2" sm="12">
+                  <VCol
+                    cols="12"
+                    lg="2"
+                    sm="12"
+                  >
                     <VBtn
                       type="button"
                       size="small"
                       class="position-relative me-3"
                       @click="isAddCustomerOpen = true"
                     >
-                      <VIcon icon="material-symbols-light:add" size="24"></VIcon>
+                      <VIcon
+                        icon="material-symbols-light:add"
+                        size="24"
+                      />
                     </VBtn>
                   </VCol>
                 </VRow>
               </VCol>
               <VCol
-                cols="12"
                 v-if="itemData.customer_id !== null"
+                cols="12"
               >
                 <VRow align="center">
-                  <VCol cols="12" lg="10" sm="12">
+                  <VCol
+                    cols="12"
+                    lg="10"
+                    sm="12"
+                  >
                     <VSelect
                       v-model="itemData.address_id"
                       :items="addresses"
@@ -273,14 +337,21 @@ onMounted(() => {
                       :rules="[requiredValidator]"
                     />
                   </VCol>
-                  <VCol cols="12" lg="2" sm="12">
+                  <VCol
+                    cols="12"
+                    lg="2"
+                    sm="12"
+                  >
                     <VBtn
                       type="button"
                       size="small"
                       class="position-relative me-3"
                       @click="isAddCustomerAddressOpen = true"
                     >
-                      <VIcon icon="material-symbols-light:add" size="24"></VIcon>
+                      <VIcon
+                        icon="material-symbols-light:add"
+                        size="24"
+                      />
                     </VBtn>
                   </VCol>
                 </VRow>
@@ -356,13 +427,18 @@ onMounted(() => {
                   return-object
                   multiple
                   :rules="[requiredValidator]"
-                >
-                </VSelect>
+                />
                 <span class="text-sm mt-1 font-weight-bold">* إضغط علي المنتج لإستكمال البيانات (مطلوب)</span>
                 <div class="mt-2">
-                  <v-chip class="mx-2" label v-for="pd in selectedProducts" :key="pd.id" @click.prevent.stop="getProductData(pd)">
+                  <VChip
+                    v-for="pd in selectedProducts"
+                    :key="pd.id"
+                    class="mx-2"
+                    label
+                    @click.prevent.stop="getProductData(pd)"
+                  >
                     <span>{{ pd.name_ar }}</span>
-                  </v-chip>
+                  </VChip>
                 </div>
               </VCol>
               <VCol
@@ -389,7 +465,11 @@ onMounted(() => {
                   type="submit"
                   class="position-relative me-3"
                 >
-                  <VIcon icon="mingcute:loading-line" class="loading" size="32"></VIcon>
+                  <VIcon
+                    icon="mingcute:loading-line"
+                    class="loading"
+                    size="32"
+                  />
                 </VBtn>
 
                 <VBtn
@@ -406,8 +486,20 @@ onMounted(() => {
       </VCard>
     </VDialog>
 
-    <AddProductQunatity v-model:is-add-open="isQuantityOpen" @addProductQuantity="AddQuantity" :item-saved="savedProduct" :item="selectedProduct"></AddProductQunatity>
-    <AddCustomerDialog v-model:is-add-open="isAddCustomerOpen" @refreshTable="getCustomers"></AddCustomerDialog>
-    <AddCustomerAddressDialog v-model:is-add-open="isAddCustomerAddressOpen" :customer="selectedCustomer" @refreshTable="closeModel"></AddCustomerAddressDialog>
+    <AddProductQunatity
+      v-model:is-add-open="isQuantityOpen"
+      :item-saved="savedProduct"
+      :item="selectedProduct"
+      @addProductQuantity="AddQuantity"
+    />
+    <AddCustomerDialog
+      v-model:is-add-open="isAddCustomerOpen"
+      @refreshTable="getCustomers"
+    />
+    <AddCustomerAddressDialog
+      v-model:is-add-open="isAddCustomerAddressOpen"
+      :customer="selectedCustomer"
+      @refreshTable="closeModel"
+    />
   </div>
 </template>

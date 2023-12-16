@@ -70,9 +70,9 @@ const resetForm = () => {
   itemData.order_id = null
   itemData.product_id = null
   itemData.quantity = null
-  itemData.cut_ids = []
-  itemData.size_ids = []
-  itemData.preparation_ids = []
+  itemData.cut_ids = null
+  itemData.size_ids = null
+  itemData.preparation_ids = null
   emit('update:isAddOpen', false)
 }
 
@@ -169,7 +169,6 @@ const dialogModelValueUpdate = val => {
             >
               <VTextField v-model="itemData.quantity"
                           :label="t('forms.quantity')"
-                          :rules="[requiredValidator]"
               ></VTextField>
             </VCol>
             <VCol cols="12"
@@ -181,8 +180,6 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.product_cut')"
                 item-title="name_ar"
                 item-value="id"
-                multiple
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol cols="12"
@@ -194,7 +191,6 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.product_size')"
                 item-title="name_ar"
                 item-value="id"
-                multiple
                 :rules="[requiredValidator]"
               />
             </VCol>
@@ -207,8 +203,6 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.product_preparation')"
                 item-title="name_ar"
                 item-value="id"
-                multiple
-                :rules="[requiredValidator]"
               />
             </VCol>
             <VCol

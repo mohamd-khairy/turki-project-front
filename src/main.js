@@ -26,7 +26,7 @@ app.directive('can', {
 
     if (!userPermissions.includes(requiredPermission) && requiredPermission !== "show") {
       el.style.display = 'none'
-      if(el.parentNode.getAttribute('class') !== "ps nav-items ps__rtl") {
+      if(!el.parentNode.getAttribute('class').includes("ps nav-items")) {
         // Insert a placeholder element
         const placeholder = document.createElement('div')
         const textContent = document.createElement('span')

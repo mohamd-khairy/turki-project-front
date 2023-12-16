@@ -97,6 +97,7 @@ const filterCustomers = () => {
 
 const clearFilter = () => {
   filters.wallet = "all"
+  searchQuery.value = null
   getCustomers()
   isFiltered.value = false
 }

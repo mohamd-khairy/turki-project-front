@@ -119,7 +119,6 @@ const getSelectedLocation = loc => {
   location.lng = loc.lng
   countryData.latitude = loc.lat
   countryData.longitude = loc.lng
-  console.log()
 }
 </script>
 
@@ -214,12 +213,11 @@ const getSelectedLocation = loc => {
               lg="12"
               sm="6"
             >
-              <pre style="display: none">LAT => {{location.lat }} - LNG => {{location.lng}}</pre>
               <MapAutoComplete @select-location="getSelectedLocation"></MapAutoComplete>
               <GoogleMap
                 api-key="AIzaSyCM2TngqydZtVlZ5hkKjY7x56ut59TTI88"
                 style="width: 100%; height: 500px"
-                :center="location"
+                :center="{lat: location.lat, lng: location.lng }"
                 :zoom="5"
               >
                 <Marker

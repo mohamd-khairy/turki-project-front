@@ -155,7 +155,7 @@ onMounted(() => {
             </span>
           </h1>
           <p class="mb-5">
-            {{ order ? order.order.comment : "لا يوجد" }}
+            {{ order.order.comment ? order.order.comment : "لا يوجد ملاحظات علي الطلب" }}
           </p>
 
           <div class="order-detail mt-5">
@@ -165,7 +165,7 @@ onMounted(() => {
                 تفاصيل الطلب
               </span>
             </h2>
-            <div>
+            <div class="d-flex gap-2 flex-wrap">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -195,7 +195,7 @@ onMounted(() => {
                   size="large"
                   class="font-weight-bold"
                 >
-                  {{ ConvertToArabicNumbers(order.order.delivery_date.toString().split('-')[1] + "-" + order.order.delivery_date.toString().split('-')[0]) }}
+                  {{ ConvertToArabicNumbers(order.order.delivery_date) }}
                 </VChip>
               </h3>
               <h3 class="text-base font-weight-bold mb-2">
@@ -226,8 +226,6 @@ onMounted(() => {
                   }}
                 </VChip>
               </h3>
-            </div>
-            <div class="order-price">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -268,25 +266,27 @@ onMounted(() => {
                   ريال
                 </VChip>
               </h3>
-              <h3 class="text-base font-weight-bold mb-2">
+              <!--
+                <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
-                  icon="arcticons:destiny-item-manager"
-                  color="primary"
-                  class="ml-2"
+                icon="arcticons:destiny-item-manager"
+                color="primary"
+                class="ml-2"
                 />
                 <span>
-                  المجموع الكلي :
+                المجموع الكلي :
                 </span>
                 <VChip
-                  size="large"
-                  class="font-weight-bold"
-                  :class="{'text-error': order['sale price'] === 'undefined', 'text-success': order['sale price'] !== 'undefined' }"
+                size="large"
+                class="font-weight-bold"
+                :class="{'text-error': order['sale price'] === 'undefined', 'text-success': order['sale price'] !== 'undefined' }"
                 >
-                  {{
-                    order.order.total_amount !== "undefined" ? ConvertToArabicNumbers(order.order.total_amount) : ConvertToArabicNumbers(0)
-                  }} ريال
+                {{
+                order.order.total_amount !== "undefined" ? ConvertToArabicNumbers(order.order.total_amount) : ConvertToArabicNumbers(0)
+                }} ريال
                 </VChip>
-              </h3>
+                </h3> 
+              -->
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -303,7 +303,7 @@ onMounted(() => {
                 >
                   {{
                     order.order.applied_discount_code ? order.order.applied_discount_code : "لا يوجد"
-                  }} 
+                  }}
                 </VChip>
               </h3>
               <h3 class="text-base font-weight-bold mb-2">
@@ -344,8 +344,6 @@ onMounted(() => {
                   }} ريال
                 </VChip>
               </h3>
-            </div>
-            <div class="order-price">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -364,8 +362,6 @@ onMounted(() => {
                   }}
                 </VChip>
               </h3>
-            </div>
-            <div class="order-price">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -381,12 +377,10 @@ onMounted(() => {
                   :class="{'text-error': order.order.selected_address.address === 'undefined', 'text-success': order.order.selected_address.address !== 'undefined' }"
                 >
                   {{
-                    order.order.selected_address.address !== "undefined" ? order.order.selected_address.address : "لا يوجد"
+                    order.order.selected_address.address !== "undefined" ? ConvertToArabicNumbers(order.order.selected_address.address) : "لا يوجد"
                   }}
                 </VChip>
               </h3>
-            </div>
-            <div class="order-price">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -405,8 +399,6 @@ onMounted(() => {
                   }}
                 </VChip>
               </h3>
-            </div>
-            <div class="order-price">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -425,8 +417,6 @@ onMounted(() => {
                   }}
                 </VChip>
               </h3>
-            </div>
-            <div class="order-price">
               <h3 class="text-base font-weight-bold mb-2">
                 <VIcon
                   icon="arcticons:destiny-item-manager"
@@ -509,7 +499,7 @@ onMounted(() => {
                     </td>
                     <td class="px-2">
                       <span class="text-success font-weight-bold">
-                        {{ ConvertToArabicNumbers(Intl.NumberFormat().format(product.total_price)) }} ريال
+                        {{ product.size ? ConvertToArabicNumbers(Intl.NumberFormat().format(product.size.sale_price * product.quantity)) : "غير معروف" }} ريال
                       </span>
                     </td>
                     <td>
@@ -658,7 +648,7 @@ img {
   content: "";
   inline-size: 50%;
   inset-block-end: 0;
-  inset-inline-end: 0;
+  inset-inline-end: 50%;
 }
 
 .order-detail h2 {
@@ -693,9 +683,9 @@ img {
 
 @media screen and (min-width: 992px) {
   .card {
-    display: grid;
-    grid-gap: 1rem;
-    grid-template-columns: 2fr 2fr;
+    //display: grid;
+    //grid-gap: 1rem;
+    //grid-template-columns: 2fr 2fr;
   }
 
   .card-wrapper {

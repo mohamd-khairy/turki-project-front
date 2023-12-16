@@ -114,6 +114,19 @@ const resetForm = () => {
 
 const refForm = ref(null)
 
+watch(() => bannerData.type, (newVal,oldVal) => {
+  if (newVal == 0) {
+    bannerData.redirect_url = null
+    bannerData.product_id = null
+  }
+  if (newVal == 1) {
+    bannerData.product_id = null
+  }
+  if (newVal == 2) {
+    bannerData.redirect_url = null
+  }
+})
+
 const onFormSubmit = async () => {
   isLoading.value = true
 
@@ -188,6 +201,13 @@ const dialogModelValueUpdate = val => {
         <!-- 👉 Form -->
         <VForm ref="refForm" @submit.prevent="onFormSubmit">
           <VRow>
+            <VCol
+              cols="12"
+            >
+              <div class="d-flex justify-center align-center">
+                <img :src="props.banner.url" alt="" class="banner-logo">
+              </div>
+            </VCol>
             <VCol
               cols="12"
               md="6"
@@ -291,6 +311,7 @@ const dialogModelValueUpdate = val => {
               />
             </VCol>
 
+
             <VCol
               cols="12"
               class="text-center"
@@ -324,3 +345,12 @@ const dialogModelValueUpdate = val => {
     </VCard>
   </VDialog>
 </template>
+
+<style>
+.banner-logo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+</style>

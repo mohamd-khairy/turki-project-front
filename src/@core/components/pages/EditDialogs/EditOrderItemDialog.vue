@@ -3,9 +3,7 @@ import { useEmployeesStore } from "@/store/Employees"
 import { useOrdersStore } from "@/store/Orders"
 import { useProductsStore } from "@/store/Products"
 import { useSettingsStore } from "@/store/Settings"
-import {
-requiredValidator,
-} from '@validators'
+import { requiredValidator } from '@validators'
 import { useI18n } from "vue-i18n"
 
 const props = defineProps({
@@ -33,7 +31,7 @@ const props = defineProps({
 
 const emit = defineEmits([
   'update:isEditProductOpen',
-  'refrshTable',
+  'refreshTable',
 ])
 
 const ordersListStore = useOrdersStore()
@@ -60,7 +58,6 @@ const resetForm = () => {
 }
 
 onUpdated(() => {
-  console.log(typeof props.item.preparation , props.item.preparation)
   itemData.order_product_id = props.item ? props.item.id : 0
   itemData.quantity = props.item ? props.item.quantity : 0
   if (typeof props.item.preparation == 'object') {
@@ -91,7 +88,7 @@ const onFormSubmit = async () => {
   const res = await refForm.value.validate()
   if (res.valid) {
     ordersListStore.editOrderProduct(itemData).then(response => {
-      emit('refrshTable')
+      emit('refreshTable')
       emit('update:isEditProductOpen', false)
       settingsListStore.alertColor = "success"
       settingsListStore.alertMessage = "تم تعديل حالة الطلب بنجاح"
@@ -187,7 +184,6 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.product_cut')"
                 item-title="name_ar"
                 item-value="id"
-                multiple
                 :rules="[requiredValidator]"
               />
             </VCol>
@@ -201,7 +197,6 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.product_size')"
                 item-title="name_ar"
                 item-value="id"
-                multiple
                 :rules="[requiredValidator]"
               />
             </VCol>
@@ -215,7 +210,6 @@ const dialogModelValueUpdate = val => {
                 :label="t('forms.product_preparation')"
                 item-title="name_ar"
                 item-value="id"
-                multiple
                 :rules="[requiredValidator]"
               />
             </VCol>
