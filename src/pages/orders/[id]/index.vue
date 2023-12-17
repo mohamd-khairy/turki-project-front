@@ -513,11 +513,12 @@ onMounted(() => {
                         {{ ConvertToArabicNumbers(product.quantity) }}
                       </span>
                     </td>
-                    <td>{{ product.is_karashah ? "مع كرشة" : "بدون كرشة" }}</td>
-                    <td>{{ product.is_kwar3 ? "مع كوارع" : "بدون كوارع" }}</td>
-                    <td>{{ product.is_lyh ? "مع لية" : "بدون لية" }}</td>
-                    <td>{{ product.is_Ras ? "مع رأس" : "بدون رأس" }}</td>
-                    <td>{{ product.shalwata ? "مع شلوطة" : "بدون شلوطة" }}</td>
+                    <td>{{ product.is_karashah ? "بدون" : "" }}</td>
+                    <td>{{ product.is_kwar3 ? "بدون" : "" }}</td>
+                    <td>{{ product.is_lyh ? "بدون" : "" }}</td>
+                    <td>{{ product.is_Ras ? "بدون" : "" }}</td>
+                    <td>{{ product.shalwata ? "مع شلوطة" : "بدون" }}</td>
+                
                     <td class="px-2">
                       <span class="text-success font-weight-bold">
                         {{ product.size ? ConvertToArabicNumbers(Intl.NumberFormat().format(product.size.sale_price * product.quantity)) : "غير معروف" }} ريال
