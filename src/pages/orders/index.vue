@@ -53,6 +53,7 @@ const filters = reactive({
   date_to: null,
   delivery_date: null,
   customer_id: null,
+  delivery_period_id: null,
 })
 
 onMounted(() => {
@@ -96,6 +97,7 @@ const getOrders = () => {
     date_from: filters.date_from,
     date_to: filters.date_to,
     delivery_date: filters.delivery_date,
+    delivery_period_id: filters.delivery_period_id,
     customer_id: filters.customer_id,
 
   }).then(response => {
@@ -145,7 +147,7 @@ const searchCustomer = e => {
   if(!searchTerm.value){
     customers.value = customersCopy.value
   }
-  customers.value = customers.value.filter(customer => {    
+  customers.value = customers.value.filter(customer => {
     return customer.name.toLowerCase().indexOf(searchTerm.value.toLowerCase()) > -1 || customer.mobile.toLowerCase().indexOf(searchTerm.value.toLowerCase()) > -1
   })
 }
@@ -185,6 +187,7 @@ const clearFilter = () => {
   filters.date_from = null,
   filters.date_to = null,
   filters.delivery_date = null,
+  filters.delivery_period_id = null,
   filters.customer_id = null
   filterOrders()
 }
@@ -317,17 +320,64 @@ const formatDateTime = data => {
                 :disabled="isLoading"
               >
                 <template #prepend-item>
-                  <VListItem>
-                    <VListItemContent>
-                      <VTextField
-                        v-model="searchTerm"
-                        placeholder="Search"
-                        @input="searchCustomer"
-                      />
-                    </VListItemContent>
-                  </VListItem>
+                  <VTextField
+                    v-model="searchTerm"
+                    class="mx-2"
+                    clearable
+                    placeholder="ابحث عن العميل"
+                    @input="searchCustomer"
+                  />
                   <VDivider class="mt-2" />
                 </template>
+              </VSelect>
+            </VCol>
+          </VRow>
+        </VCol>
+        <VCol
+          cols="12"
+          lg="3"
+          md="4"
+          sm="6"
+        >
+          <VRow>
+            <VCol
+              cols="12"
+              class="d-flex align-center gap-3"
+            >
+              <div class="icon">
+                <VIcon
+                  icon="solar:delivery-broken"
+                  color="primary"
+                />
+              </div>
+              <VSelect
+                v-model="filters.order_state_ids"
+                :items="orderStatuses"
+                label="حالة الطلب"
+                item-title="state_ar"
+                item-value="code"
+                multiple
+                :disabled="isLoading"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              class="d-flex align-center gap-3"
+            >
+              <div class="icon">
+                <VIcon
+                  icon="fluent-mdl2:date-time"
+                  color="primary"
+                />
+              </div>
+              <VSelect
+                v-model="filters.delivery_period_id"
+                :items="deliveryPeriods"
+                :label="t('Delivery_Periods')"
+                item-title="name_ar"
+                item-value="id"
+                :disabled="isLoading"
+              >
               </VSelect>
             </VCol>
           </VRow>
@@ -399,40 +449,42 @@ const formatDateTime = data => {
                 :disabled="isLoading"
               />
             </VCol>
-            <VCol
-              cols="12"
-              class="d-flex align-center gap-3"
-            >
-              <VBtn
-                v-if="!isLoading"
-                prepend-icon="solar:filter-bold-duotone"
-                class="w-50"
-                :disabled="isLoading"
-                @click.stop="filterOrders"
-              >
-                {{ t('Filter') }}
-              </VBtn>
-              <VBtn
-                v-else
-                type="submit"
-                class="position-relative me-3 w-100"
-              >
-                <VIcon
-                  icon="mingcute:loading-line"
-                  class="loading"
-                  size="32"
-                />
-              </VBtn>
-              <VBtn
-                prepend-icon="healthicons:x"
-                class="w-50"
-                :disabled="isLoading || !isFiltered"
-                @click.stop="clearFilter"
-              >
-                {{ t('Clear_Filter') }}
-              </VBtn>
-            </VCol>
           </VRow>
+        </VCol>
+        <VCol
+          cols="12"
+          md="4"
+          sm="6"
+          class="d-flex align-center gap-3"
+        >
+          <VBtn
+            v-if="!isLoading"
+            prepend-icon="solar:filter-bold-duotone"
+            class="w-50"
+            :disabled="isLoading"
+            @click.stop="filterOrders"
+          >
+            {{ t('Filter') }}
+          </VBtn>
+          <VBtn
+            v-else
+            type="submit"
+            class="position-relative me-3 w-100"
+          >
+            <VIcon
+              icon="mingcute:loading-line"
+              class="loading"
+              size="32"
+            />
+          </VBtn>
+          <VBtn
+            prepend-icon="healthicons:x"
+            class="w-50"
+            :disabled="isLoading || !isFiltered"
+            @click.stop="clearFilter"
+          >
+            {{ t('Clear_Filter') }}
+          </VBtn>
         </VCol>
       </VRow>
     </VCard>
@@ -513,7 +565,7 @@ const formatDateTime = data => {
               class="font-weight-semibold"
               >
               {{ t('forms.order_subtotal') }}
-              </th> 
+              </th>
             -->
             <th
               scope="col"
@@ -527,7 +579,7 @@ const formatDateTime = data => {
               class="font-weight-semibold"
               >
               {{ t('forms.total_amount') }}
-              </th> 
+              </th>
             -->
             <th
               scope="col"
@@ -542,7 +594,7 @@ const formatDateTime = data => {
               class="font-weight-semibold"
               >
               {{ t('forms.created_at') }}
-              </th> 
+              </th>
             -->
             <th
               scope="col"
@@ -561,7 +613,7 @@ const formatDateTime = data => {
             <!--
               <td>
               #{{ ConvertToArabicNumbers(Intl.NumberFormat().format(++i)) }}
-              </td> 
+              </td>
             -->
             <td>
               {{ order.ref_no }}
@@ -591,7 +643,7 @@ const formatDateTime = data => {
             <!--
               <td>
               {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.order_subtotal)) }}
-              </td> 
+              </td>
             -->
             <td>
               {{ order.payment_type_name }}
@@ -599,7 +651,7 @@ const formatDateTime = data => {
             <!--
               <td>
               {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount)) }}
-              </td> 
+              </td>
             -->
             <td>
               {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount_after_discount)) }}
@@ -607,7 +659,7 @@ const formatDateTime = data => {
             <!--
               <td>
               {{ ConvertToArabicNumbers(formatDateTime(order.created_at).date) }}
-              </td> 
+              </td>
             -->
             <td>
               <VBtn

@@ -48,6 +48,9 @@ export const useOrdersStore = defineStore('OrdersStore', {
     fetchOrder(refrence_id) {
       return axios.get(`/orders/get-one-order/${refrence_id}`)
     },
+    removeDiscount(refrence_id){
+      return axios.delete(`/order/remove-dicount/${refrence_id}`)
+    },
     editOrder(data) {
       return axios.post(`/orders/edit-order`, data)
     },
