@@ -25,8 +25,26 @@ const { t } = useI18n()
 
 const i18n = useI18n()
 
-const addProductCoupon = () => {
-  console.log("ADDED")
+const removeDiscount = product => {
+  ordersListStore.removeDiscount(product.id).then(() => {
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم إزالة الكوبون بنجاح"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
+    isDeleteing.value = false
+  }).catch(error => {
+    isDeleteing.value = false
+    settingsListStore.alertColor = "error"
+    settingsListStore.alertMessage = "حدث خطأ ما !"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
+  })
 }
 
 const openProductEdit = item => {
@@ -525,37 +543,64 @@ onMounted(() => {
                       </span>
                     </td>
                     <td>
-                      <VBtn
-                        icon
-                        variant="plain"
-                        color="default"
-                        size="x-small"
-                        @click="openProductEdit(product)"
-                      >
-                        <VIcon
-                          :size="22"
-                          icon="ph:pencil-line"
-                        />
-                      </VBtn>
-                      <VBtn
-                        icon
-                        variant="plain"
-                        color="default"
-                        size="x-small"
-                        @click="deleteProduct(product)"
-                      >
-                        <VIcon
-                          v-if="!isDeleteing"
-                          :size="22"
-                          icon="mingcute:delete-line"
-                        />
-                        <VIcon
-                          v-else
-                          icon="mingcute:loading-line"
-                          class="loading"
-                          size="32"
-                        />
-                      </VBtn>
+                      <VTooltip text="إزالة الكوبون من المنتج">
+                        <template #activator="{ props }">
+                          <VBtn
+                            v-bind="props"
+                            icon
+                            variant="plain"
+                            color="default"
+                            size="x-small"
+                            @click="removeDiscount(product)"
+                          >
+                            <VIcon
+                              :size="22"
+                              icon="streamline:discount-percent-coupon"
+                            />
+                          </VBtn>
+                        </template>
+                      </VTooltip>
+                      <VTooltip text="تعديل المنتج">
+                        <template #activator="{ props }">
+                          <VBtn
+                            v-bind="props"
+                            icon
+                            variant="plain"
+                            color="default"
+                            size="x-small"
+                            @click="openProductEdit(product)"
+                          >
+                            <VIcon
+                              :size="22"
+                              icon="ph:pencil-line"
+                            />
+                          </VBtn>
+                        </template>
+                      </VTooltip>
+                      <VTooltip text="حذف المنتج">
+                        <template #activator="{ props }">
+                          <VBtn
+                            v-bind="props"
+                            icon
+                            variant="plain"
+                            color="default"
+                            size="x-small"
+                            @click="deleteProduct(product)"
+                          >
+                            <VIcon
+                              v-if="!isDeleteing"
+                              :size="22"
+                              icon="mingcute:delete-line"
+                            />
+                            <VIcon
+                              v-else
+                              icon="mingcute:loading-line"
+                              class="loading"
+                              size="32"
+                            />
+                          </VBtn>
+                        </template>
+                      </VTooltip>
                     </td>
                   </tr>
                 </tbody>

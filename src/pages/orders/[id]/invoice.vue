@@ -1,6 +1,9 @@
 <script setup>
 import { useOrdersStore } from "@/store/Orders"
 import moment from "moment"
+import axios from "@axios"
+
+const value = ref('qrcode')
 
 const ordersListStore = useOrdersStore()
 const route = useRoute()
@@ -328,6 +331,10 @@ onMounted(() => {
             </tbody>
           </VTable>
         </VCol>
+      </VRow>
+      <VRow class="mt-3">
+        <img :src="order.order.qr" alt="رمز الاستجاةب السريعة" width="300" class="mx-auto" v-if="order.order.qr">
+        <img src="@/assets/images/logo.png" alt="najdiya"  width="300" class="mx-auto" v-else>
       </VRow>
     </div>
   </div>
