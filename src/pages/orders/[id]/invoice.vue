@@ -158,7 +158,7 @@ onMounted(() => {
               class="ml-2"
             />
             <span>الجوال: </span>
-            <span class="text-primary">{{ order.order.customer.mobile }}</span>
+            <span class="text-primary">{{ ConvertToArabicNumbers(order.order.customer.mobile) }}</span>
           </h3>
           <h3 class="mb-2">
             <VIcon
@@ -168,7 +168,7 @@ onMounted(() => {
               class="ml-2"
             />
             <span>تاريخ التسليم: </span>
-            <span class="text-primary">{{ order.order.delivery_date }}</span>
+            <span class="text-primary">{{ ConvertToArabicNumbers(order.order.delivery_date.toString().split("-").reverse().join("-")) }}</span>
           </h3>
           <h3 class="mb-2">
             <VIcon
@@ -213,7 +213,7 @@ onMounted(() => {
               class="ml-2"
             />
             <span>
-              {{ order.order.selected_address.address }}
+              {{ ConvertToArabicNumbers(order.order.selected_address.address) }}
             </span>
           </h3>
         </VCol>
@@ -248,20 +248,25 @@ onMounted(() => {
                 <td>{{ product.quantity ? product.quantity : "لا يوجد" }}</td>
                 <td>{{ product.cut ? product.cut.name_ar : "لا يوجد" }}</td>
                 <td>{{ product.preparation ? product.preparation.name_ar : "لا يوجد" }}</td>
-                <td>{{ product.is_karashah ? "بدون" : "" }}</td>
-                <td>{{ product.is_kwar3 ? "بدون" : "" }}</td>
-                <td>{{ product.is_lyh ? "بدون" : "" }}</td>
-                <td>{{ product.is_Ras ? "بدون" : "" }}</td>
-                <td>{{ product.shalwata ? "مع شلوطة" : "بدون" }}</td>
-                <td>{{ product.price ?? (product.total_price / product.quantity) }}</td>
-                <td>{{ product.total_price ?? "لا يوجد" }}</td>
+                <td>{{ product.is_karashah ? "بدون كرشة" : "مع كرشة" }}</td>
+                <td>{{ product.is_kwar3 ? "بدون كوارع" : "مع كوارع" }}</td>
+                <td>{{ product.is_lyh ? " بدون ليه" : "مع ليه" }}</td>
+                <td>{{ product.is_Ras ? "بدون رأس" : "مع رأس " }}</td>
+                <td>{{ product.shalwata ? "مع شلوطة" : "بدون شلوطة" }}</td>
+<!--                <td>{{ product.is_karashah ? "بدون" : "" }}</td>-->
+<!--                <td>{{ product.is_kwar3 ? "بدون" : "" }}</td>-->
+<!--                <td>{{ product.is_lyh ? "بدون" : "" }}</td>-->
+<!--                <td>{{ product.is_Ras ? "بدون" : "" }}</td>-->
+<!--                <td>{{ product.shalwata ? "مع شلوطة" : "بدون" }}</td>-->
+                <td>{{ ConvertToArabicNumbers(product.price ?? (product.total_price / product.quantity)) }}  ريال سعودي</td>
+                <td>{{ ConvertToArabicNumbers(product.total_price) ?? "لا يوجد" }} ريال سعودي</td>
               </tr>
               <tr>
                 <td colspan="4">
                   الإجمالي شامل الضريبة
                 </td>
                 <td colspan="8">
-                  {{ Number(order.order.order_subtotal) }} ريال سعودي
+                  {{ ConvertToArabicNumbers(Number(order.order.order_subtotal)) }} ريال سعودي
                 </td>
               </tr>
               <tr>
@@ -269,7 +274,7 @@ onMounted(() => {
                   الخصم
                 </td>
                 <td colspan="8">
-                  {{ order.order.discount_applied ?? 0 }} ريال سعودي
+                  {{ ConvertToArabicNumbers(order.order.discount_applied) ?? 0 }} ريال سعودي
                 </td>
               </tr>
               <tr>
@@ -277,7 +282,7 @@ onMounted(() => {
                   الإجمالي غير شامل الضريبة بعد الخصم
                 </td>
                 <td colspan="8">
-                  {{ order.order.total_amount_after_tax ?? 0 }} ريال سعودي
+                  {{ ConvertToArabicNumbers(order.order.total_amount_after_tax) ?? 0 }} ريال سعودي
                 </td>
               </tr>
               <tr>
@@ -285,7 +290,7 @@ onMounted(() => {
                   ضريبة القيمة المضافة
                 </td>
                 <td colspan="8">
-                  {{ order.order.tax_fees }} ريال سعودي
+                  {{ ConvertToArabicNumbers(order.order.tax_fees) }} ريال سعودي
                 </td>
               </tr>
               <tr>
@@ -293,7 +298,7 @@ onMounted(() => {
                   الإجمالي شامل الضريبة بعد الخصم
                 </td>
                 <td colspan="8">
-                  {{ order.order.total_amount_after_discount ?? 0 }} ريال سعودي
+                  {{ ConvertToArabicNumbers(order.order.total_amount_after_discount) ?? 0 }} ريال سعودي
                 </td>
               </tr>
               <tr>
@@ -301,7 +306,7 @@ onMounted(() => {
                   المسدد
                 </td>
                 <td colspan="8">
-                  {{ order.order.payment ? order.order.payment.price : 0 }} ريال سعودي
+                  {{ order.order.payment ? ConvertToArabicNumbers(order.order.payment.price) : 0 }} ريال سعودي
                 </td>
               </tr>
               <tr>
@@ -309,7 +314,7 @@ onMounted(() => {
                   إجمالي المتبقي
                 </td>
                 <td colspan="8">
-                  {{ order.order.payment ? order.order.total_amount_after_discount - order.order.payment.price < 0 ? 0 : order.order.total_amount_after_discount - order.order.payment.price : order.order.total_amount_after_discount }} ريال سعودي
+                  {{ order.order.payment ? order.order.total_amount_after_discount - order.order.payment.price < 0 ? ConvertToArabicNumbers(0) : ConvertToArabicNumbers(order.order.total_amount_after_discount - order.order.payment.price) : ConvertToArabicNumbers(order.order.total_amount_after_discount) }} ريال سعودي
                 </td>
               </tr>
               <tr>
@@ -332,9 +337,12 @@ onMounted(() => {
           </VTable>
         </VCol>
       </VRow>
-      <VRow class="mt-3">
-        <img :src="order.order.qr" alt="رمز الاستجاةب السريعة" width="300" class="mx-auto" v-if="order.order.qr">
-        <img src="@/assets/images/logo.png" alt="najdiya"  width="300" class="mx-auto" v-else>
+      <VRow class="mt-3 flex-column" justify="center" align="center">
+        <h3>رمز الإستجابة السريعة</h3>
+        <div>
+          <img :src="order.order.qr" alt="رمز الاستجابة السريعة" width="300" class="mx-auto" v-if="order.order.qr">
+          <img src="@/assets/images/logo.png" alt="najdiya"  width="300" class="mx-auto" v-else>
+        </div>
       </VRow>
     </div>
   </div>
