@@ -40,6 +40,7 @@ const itemData = reactive({
   delivery_period: null,
   payment_type: null,
   paid: null,
+  notes: null,
 })
 
 watch(() => itemData.discount_code, newVal => {
@@ -82,6 +83,7 @@ onUpdated(() => {
   itemData.order_state_id = props.item.order ? props.item.order.order_state_id : 0
   itemData.discount_code = props.item.order ? props.item.order.applied_discount_code : null
   itemData.paid = props.item.order ? props.item.order.paid : null
+  itemData.notes = props.item.order ? props.item.order.notes ? props.item.order.notes : null : null
 })
 
 const refForm = ref(null)
@@ -310,6 +312,15 @@ const dialogModelValueUpdate = val => {
                 :items="payment_status"
                 item-title="name"
                 item-value="id"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+            >
+              <VTextarea
+                v-model="itemData.notes"
+                :label="t('forms.notes')"
+                rows="3"
               />
             </VCol>
 

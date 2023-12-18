@@ -67,6 +67,7 @@ const itemData = reactive({
   using_wallet: false,
   address_id: null,
   discount_code: null,
+  notes: null,
   products: [],
 })
 
@@ -465,6 +466,15 @@ onMounted(() => {
                     <span>{{ pd.name_ar }}</span>
                   </VChip>
                 </div>
+              </VCol>
+              <VCol
+                cols="12"
+              >
+                <VTextarea
+                  v-model="itemData.notes"
+                  :label="t('forms.notes')"
+                  rows="3"
+                />
               </VCol>
               <VCol
                 cols="12"

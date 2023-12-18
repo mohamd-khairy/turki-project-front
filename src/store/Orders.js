@@ -22,7 +22,8 @@ export const useOrdersStore = defineStore('OrdersStore', {
         using_wallet: data.using_wallet,
         address_id: data.address_id,
         discount_code: data.discount_code,
-        products: data.products
+        notes: data.notes,
+        products: data.products,
       }
       // data.products.map((pd, ind) => {
       //   order[`products[${ind}][product_id]`] = pd.product_id
