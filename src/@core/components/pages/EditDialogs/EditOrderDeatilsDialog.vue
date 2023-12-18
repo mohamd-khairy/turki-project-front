@@ -85,6 +85,7 @@ onUpdated(() => {
 })
 
 const refForm = ref(null)
+const isDeleteing = ref(false)
 
 const payment_status = reactive([
   {
@@ -95,6 +96,30 @@ const payment_status = reactive([
     name: "غير مدفوع",
   },
 ])
+
+const removeDiscountCode = () => {
+  isDeleteing.value = true
+  ordersListStore.removeDiscount(itemData.id).then(() => {
+    settingsListStore.alertColor = "success"
+    settingsListStore.alertMessage = "تم إزالة الكوبون بنجاح"
+    settingsListStore.isAlertShow = true
+    emit('refreshTable')
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
+    isDeleteing.value = false
+  }).catch(error => {
+    isDeleteing.value = false
+    settingsListStore.alertColor = "error"
+    settingsListStore.alertMessage = "حدث خطأ ما !"
+    settingsListStore.isAlertShow = true
+    setTimeout(() => {
+      settingsListStore.isAlertShow = false
+      settingsListStore.alertMessage = ""
+    }, 2000)
+  })
+}
 
 const onFormSubmit = async () => {
   isLoading.value = true
@@ -210,13 +235,36 @@ const dialogModelValueUpdate = val => {
               cols="12"
               md="6"
             >
-              <VSelect
-                v-model="itemData.discount_code"
-                :label="t('forms.coupon')"
-                :items="coupons"
-                item-title="name"
-                item-value="code"
-              />
+              <VRow align="center">
+                <VCol :cols="props.item.order.applied_discount_code ? 10 : 12">
+                  <VSelect
+                    v-model="itemData.discount_code"
+                    :label="t('forms.coupon')"
+                    :items="coupons"
+                    item-title="name"
+                    item-value="code"
+                  />
+                </VCol>
+                <VCol :cols="props.item.order.applied_discount_code ? 2 : 0" v-if="props.item.order.applied_discount_code">
+                  <VTooltip text="إزالة الكوبون من الطلب">
+                    <template v-slot:activator="{ props }">
+                      <VBtn
+                        v-bind="props"
+                        icon
+                        variant="plain"
+                        color="error"
+                        size="x-small"
+                        @click="removeDiscountCode"
+                      >
+                        <VIcon
+                          :size="22"
+                          icon="streamline:discount-percent-coupon"
+                        />
+                      </VBtn>
+                    </template>
+                  </VTooltip>
+                </VCol>
+              </VRow>
             </VCol>
             <VCol
               cols="12"

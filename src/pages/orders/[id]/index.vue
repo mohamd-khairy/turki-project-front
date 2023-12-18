@@ -25,27 +25,6 @@ const { t } = useI18n()
 
 const i18n = useI18n()
 
-const removeDiscount = product => {
-  ordersListStore.removeDiscount(product.id).then(() => {
-    settingsListStore.alertColor = "success"
-    settingsListStore.alertMessage = "تم إزالة الكوبون بنجاح"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
-    }, 2000)
-    isDeleteing.value = false
-  }).catch(error => {
-    isDeleteing.value = false
-    settingsListStore.alertColor = "error"
-    settingsListStore.alertMessage = "حدث خطأ ما !"
-    settingsListStore.isAlertShow = true
-    setTimeout(() => {
-      settingsListStore.isAlertShow = false
-      settingsListStore.alertMessage = ""
-    }, 2000)
-  })
-}
 
 const openProductEdit = item => {
   selectedProductItem.value = item
@@ -543,23 +522,6 @@ onMounted(() => {
                       </span>
                     </td>
                     <td>
-                      <VTooltip text="إزالة الكوبون من المنتج">
-                        <template v-slot:activator="{ props }">
-                          <VBtn
-                            v-bind="props"
-                            icon
-                            variant="plain"
-                            color="default"
-                            size="x-small"
-                            @click="removeDiscount(product)"
-                          >
-                            <VIcon
-                              :size="22"
-                              icon="streamline:discount-percent-coupon"
-                            />
-                          </VBtn>
-                        </template>
-                      </VTooltip>
                       <VTooltip text="تعديل المنتج">
                         <template v-slot:activator="{ props }">
                           <VBtn
