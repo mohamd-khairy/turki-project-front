@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import axios from '@axios'
+import { defineStore } from 'pinia'
 
 export const useOrdersStore = defineStore('OrdersStore', {
   actions: {
@@ -22,8 +22,9 @@ export const useOrdersStore = defineStore('OrdersStore', {
         using_wallet: data.using_wallet,
         address_id: data.address_id,
         discount_code: data.discount_code,
-        products: data.products
+        products: data.products,
       }
+
       // data.products.map((pd, ind) => {
       //   order[`products[${ind}][product_id]`] = pd.product_id
       //   order[`products[${ind}][quantity]`] = pd.quantity
@@ -49,7 +50,7 @@ export const useOrdersStore = defineStore('OrdersStore', {
       return axios.get(`/orders/get-one-order/${refrence_id}`)
     },
     removeDiscount(refrence_id){
-      return axios.get(`/orders/remove-dicount/${refrence_id}`)
+      return axios.get(`/orders/remove-discount/${refrence_id}`)
     },
     editOrder(data) {
       return axios.post(`/orders/edit-order`, data)
