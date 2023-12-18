@@ -22,6 +22,7 @@ export const useOrdersStore = defineStore('OrdersStore', {
         using_wallet: data.using_wallet,
         address_id: data.address_id,
         discount_code: data.discount_code,
+        notes: data.notes,
         products: data.products,
       }
 
