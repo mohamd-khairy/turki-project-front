@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import axios from '@axios'
+import { defineStore } from 'pinia'
 
 export const useEmployeesStore = defineStore('EmployeesStore', {
   actions: {
@@ -58,6 +58,8 @@ export const useEmployeesStore = defineStore('EmployeesStore', {
     },
 
     editEmployee(data) {
+      console.log('here', Object.values(data.roles))
+
       const formData = new FormData()
 
       formData.append("_method", "PUT")
@@ -73,9 +75,15 @@ export const useEmployeesStore = defineStore('EmployeesStore', {
       formData.append("gender", data.gender)
       formData.append("age", data.age)
       formData.append("is_active", data.is_active)
-      for (let i = 0; i < data.roles.length; i++) {
-        formData.append(`roles[${i}]`, data.roles[i].id)
-      }
+
+      Object.values(data.roles).map((role, index) => {
+        formData.append(`roles[${index}]`, role)
+      })
+
+      // for (let i = 0; i < data.roles.length; i++) {
+      // }
+
+      
 
       return axios.post(`users/${data.id}`, formData)
     },
