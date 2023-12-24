@@ -12,6 +12,7 @@ import { useI18n } from "vue-i18n"
 const { t } = useI18n()
 const router = useRouter()
 
+
 const ordersListStore = useOrdersStore()
 const citiesListStore = useCitiesStore()
 const countriesListStore = useCountriesStore()
@@ -44,6 +45,7 @@ const selectedOrder = ref({})
 const isEditOpen = ref(false)
 const isLoading = ref(false)
 const isFiltered = ref(false)
+const is_production_manager = ref(false)
 
 const filters = reactive({
   city_ids: [],
@@ -77,6 +79,8 @@ onMounted(() => {
     customers.value = response.data.data
     customersCopy.value = response.data.data
   })
+
+  checkRole()
 })
 
 watch(() => filters.country_ids, (newVal, oldVal) => {
@@ -190,6 +194,16 @@ const clearFilter = () => {
   filters.delivery_period_id = null,
   filters.customer_id = null
   filterOrders()
+}
+
+const checkRole = () => {
+
+  const user = JSON.parse(localStorage.getItem('najdUser'))
+
+  is_production_manager.value = user.roles.filter(role => {        
+    return role.toLowerCase().indexOf(['logistic_manager']) > -1
+  }).length > 0 ? true : false
+
 }
 
 const openDetails = order => {
@@ -377,8 +391,7 @@ const formatDateTime = data => {
                 item-title="name_ar"
                 item-value="id"
                 :disabled="isLoading"
-              >
-              </VSelect>
+              />
             </VCol>
           </VRow>
         </VCol>
@@ -627,7 +640,23 @@ const formatDateTime = data => {
             <td>
               {{ ConvertToArabicNumbers(formatDateTime(order.delivery_date).date) }}
             </td>
-            <td @click="openEdit(order)">
+            <td
+              v-if="order.order_state_id == '105' && is_production_manager"
+              @click="openEdit(order)"
+            >
+              <VChip style="cursor: pointer;">
+                {{ order.order_state_ar }}
+              </VChip>
+            </td>
+            <td
+              v-else-if="!is_production_manager"
+              @click="openEdit(order)"
+            >
+              <VChip style="cursor: pointer;">
+                {{ order.order_state_ar }}
+              </VChip>
+            </td>
+            <td v-else>
               <VChip style="cursor: pointer;">
                 {{ order.order_state_ar }}
               </VChip>
