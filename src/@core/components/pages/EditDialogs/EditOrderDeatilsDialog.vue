@@ -4,7 +4,7 @@ import { useEmployeesStore } from "@/store/Employees"
 import { useOrdersStore } from "@/store/Orders"
 import { useSettingsStore } from "@/store/Settings"
 import {
-  requiredValidator,
+requiredValidator,
 } from '@validators'
 import { useI18n } from "vue-i18n"
 
@@ -48,6 +48,7 @@ watch(() => itemData.discount_code, newVal => {
 })
 
 const statues = reactive([])
+const allStatues = reactive([])
 const users = reactive([])
 const coupons = ref([])
 const delivery_periods = ref([])
@@ -63,6 +64,9 @@ const resetForm = () => {
 onMounted(() => {
   ordersListStore.fetchOrderStatus().then(response => {
     statues.value = response.data.data
+  })
+  ordersListStore.fetchAllOrderStatus().then(response => {
+    allStatues.value = response.data.data
   })
   employeesListStore.fetchEmployees({ pageSize: -1, role_id: 7 }).then(response => {
     users.value = response.data.data
@@ -212,7 +216,7 @@ const dialogModelValueUpdate = val => {
             >
               <VSelect
                 v-model="itemData.order_state_id"
-                :items="statues.value"
+                :items="allStatues.value"
                 :label="t('forms.order_state')"
                 item-title="customer_state_ar"
                 item-value="code"

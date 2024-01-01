@@ -35,6 +35,7 @@ const products = ref([])
 const coupons = ref([])
 const deliveryPeriods = ref([])
 const orderStatuses = ref([])
+const allOrderStatuses = ref([])
 const dataFrom = ref(1)
 const dataTo = ref(1)
 const selectedRows = ref([])
@@ -60,6 +61,9 @@ onMounted(() => {
   getOrders()
   ordersListStore.fetchOrderStatus().then(response => {
     orderStatuses.value = response.data.data
+  })
+  ordersListStore.fetchAllOrderStatus().then(response => {
+    allOrderStatuses.value = response.data.data
   })
   countriesListStore.fetchCountries().then(response => {
     countries.value = response.data.data
@@ -293,7 +297,7 @@ const formatDateTime = data => {
               </div>
               <VSelect
                 v-model="filters.order_state_ids"
-                :items="orderStatuses"
+                :items="allOrderStatuses"
                 label="حالة الطلب"
                 item-title="state_ar"
                 item-value="code"
@@ -346,6 +350,24 @@ const formatDateTime = data => {
             >
               <div class="icon">
                 <VIcon
+                  icon="fluent-mdl2:date-time"
+                  color="primary"
+                />
+              </div>
+              <VTextField
+                v-model="filters.delivery_date"
+                type="date"
+                :label="t('forms.delivery_date')"
+                :disabled="isLoading"
+              />
+            </VCol>
+        
+            <!-- <VCol
+              cols="12"
+              class="d-flex align-center gap-3"
+            >
+              <div class="icon">
+                <VIcon
                   icon="solar:delivery-broken"
                   color="primary"
                 />
@@ -359,7 +381,7 @@ const formatDateTime = data => {
                 multiple
                 :disabled="isLoading"
               />
-            </VCol>
+            </VCol> -->
             <VCol
               cols="12"
               class="d-flex align-center gap-3"
@@ -425,32 +447,7 @@ const formatDateTime = data => {
             </VCol>
           </VRow>
         </VCol>
-        <VCol
-          cols="12"
-          lg="3"
-          md="4"
-          sm="6"
-        >
-          <VRow>
-            <VCol
-              cols="12"
-              class="d-flex align-center gap-3"
-            >
-              <div class="icon">
-                <VIcon
-                  icon="fluent-mdl2:date-time"
-                  color="primary"
-                />
-              </div>
-              <VTextField
-                v-model="filters.delivery_date"
-                type="date"
-                :label="t('forms.delivery_date')"
-                :disabled="isLoading"
-              />
-            </VCol>
-          </VRow>
-        </VCol>
+       
         <VCol
           cols="12"
           md="4"
