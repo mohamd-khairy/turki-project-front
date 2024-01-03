@@ -12,7 +12,8 @@
         "src/@iconify/*"
     ],
     "compilerOptions": {
-        "baseUrl":"",// "./laravel/public/",
+        // "baseUrl": "./laravel/public/",
+        "baseUrl":"",
         "target": "esnext",
         "module": "esnext",
         "moduleResolution": "node",

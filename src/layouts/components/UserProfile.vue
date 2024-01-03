@@ -36,8 +36,15 @@ const logout = () => {
       color="primary"
       variant="tonal"
     >
-      <VImg :src="user.avatar ?? avatar1" v-if="user.avatar"/>
-      <VIcon icon="iconoir:n-square" size="32" v-else></VIcon>
+      <VImg
+        v-if="user.avatar"
+        :src="user.avatar ?? avatar1"
+      />
+      <VIcon
+        v-else
+        icon="iconoir:n-square"
+        size="32"
+      />
 
       <!-- SECTION Menu -->
       <VMenu
@@ -62,8 +69,15 @@ const logout = () => {
                     color="primary"
                     variant="tonal"
                   >
-                    <VImg :src="user.avatar ?? avatar1" v-if="user.avatar"/>
-                    <VIcon icon="iconoir:n-square" size="32" v-else></VIcon>
+                    <VImg
+                      v-if="user.avatar"
+                      :src="user.avatar ?? avatar1"
+                    />
+                    <VIcon
+                      v-else
+                      icon="iconoir:n-square"
+                      size="32"
+                    />
                   </VAvatar>
                 </VBadge>
               </VListItemAction>
@@ -73,8 +87,6 @@ const logout = () => {
               {{ user.username ?? "مستخدم نجدية" }}
             </VListItemTitle>
             <VListItemSubtitle>
-              <VIcon icon="octicon:dot-fill-24" :color="user.is_active == true || user.is_active == 1 ? '#008000' : '#f00000'" size="16"
-              ></VIcon>
               <span class="mx-1">
                 {{ user.roles.length ? user.roles[0] : (user.is_active == true || user.is_active == 1 ? 'نشط' : 'غير نشط') }}
 
@@ -82,7 +94,7 @@ const logout = () => {
             </VListItemSubtitle>
           </VListItem>
 
-          <VDivider class="my-2"/>
+          <VDivider class="my-2" />
 
           <VListItem @click="logout">
             <template #prepend>
@@ -95,7 +107,12 @@ const logout = () => {
 
             <VListItemTitle>
               <span v-if="!isLoading">تسجيل الخروج</span>
-              <VIcon icon="mingcute:loading-line" class="fixed loading" size="32" v-else></VIcon>
+              <VIcon
+                v-else
+                icon="mingcute:loading-line"
+                class="fixed loading"
+                size="32"
+              />
             </VListItemTitle>
           </VListItem>
         </VList>

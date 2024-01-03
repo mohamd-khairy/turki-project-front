@@ -54,6 +54,8 @@ const coupons = ref([])
 const delivery_periods = ref([])
 const payment_types = ref([])
 const couponsListStore = useCouponsStore()
+const is_production_manager = ref(false)
+const is_admin = ref(false)
 
 const form = ref()
 
@@ -80,7 +82,21 @@ onMounted(() => {
   settingsListStore.fetchPaymentTypes().then(response => {
     payment_types.value = response.data.data
   })
+  checkRole()
 })
+
+const checkRole = () => {
+
+  const user = JSON.parse(localStorage.getItem('najdUser'))
+
+  is_production_manager.value = user.roles.filter(role => {        
+    return role.toLowerCase().indexOf(['logistic_manager']) > -1
+  }).length > 0 ? true : false
+
+  is_admin.value = user.roles.filter(role => {        
+    return role.toLowerCase().indexOf(['admin']) > -1
+  }).length > 0 ? true : false
+}
 
 onUpdated(() => {
   itemData.id = props.item.order ? props.item.order.id : 0
@@ -185,7 +201,7 @@ const dialogModelValueUpdate = val => {
     @update:model-value="dialogModelValueUpdate"
   >
     <!-- Dialog close btn -->
-    <DialogCloseBtn @click="dialogModelValueUpdate(false)"/>
+    <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
 
     <VCard
       class="pa-sm-9 pa-5"
@@ -211,6 +227,7 @@ const dialogModelValueUpdate = val => {
         >
           <VRow>
             <VCol
+              v-if="itemData.order_state_id == '105' && is_production_manager"
               cols="12"
               md="6"
             >
@@ -224,6 +241,21 @@ const dialogModelValueUpdate = val => {
               />
             </VCol>
             <VCol
+              v-else-if="!is_production_manager"
+              cols="12"
+              md="6"
+            >
+              <VSelect
+                v-model="itemData.order_state_id"
+                :items="statues.value"
+                :label="t('forms.order_state')"
+                item-title="customer_state_ar"
+                item-value="code"
+                :rules="[requiredValidator]"
+              />
+            </VCol>
+            <VCol
+              v-if="is_production_manager || is_admin"
               cols="12"
               md="6"
             >
@@ -251,9 +283,12 @@ const dialogModelValueUpdate = val => {
                     item-value="code"
                   />
                 </VCol>
-                <VCol :cols="props.item.order.applied_discount_code ? 2 : 0" v-if="props.item.order.applied_discount_code">
+                <VCol
+                  v-if="props.item.order.applied_discount_code"
+                  :cols="props.item.order.applied_discount_code ? 2 : 0"
+                >
                   <VTooltip text="إزالة الكوبون من الطلب">
-                    <template v-slot:activator="{ props }">
+                    <template #activator="{ props }">
                       <VBtn
                         v-bind="props"
                         icon
