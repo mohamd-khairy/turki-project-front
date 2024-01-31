@@ -300,7 +300,7 @@ onMounted(() => {
                   المسدد
                 </td>
                 <td colspan="8">
-                  {{ order.order.payment ? ConvertToArabicNumbers(order.order.payment.price) : 0 }} ريال سعودي
+                  {{ order.order.paidpayment ? ConvertToArabicNumbers(order.order.paidpayment.price) : 0 }} ريال سعودي
                 </td>
               </tr>
               <tr>
@@ -308,7 +308,7 @@ onMounted(() => {
                   إجمالي المتبقي
                 </td>
                 <td colspan="8">
-                  {{ order.order.payment ? order.order.total_amount_after_discount - order.order.payment.price < 0 ? ConvertToArabicNumbers(0) : ConvertToArabicNumbers(order.order.total_amount_after_discount - order.order.payment.price) : ConvertToArabicNumbers(order.order.total_amount_after_discount) }} ريال سعودي
+                  {{ order.order.paidpayment ? order.order.total_amount_after_discount - order.order.paidpayment.price < 0 ? ConvertToArabicNumbers(0) : ConvertToArabicNumbers(order.order.total_amount_after_discount - order.order.paidpayment.price) : ConvertToArabicNumbers(order.order.total_amount_after_discount) }} ريال سعودي
                 </td>
               </tr>
               <tr>
