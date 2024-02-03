@@ -376,26 +376,28 @@ const formatDateTime = data => {
               />
             </VCol>
         
-            <!-- <VCol
+            <!--
+              <VCol
               cols="12"
               class="d-flex align-center gap-3"
-            >
+              >
               <div class="icon">
-                <VIcon
-                  icon="solar:delivery-broken"
-                  color="primary"
-                />
+              <VIcon
+              icon="solar:delivery-broken"
+              color="primary"
+              />
               </div>
               <VSelect
-                v-model="filters.order_state_ids"
-                :items="orderStatuses"
-                label="حالة الطلب"
-                item-title="state_ar"
-                item-value="code"
-                multiple
-                :disabled="isLoading"
+              v-model="filters.order_state_ids"
+              :items="orderStatuses"
+              label="حالة الطلب"
+              item-title="state_ar"
+              item-value="code"
+              multiple
+              :disabled="isLoading"
               />
-            </VCol> -->
+              </VCol> 
+            -->
             <VCol
               cols="12"
               class="d-flex align-center gap-3"
@@ -638,7 +640,7 @@ const formatDateTime = data => {
               {{ ConvertToArabicNumbers(formatDateTime(order.delivery_date).date) }}
             </td>
             <td
-              v-if="order.order_state_id == '105' && is_production_manager"
+              v-if=" (order.order_state_id == '101' || order.order_state_id == '105') && is_production_manager"
               @click="openEdit(order)"
             >
               <VChip style="cursor: pointer;">

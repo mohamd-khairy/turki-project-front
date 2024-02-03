@@ -227,7 +227,7 @@ const dialogModelValueUpdate = val => {
         >
           <VRow>
             <VCol
-              v-if="itemData.order_state_id == '105' && is_production_manager"
+              v-if=" (itemData.order_state_id == '101' || itemData.order_state_id == '105') && is_production_manager"
               cols="12"
               md="6"
             >

@@ -12,8 +12,9 @@ import vuetify from 'vite-plugin-vuetify'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  // base:"/laravel/public/",
-  base:"",
+  base:"/laravel/public/",
+
+  // base:"",
   plugins: [
     vue(),
     vueJsx(),
