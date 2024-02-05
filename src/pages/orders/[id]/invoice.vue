@@ -292,7 +292,7 @@ onMounted(() => {
                   الإجمالي شامل الضريبة بعد الخصم
                 </td>
                 <td colspan="8">
-                  {{ ConvertToArabicNumbers(order.order.total_amount_after_discount) ?? 0 }} ريال سعودي
+                  {{ ConvertToArabicNumbers(parseFloat(order.order.total_amount_after_discount) + parseFloat(order.order.wallet_amount_used)) ?? 0 }} ريال سعودي
                 </td>
               </tr>
               <tr>
@@ -300,7 +300,7 @@ onMounted(() => {
                   المسدد
                 </td>
                 <td colspan="8">
-                  {{ order.order.paidpayment ? ConvertToArabicNumbers(order.order.paidpayment.price) : 0 }} ريال سعودي
+                  {{ order.order.paidpayment ? ConvertToArabicNumbers(parseFloat(order.order.paidpayment.price) + parseFloat(order.order.wallet_amount_used)) : ConvertToArabicNumbers(parseFloat(0) + parseFloat(order.order.wallet_amount_used)) }} ريال سعودي
                 </td>
               </tr>
               <tr>
@@ -308,7 +308,7 @@ onMounted(() => {
                   إجمالي المتبقي
                 </td>
                 <td colspan="8">
-                  {{ order.order.paidpayment ? order.order.total_amount_after_discount - order.order.paidpayment.price < 0 ? ConvertToArabicNumbers(0) : ConvertToArabicNumbers(order.order.total_amount_after_discount - order.order.paidpayment.price) : ConvertToArabicNumbers(order.order.total_amount_after_discount) }} ريال سعودي
+                  {{ ConvertToArabicNumbers(order.order.remain_amount ?? 0) }} ريال سعودي
                 </td>
               </tr>
               <tr>

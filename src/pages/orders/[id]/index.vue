@@ -348,7 +348,7 @@ onMounted(() => {
                   :class="{'text-error': order['sale price'] === 'undefined', 'text-success': order['sale price'] !== 'undefined' }"
                 >
                   {{
-                    order.order.total_amount_after_discount !== "undefined" ? ConvertToArabicNumbers(order.order.total_amount_after_discount) : ConvertToArabicNumbers(0)
+                    order.order.total_amount_after_discount !== "undefined" ? ConvertToArabicNumbers(parseFloat(order.order.total_amount_after_discount) + parseFloat(order.order.wallet_amount_used)) : ConvertToArabicNumbers(0)
                   }} ريال
                 </VChip>
               </h3>

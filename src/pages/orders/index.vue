@@ -682,7 +682,7 @@ const formatDateTime = data => {
               </td>
             -->
             <td>
-              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(order.total_amount_after_discount)) }}
+              {{ ConvertToArabicNumbers(Intl.NumberFormat().format(parseFloat(order.total_amount_after_discount) + parseFloat(order.wallet_amount_used))) }}
             </td>
             <!--
               <td>
